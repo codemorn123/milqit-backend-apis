@@ -1,0 +1,23 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/controllers/**/*.ts"],
+  "spec": {
+    "outputDirectory": "build",
+    "specVersion": 3,
+    "basePath": "/v1",
+    "host": "localhost:3000",
+    "schemes": ["http"],
+    "info": {
+      "title": "Milqit E-commerce API",
+      "version": "1.0.0",
+      "description": "E-commerce API with admin and mobile interfaces"
+    }
+  
+  },
+  "routes": {
+    "routesDir": "build",
+    "middleware": "express",
+        "authenticationModule": "./src/middleware/auth-helper.ts"
+  }
+}

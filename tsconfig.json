@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "strict": true,
+    
+    "outDir": "build", /* Changed from "dist" to "build" to match where TSOA is looking */
+    "sourceMap": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    /* Added for better TSOA compatibility */
+    "rootDir": ".",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "noImplicitAny": false, /* Temporarily disable to avoid issues with TSOA analysis */
+    "moduleResolution": "node"
+  },
+  "include": ["src/**/*", "tsoa.json", "tsoa.admin.json", "tsoa.mobile.json"],
+  "exclude": ["node_modules", "dist"]
+}

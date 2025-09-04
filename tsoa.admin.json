@@ -1,0 +1,40 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "silently-remove-extras",
+    "controllerPathGlobs": [
+    "src/controllers/admin/**/*Controller.ts",
+    "src/controllers/admin/**/*.ts"
+  ],
+  "spec": {
+    "outputDirectory": "build",
+    "specVersion": 3,
+    "basePath": "/v1/admin",
+    "outputFileName": "swagger.admin.json",
+     "host": "localhost:3000",
+    "schemes": ["http", "https"],
+        "produces": ["application/json"],
+    "securityDefinitions": {
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "info": {
+      "title": "Admin API",
+      "version": "1.0.0",
+      "description": "Admin API Documentation"
+    }
+  },
+  "routes": {
+    "routesDir": "build",
+    "middleware": "express",
+    "authenticationModule": "./src/middleware/auth-helper.ts",
+    "routesFileName": "routes.admin.ts"
+  },
+   "compilerOptions": {
+    "baseUrl": ".",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
