@@ -40,7 +40,7 @@ async function startServer(): Promise<void> {
       // RegisterMobileRoutes(app);
       // RegisterAdminRoutes(app);
       // registerCategoryRoutes(app);
-      logger.info('TSOA routes registered successfully');
+      // logger.info('TSOA routes registered successfully');
     } catch (error) {
       logger.error({
         error: error instanceof Error ? error.message : String(error),
