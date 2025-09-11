@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import { ApiError } from './errorHandler';
 
-/**
- * Format a Zod validation error path
- * Handles strings, numbers, and symbols in the path
- */
+
 function formatZodPath(path: PropertyKey[]): string {
   return path.map(p => {
     if (typeof p === 'number') {
@@ -47,7 +44,6 @@ export async function validateAsync<T>(
     return await schema.parseAsync(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      // Updated to use issues instead of errors (Zod v3.22.4+)
       const formattedErrors = error.issues.map(issue => ({
         path: formatZodPath(issue.path),
         message: issue.message,

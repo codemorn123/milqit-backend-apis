@@ -1,12 +1,12 @@
-import { CategoryModel, ICategoryDocument, ICategory } from '../models/CategoryModel';
-import { ApiError } from '../utils/errorHandler';
 import mongoose, { PaginateOptions, PaginateResult } from 'mongoose';
-import { imageUploadService } from './imageUploadService';
-import { logger } from '../config/logger';
 import slugify from 'slugify';
+import { logger } from '../config/logger';
+import { PresentableError } from '../error/clientErrorHelper';
+import { CategoryModel, ICategory, ICategoryDocument } from '../models/CategoryModel';
 import { CreateCategoryInput, UpdateCategoryInput } from '../validations/categoryValidators';
+import { imageUploadService } from './imageUploadService';
 
-// Category query options interface
+// --- Interfaces ---
 export interface CategoryQueryOptions {
   page?: number;
   limit?: number;
@@ -17,604 +17,223 @@ export interface CategoryQueryOptions {
   parentId?: string | null;
 }
 
-// For the tree result structure
 export interface CategoryTreeItem {
   id: string;
   name: string;
   slug: string;
-  displayOrder: number;
-  image?: string;
-  icon?: string;
-  description?: string;
   children: CategoryTreeItem[];
+  // You can add other relevant fields like image, icon, etc.
 }
 
-// Interface for file processing options
 interface FileProcessingOptions {
   imageFile?: Express.Multer.File | null;
   iconFile?: Express.Multer.File | null;
   bannerFile?: Express.Multer.File | null;
 }
 
-// File processing result
 interface FileProcessingResult {
-  imagePath?: string;
-  iconPath?: string;
-  bannerPath?: string;
+  image?: string;
+  icon?: string;
+  bannerImage?: string;
 }
 
-export const categoryService = {
-  /**
-   * Process upload files and return their paths
-   */
-  async processUploadedFiles(
-    imageFile?: Express.Multer.File | null,
-    iconFile?: Express.Multer.File | null,
-    bannerFile?: Express.Multer.File | null
-  ): Promise<FileProcessingResult> {
-    const result: FileProcessingResult = {};
-    
-    try {
-      // Process main image if provided
-      if (imageFile) {
-        result.imagePath = await imageUploadService.processCategoryImage(imageFile);
-      }
-      
-      // Process icon if provided
-      if (iconFile) {
-        result.iconPath = await imageUploadService.processCategoryImage(iconFile, {
-          width: 128,
-          height: 128
-        });
-      }
-      
-      // Process banner if provided
-      if (bannerFile) {
-        result.bannerPath = await imageUploadService.processCategoryImage(bannerFile, {
-          width: 1200,
-          height: 300
-        });
-      }
-      
-      return result;
-    } catch (error) {
-      // Clean up any uploaded files if an error occurs
-      if (result.imagePath) {
-        await imageUploadService.deleteImage(result.imagePath).catch((err: Error) => {
-          logger.error({ err }, 'Failed to clean up image after error');
-        });
-      }
-      
-      if (result.iconPath) {
-        await imageUploadService.deleteImage(result.iconPath).catch((err: Error) => {
-          logger.error({ err }, 'Failed to clean up icon after error');
-        });
-      }
-      
-      if (result.bannerPath) {
-        await imageUploadService.deleteImage(result.bannerPath).catch((err: Error) => {
-          logger.error({ err }, 'Failed to clean up banner after error');
-        });
-      }
-      
-      // Re-throw the error
-      throw error;
-    }
-  },
+// --- Error Handling Decorator ---
+function handleServiceErrors(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
 
-  /**
-   * Generate a unique slug for a category
-   */
-  async generateUniqueSlug(name: string, existingId?: string): Promise<string> {
-    // Generate base slug
-    let slug = slugify(name, { 
-      lower: true,
-      strict: true,
-      trim: true
+  descriptor.value = async function (...args: any[]) {
+    try {
+      return await originalMethod.apply(this, args);
+    } catch (error: any) {
+      if (error instanceof PresentableError) {
+        throw error;
+      }
+      logger.error({ err: error, method: propertyKey, args }, `Unexpected error in CategoryService.${propertyKey}`);
+      throw new PresentableError('SERVER_ERROR', 'An unexpected error occurred.');
+    }
+  };
+
+  return descriptor;
+}
+
+class CategoryService {
+
+  // --- Public CRUD Methods ---
+
+  @handleServiceErrors
+  public async createCategory(data: CreateCategoryInput, files: FileProcessingOptions): Promise<ICategoryDocument> {
+    await this._assertCategoryNameIsUnique(data.name);
+    const slug = await this._generateUniqueSlug(data.name);
+    const filePaths = await this._processAndCleanupFiles(files);
+    if (!filePaths.image) {
+      throw new PresentableError('VALIDATION_ERROR', 'Category image is required.');
+    }
+    const parentId = this._validateAndGetParentId(data.parentId);
+    const newCategory = await CategoryModel.create({
+      ...data, ...filePaths, slug, parentId, createdAt: new Date(), updatedAt: new Date()
     });
-    
-    // Check for duplicate slug
-    const query: Record<string, unknown> = { slug };
-    if (existingId) {
-      query._id = { $ne: new mongoose.Types.ObjectId(existingId) };
-    }
-    
-    const existingSlug = await CategoryModel.findOne(query);
-    
-    // If duplicate exists, append timestamp to make unique
-    if (existingSlug) {
-      slug = `${slug}-${Date.now()}`;
-    }
-    
-    return slug;
-  },
+    logger.info({ categoryId: newCategory._id }, 'Category created successfully');
+    return newCategory;
+  }
 
-  /**
-   * Create a new category
-   */
-  async createCategory(
-    data: CreateCategoryInput,
-    files: FileProcessingOptions = {}
-  ): Promise<ICategoryDocument> {
-    const timestamp = new Date().toISOString();
-    
-    try {
-      logger.info({ 
-        action: 'CREATE_CATEGORY_ATTEMPT',
-        data: { ...data, timestamp },
-        user: 'MarotiKathoke'
-      }, 'Attempting to create category');
-      
-      // Check for duplicate name
-      const existingCategory = await CategoryModel.findOne({ 
-        name: { $regex: new RegExp(`^${data.name}$`, 'i') }
-      });
-      
-      if (existingCategory) {
-        throw ApiError.conflict('Category with this name already exists');
-      }
-      
-      // Generate unique slug
-      const slug = await this.generateUniqueSlug(data.name);
-      
-      // Process uploaded files
-      const { imagePath, iconPath, bannerPath } = await this.processUploadedFiles(
-        files.imageFile,
-        files.iconFile,
-        files.bannerFile
-      );
-      
-      if (!imagePath) {
-        throw ApiError.badRequest('Category image is required');
-      }
-      
-      // Process parent ID if provided
-      let parentId: mongoose.Types.ObjectId | null = null;
-      if (data.parentId) {
-        if (data.parentId !== 'null' && data.parentId !== '') {
-          if (mongoose.isValidObjectId(data.parentId)) {
-            parentId = new mongoose.Types.ObjectId(data.parentId);
-          } else {
-            throw ApiError.badRequest('Invalid parent ID format');
-          }
-        }
-      }
-      
-      // Create category
-      const newCategory = await CategoryModel.create({
-        ...data,
-        slug,
-        parentId,
-        image: imagePath,
-        icon: iconPath,
-        bannerImage: bannerPath,
-        createdBy: 'MarotiKathoke',
-        updatedBy: 'MarotiKathoke',
-      });
-      
-      logger.info({ 
-        categoryId: newCategory._id.toString(),
-        timestamp
-      }, 'Category created successfully');
-      
-      return newCategory;
-    } catch (error) {
-      logger.error({ 
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-        data,
-        timestamp
-      }, 'Failed to create category');
-      
-      if (error instanceof ApiError) throw error;
-      throw ApiError.internal('Failed to create category');
-    }
-  },
-  
-  /**
-   * Update an existing category
-   */
-  async updateCategory(
-    id: string,
-    data: UpdateCategoryInput,
-    files: FileProcessingOptions = {},
-    session?: mongoose.ClientSession
-  ): Promise<ICategoryDocument> {
-    const timestamp = new Date().toISOString();
-    
-    try {
-      if (!mongoose.isValidObjectId(id)) {
-        throw ApiError.badRequest('Invalid category ID format');
-      }
+  @handleServiceErrors
+  public async updateCategory(id: string, data: UpdateCategoryInput, files: FileProcessingOptions, session?: mongoose.ClientSession): Promise<ICategoryDocument> {
+    const category = await this.getCategoryById(id, session);
 
-      logger.info({ 
-        action: 'UPDATE_CATEGORY_ATTEMPT',
-        categoryId: id,
-        data: { ...data, timestamp },
-        user: 'MarotiKathoke'
-      }, 'Attempting to update category');
-      
-      // Find the category
-      const findOptions = session ? { session } : {};
-      const category = await CategoryModel.findById(id).session(session || null);
-      
-      if (!category) {
-        throw ApiError.notFound('Category not found');
-      }
-      
-      // If updating name, check duplicates and update slug
-      if (data.name && data.name !== category.name) {
-        const existingCategory = await CategoryModel.findOne({ 
-          name: { $regex: new RegExp(`^${data.name}$`, 'i') },
-          _id: { $ne: new mongoose.Types.ObjectId(id) }
-        }).session(session || null);
-        
-        if (existingCategory) {
-          throw ApiError.conflict('Category with this name already exists');
-        }
-        
-        // Generate new slug
-        category.slug = await this.generateUniqueSlug(data.name, id);
-      }
-      
-      // Process uploaded files
-      const { imagePath, iconPath, bannerPath } = await this.processUploadedFiles(
-        files.imageFile,
-        files.iconFile,
-        files.bannerFile
-      );
-      
-      // Update image if provided and delete old one
-      if (imagePath) {
-        if (category.image) {
-          await imageUploadService.deleteImage(category.image).catch((err: Error) => {
-            logger.warn({ err, oldPath: category.image }, 'Failed to delete old image');
-          });
-        }
-        category.image = imagePath;
-      }
-      
-      // Update icon if provided and delete old one
-      if (iconPath) {
-        if (category.icon) {
-          await imageUploadService.deleteImage(category.icon).catch((err: Error) => {
-            logger.warn({ err, oldPath: category.icon }, 'Failed to delete old icon');
-          });
-        }
-        category.icon = iconPath;
-      }
-      
-      // Update banner if provided and delete old one
-      if (bannerPath) {
-        if (category.bannerImage) {
-          await imageUploadService.deleteImage(category.bannerImage).catch((err: Error) => {
-            logger.warn({ err, oldPath: category.bannerImage }, 'Failed to delete old banner');
-          });
-        }
-        category.bannerImage = bannerPath;
-      }
-      
-      // Update fields from input data
-      if (data.name !== undefined) category.name = data.name;
-      if (data.description !== undefined) category.description = data.description;
-      if (data.displayOrder !== undefined) category.displayOrder = data.displayOrder;
-      if (data.isActive !== undefined) category.isActive = data.isActive;
-      if (data.metaTitle !== undefined) category.metaTitle = data.metaTitle;
-      if (data.metaDescription !== undefined) category.metaDescription = data.metaDescription;
-      if (data.backgroundColor !== undefined) category.backgroundColor = data.backgroundColor;
-      if (data.textColor !== undefined) category.textColor = data.textColor;
-      
-      // Handle parentId special case
-      if (data.parentId !== undefined) {
-        // Convert 'null' string or empty string to actual null
-        if (data.parentId === 'null' || data.parentId === '' || data.parentId === null) {
-          category.parentId = null;
-        } else {
-          // Ensure it's a valid ObjectId
-          if (!mongoose.isValidObjectId(data.parentId)) {
-            throw ApiError.badRequest('Invalid parent ID format');
-          }
+    if (data.name && data.name !== category.name) {
+      await this._assertCategoryNameIsUnique(data.name, id);
+      category.slug = await this._generateUniqueSlug(data.name, id);
+    }
 
-          // Prevent category from being its own parent
-          if (data.parentId === category._id.toString()) {
-            throw ApiError.badRequest('Category cannot be its own parent');
-          }
-          
-          // Prevent circular references
-          const potentialParent = await CategoryModel.findById(data.parentId).session(session || null);
-          if (!potentialParent) {
-            throw ApiError.notFound('Parent category not found');
-          }
-          
-          // Check if setting as parent would create a circular reference
-          let currentParent = potentialParent;
-          let visited = new Set<string>([category._id.toString()]);
-          
-          while (currentParent.parentId) {
-            const parentId = currentParent.parentId.toString();
-            
-            // Check for circular reference
-            if (visited.has(parentId)) {
-              throw ApiError.badRequest('Creating a circular reference is not allowed');
-            }
-            
-            // Add to visited set
-            visited.add(parentId);
-            
-            // Find next parent
-            const nextParent = await CategoryModel.findById(parentId).session(session || null);
-            if (!nextParent) break;
-            currentParent = nextParent;
-          }
-          
-          category.parentId = new mongoose.Types.ObjectId(data.parentId);
-        }
-      }
-      
-      // Update audit fields
-      category.updatedAt = new Date();
-      category.updatedBy = 'MarotiKathoke';
-      
-      // Save updated category
-      await category.save({ session });
-      
-      logger.info({ 
-        categoryId: id,
-        timestamp
-      }, 'Category updated successfully');
-      
-      return category;
-    } catch (error) {
-      logger.error({ 
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-        id,
-        data,
-        timestamp
-      }, 'Failed to update category');
-      
-      if (error instanceof ApiError) throw error;
-      throw ApiError.internal('Failed to update category');
-    }
-  },
-  
-  /**
-   * Get a category by ID
-   */
-  async getCategoryById(id: string): Promise<ICategoryDocument> {
-    try {
-      // Validate ObjectID
-      if (!mongoose.isValidObjectId(id)) {
-        throw ApiError.badRequest('Invalid category ID format');
-      }
-      
-      const category = await CategoryModel.findById(id);
-      
-      if (!category) {
-        throw ApiError.notFound('Category not found');
-      }
-      
-      return category;
-    } catch (error) {
-      if (error instanceof ApiError) throw error;
-      logger.error({ 
-        error: error instanceof Error ? error.message : String(error),
-        id 
-      }, 'Failed to get category');
-      throw ApiError.internal('Failed to get category');
-    }
-  },
-  
-  /**
-   * Delete a category
-   */
-  async deleteCategory(id: string): Promise<boolean> {
-    const timestamp = new Date().toISOString();
+    const newFilePaths = await this._processAndCleanupFiles(files, category);
+    Object.assign(category, newFilePaths);
     
-    try {
-      logger.info({ 
-        action: 'DELETE_CATEGORY_ATTEMPT',
-        categoryId: id,
-        timestamp,
-        user: 'MarotiKathoke'
-      }, 'Attempting to delete category');
-      
-      // Validate ObjectID
-      if (!mongoose.isValidObjectId(id)) {
-        throw ApiError.badRequest('Invalid category ID format');
-      }
-      
-      const category = await CategoryModel.findById(id);
-      if (!category) {
-        throw ApiError.notFound('Category not found');
-      }
-      
-      // Check if category has subcategories
-      const hasSubcategories = await CategoryModel.exists({ parentId: new mongoose.Types.ObjectId(id) });
-      if (hasSubcategories) {
-        throw ApiError.badRequest('Cannot delete category with subcategories. Remove subcategories first.');
-      }
-      
-      // Check if category has products
-      const ProductModel = mongoose.model('Product');
-      const hasProducts = await ProductModel.exists({ categoryId: new mongoose.Types.ObjectId(id) });
-      if (hasProducts) {
-        throw ApiError.badRequest('Cannot delete category with associated products. Remove or reassign products first.');
-      }
-      
-      // Delete associated images
-      if (category.image) {
-        await imageUploadService.deleteImage(category.image).catch((err: Error) => {
-          logger.warn({ err, path: category.image }, 'Failed to delete category image');
-        });
-      }
-      
-      if (category.icon) {
-        await imageUploadService.deleteImage(category.icon).catch((err: Error) => {
-          logger.warn({ err, path: category.icon }, 'Failed to delete category icon');
-        });
-      }
-      
-      if (category.bannerImage) {
-        await imageUploadService.deleteImage(category.bannerImage).catch((err: Error) => {
-          logger.warn({ err, path: category.bannerImage }, 'Failed to delete category banner');
-        });
-      }
-      
-      // Delete the category
-      await CategoryModel.findByIdAndDelete(id);
-      
-      logger.info({ 
-        categoryId: id,
-        timestamp
-      }, 'Category deleted successfully');
-      
-      return true;
-    } catch (error) {
-      logger.error({ 
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-        id,
-        timestamp
-      }, 'Failed to delete category');
-      
-      if (error instanceof ApiError) throw error;
-      throw ApiError.internal('Failed to delete category');
+    if (data.parentId !== undefined) {
+      category.parentId = await this._validateParentCategory(id, data.parentId);
     }
-  },
-  
-  /**
-   * List categories with pagination, sorting and filtering
-   */
-  async listCategories(options: CategoryQueryOptions = {}): Promise<PaginateResult<ICategoryDocument>> {
-    try {
-      const {
-        page = 1,
-        limit = 20,
-        sortBy = 'displayOrder',
-        sortOrder = 'asc',
-        search = '',
-        isActive,
-        parentId
-      } = options;
-      
-      // Build filter
-      const filter: Record<string, unknown> = {};
-      
-      // Add isActive filter if provided
-      if (isActive !== undefined) {
-        filter.isActive = isActive;
+    
+    const updatableFields: (keyof UpdateCategoryInput)[] = [
+      'name', 'description', 'displayOrder', 'isActive', 'metaTitle', 'metaDescription', 'backgroundColor', 'textColor'
+    ];
+    
+    updatableFields.forEach(field => {
+      if (data[field] !== undefined) {
+        (category as any)[field] = data[field];
       }
-      
-      // Add parentId filter (handle null case)
-      if (parentId !== undefined) {
-        if (parentId === 'null' || parentId === null) {
-          filter.parentId = null;
-        } else if (mongoose.isValidObjectId(parentId)) {
-          filter.parentId = new mongoose.Types.ObjectId(parentId);
-        } else {
-          // If parentId is provided but invalid, return empty result
-          logger.warn({ parentId }, 'Invalid parentId format provided for category listing');
-          return {
-            docs: [],
-            totalDocs: 0,
-            limit,
-            page,
-            totalPages: 0,
-            hasNextPage: false,
-            hasPrevPage: false,
-            nextPage: null,
-            prevPage: null,
-            pagingCounter: 0,
-            offset: 0  
-          };
-        }
-      }
-      
-      // Add search if provided
-      if (search) {
-        filter.$or = [
-          { name: { $regex: new RegExp(search, 'i') } },
-          { description: { $regex: new RegExp(search, 'i') } }
-        ];
-      }
-      
-      // Configure pagination options
-      const paginateOptions: PaginateOptions = {
-        page,
-        limit,
-        sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 },
-        lean: true
-      };
-      
-      // Get paginated results
-      const result = await CategoryModel.paginate(filter, paginateOptions);
-      
-      return result;
-    } catch (error) {
-      logger.error({ 
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-        options 
-      }, 'Failed to list categories');
-      
-      throw ApiError.internal('Failed to list categories');
+    });
+
+    category.updatedAt = new Date();
+    await category.save({ session });
+    logger.info({ categoryId: id }, 'Category updated successfully');
+    return category;
+  }
+
+  @handleServiceErrors
+  public async getCategoryById(id: string, session?: mongoose.ClientSession): Promise<ICategoryDocument> {
+    if (!mongoose.isValidObjectId(id)) {
+      throw new PresentableError('VALIDATION_ERROR', 'Invalid category ID format.');
     }
-  },
-  
-  /**
-   * Get category hierarchy (tree structure)
-   */
-async getCategoryTree(): Promise<CategoryTreeItem[]> {
-  try {
-    // Define the correct type for category documents from lean query
+    const category = await CategoryModel.findById(id).session(session || null);
+    if (!category) {
+      throw new PresentableError('NOT_FOUND', 'Category not found.');
+    }
+    return category;
+  }
+
+  @handleServiceErrors
+  public async deleteCategory(id: string): Promise<void> {
+    const category = await this.getCategoryById(id);
+    const hasSubcategories = await CategoryModel.exists({ parentId: category._id });
+    if (hasSubcategories) {
+      throw new PresentableError('CONFLICT', 'Cannot delete category with subcategories.');
+    }
+    // Add product check if needed
+    await this._processAndCleanupFiles({}, category); // Deletes all associated images
+    await CategoryModel.findByIdAndDelete(id);
+    logger.info({ categoryId: id }, 'Category deleted successfully.');
+  }
+
+  @handleServiceErrors
+  public async listCategories(options: CategoryQueryOptions = {}): Promise<PaginateResult<ICategoryDocument>> {
+    const { page = 1, limit = 20, sortBy = 'displayOrder', sortOrder = 'asc', search, isActive, parentId } = options;
+    const filter: mongoose.FilterQuery<ICategoryDocument> = {};
+    if (isActive !== undefined) filter.isActive = isActive;
+    if (search) filter.name = { $regex: search, $options: 'i' };
+    if (parentId !== undefined) filter.parentId = this._validateAndGetParentId(parentId);
+      
+    const paginateOptions: PaginateOptions = { page, limit, sort: { [sortBy]: sortOrder }, lean: true };
+    return CategoryModel.paginate(filter, paginateOptions);
+  }
+
+  @handleServiceErrors
+  public async getCategoryTree(): Promise<CategoryTreeItem[]> {
     type LeanCategory = ICategory & { _id: mongoose.Types.ObjectId };
-
-    // Get all categories
-    const allCategories = await CategoryModel.find({ isActive: true })
-      .sort('displayOrder')
-      .lean<LeanCategory[]>(); // Now correctly typed as an array
-    
-    // Build tree starting with root categories (parentId is null)
-    // Explicitly type the callback parameter
-    const rootCategories = allCategories.filter((c: LeanCategory) => !c.parentId);
-    
-    // Function to build tree recursively with explicit types
-    const buildTree = (categories: LeanCategory[]): CategoryTreeItem[] => {
-      return categories.map((category: LeanCategory) => {
-        // Get ID string safely
-        const categoryId = category._id.toString();
-        
-        // Find children of this category - explicit typing of callback
-        const children = allCategories.filter((c: LeanCategory) => 
-          c.parentId && c.parentId.toString() === categoryId
-        );
-        
-        // Create the tree item
-        const treeItem: CategoryTreeItem = {
-          id: categoryId,
-          name: category.name,
-          slug: category.slug,
-          displayOrder: category.displayOrder,
-          image: category.image,
-          icon: category.icon,
-          description: category.description,
-          children: children.length > 0 ? buildTree(children) : []
-        };
-        
-        return treeItem;
-      });
-    };
-    
-    // Build and return tree
+    const allCategories = await CategoryModel.find({ isActive: true }).sort('displayOrder').lean<LeanCategory[]>();
+    type CategoryWithChildren = LeanCategory & { children: CategoryWithChildren[] };
+    const categoryMap = new Map<string, CategoryWithChildren>();
+    allCategories.forEach(cat => categoryMap.set(cat._id.toString(), { ...cat, children: [] }));
+    const rootCategories: CategoryWithChildren[] = [];
+    allCategories.forEach(cat => {
+      const node = categoryMap.get(cat._id.toString())!;
+      if (cat.parentId && categoryMap.has(cat.parentId.toString())) {
+        categoryMap.get(cat.parentId.toString())!.children.push(node);
+      } else {
+        rootCategories.push(node);
+      }
+    });
+    const buildTree = (categories: CategoryWithChildren[]): CategoryTreeItem[] => categories.map(cat => ({
+      id: cat._id.toString(), name: cat.name, slug: cat.slug, children: buildTree(cat.children),
+    }));
     return buildTree(rootCategories);
-  } catch (error) {
-    logger.error({ 
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
-    }, 'Failed to get category tree');
-    
-    throw ApiError.internal('Failed to get category hierarchy');
+  }
+
+  @handleServiceErrors
+  public async reorderCategories(categories: { id: string; displayOrder: number }[]): Promise<void> {
+    const session = await mongoose.startSession();
+    await session.withTransaction(async () => {
+      for (const item of categories) {
+        // Use the main updateCategory method within the transaction
+        await this.updateCategory(item.id, { displayOrder: item.displayOrder }, {}, session);
+      }
+    });
+    await session.endSession();
+    logger.info({  count: categories.length }, 'Categories reordered successfully');
+  }
+
+  // --- Private Helper Methods ---
+
+  private async _processAndCleanupFiles(files: FileProcessingOptions, existingDoc?: ICategoryDocument): Promise<FileProcessingResult> {
+    const processFile = async (file?: Express.Multer.File | null, oldPath?: string, options?: any) => {
+      if (file) {
+        if (oldPath) await imageUploadService.deleteImage(oldPath).catch(err => logger.warn({ err }, 'Failed to delete old image'));
+        return imageUploadService.processCategoryImage(file, options);
+      }
+      if (existingDoc && Object.keys(files).length === 0) {
+        if (oldPath) await imageUploadService.deleteImage(oldPath).catch(err => logger.warn({ err }, 'Failed to delete image on cleanup'));
+      }
+      return undefined;
+    };
+    const [image, icon, bannerImage] = await Promise.all([
+      processFile(files.imageFile, existingDoc?.image),
+      processFile(files.iconFile, existingDoc?.icon, { width: 128, height: 128 }),
+      processFile(files.bannerFile, existingDoc?.bannerImage, { width: 1200, height: 300 }),
+    ]);
+    return { image, icon, bannerImage };
+  }
+
+  private async _generateUniqueSlug(name: string, existingId?: string): Promise<string> {
+    const slug = slugify(name, { lower: true, strict: true, trim: true });
+    const query: mongoose.FilterQuery<ICategoryDocument> = { slug };
+    if (existingId) query._id = { $ne: new mongoose.Types.ObjectId(existingId) };
+    const existing = await CategoryModel.findOne(query);
+    return existing ? `${slug}-${Date.now()}` : slug;
+  }
+
+  private async _assertCategoryNameIsUnique(name: string, existingId?: string): Promise<void> {
+    const query: mongoose.FilterQuery<ICategoryDocument> = { name: { $regex: new RegExp(`^${name}$`, 'i') } };
+    if (existingId) query._id = { $ne: new mongoose.Types.ObjectId(existingId) };
+    const existingCategory = await CategoryModel.findOne(query);
+    if (existingCategory) throw new PresentableError('CONFLICT', 'A category with this name already exists.');
+  }
+
+  private _validateAndGetParentId(parentId?: string | null): mongoose.Types.ObjectId | null {
+    if (parentId === 'null' || parentId === '' || !parentId) return null;
+    if (!mongoose.isValidObjectId(parentId)) throw new PresentableError('VALIDATION_ERROR', 'Invalid parent ID format.');
+    return new mongoose.Types.ObjectId(parentId);
+  }
+
+  private async _validateParentCategory(categoryId: string, parentId: string | null): Promise<mongoose.Types.ObjectId | null> {
+    const validatedParentId = this._validateAndGetParentId(parentId);
+    if (!validatedParentId) return null;
+    if (validatedParentId.toString() === categoryId) throw new PresentableError('VALIDATION_ERROR', 'Category cannot be its own parent.');
+    let current = await CategoryModel.findById(validatedParentId);
+    while (current) {
+      if (current._id.toString() === categoryId) throw new PresentableError('VALIDATION_ERROR', 'Circular parent-child reference detected.');
+      if (!current.parentId) break;
+      current = await CategoryModel.findById(current.parentId);
+    }
+    return validatedParentId;
   }
 }
-};
+
+export const categoryService = new CategoryService();

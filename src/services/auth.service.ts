@@ -1,119 +1,196 @@
+
+
+
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { OtpModel, IOtpDocument } from '../models/OtpModel';
+import { OtpModel } from '../models/OtpModel';
 import { tokenService } from './token.service';
-import { ApiError } from '../utils/errorHandler';
 import { logger } from '../config/logger';
 import { SmsService } from './sms.service';
 import UserService from './user.service';
-import { UserModel, IUserDocument } from '../models/UserModel';
+import { UserModel } from '../models/UserModel';
 
 import {
-  ISendOtpInput,
   IVerifyOtpInput,
   IAuthResponse,
   AuthTokens,
   LoginRequest as LoginInput,
   RegisterRequest as RegisterInput,
   RefreshTokenRequest as RefreshTokenInput,
-  CreateAdminRequest as CreateAdminInput
+  CreateAdminRequest as CreateAdminInput,
+  UserProfile
 } from '../types/auth.types';
-import { CreateUserInput } from '@/schemas/userSchemas';
+import { CreateUserInput } from '../schemas/userSchemas';
+import { PresentableError } from '../error/clientErrorHelper';
 
+/**
+ * Service for handling authentication-related operations
+ */
 export class AuthService {
   /**
-   * Registers a new user.
+   * Registers a new user
+   * @param data Registration data
+   * @returns User profile and authentication tokens
    */
-  static async register(data: RegisterInput) {
-    await UserService.checkIfUserExists(data.email, data.phone);
-    const newUser = await UserService.createUser(data as CreateUserInput, false);
-    if (!newUser) {
-      throw ApiError.internal('Failed to create user');
+  static async register(data: RegisterInput): Promise<{ user: UserProfile; tokens: AuthTokens }> {
+    // Validate input
+    if (!data.email) {
+      throw new PresentableError('VALIDATION_ERROR', 'Email is required');
     }
     
-    const tokens = tokenService.generateAuthTokens(newUser.id, newUser.roles);
+    // Check if user already exists
+    await UserService.checkIfUserExists(data.email, data.phone);
+    
+    // Create new user
+    const newUser = await UserService.createUser(data as CreateUserInput, false);
+    if (!newUser) {
+      throw new PresentableError('SERVER_ERROR', 'Failed to create user');
+    }
+    
+    // Generate authentication tokens
+    const tokenResponse = tokenService.generateAuthTokens(newUser.id, newUser.roles);
+    const tokens: AuthTokens = {
+      accessToken: tokenResponse.accessToken,
+      refreshToken: tokenResponse.refreshToken,
+      expiresIn: parseInt(tokenResponse.expiresIn) || 3600
+    };
+    
     return { user: newUser.toProfileDTO(), tokens };
   }
 
-  /**
-   * Logs a user in.
-   */
-  static async login(data: LoginInput) {
+
+  static async login(data: LoginInput): Promise<{ user: UserProfile; tokens: AuthTokens }> {
+    // Validate input
+    if (!data.email || !data.password) {
+      throw new PresentableError('VALIDATION_ERROR', 'Email and password are required');
+    }
+    
+    // Find user by email
     const user = await UserService.getActiveUserByEmail(data.email);
     if (!user) {
-      throw ApiError.unauthorized('Invalid credentials');
+      throw new PresentableError('UNAUTHORIZED', 'Invalid credentials');
     }
 
+    // Verify password
     const isPasswordValid = await bcrypt.compare(data.password, user.passwordHash);
     if (!isPasswordValid) {
-      throw ApiError.unauthorized('Invalid credentials');
+      throw new PresentableError('UNAUTHORIZED', 'Invalid credentials');
     }
 
+    // Update last login timestamp
     await UserService.updateLastLogin(user.id);
-    const tokens = tokenService.generateAuthTokens(user.id, user.roles);
+    
+    // Generate authentication tokens
+    const tokenResponse = tokenService.generateAuthTokens(user.id, user.roles);
+    const tokens: AuthTokens = {
+      accessToken: tokenResponse.accessToken,
+      refreshToken: tokenResponse.refreshToken,
+      expiresIn: parseInt(tokenResponse.expiresIn) || 3600
+    };
 
     return { user: user.toProfileDTO(), tokens };
   }
 
   /**
-   * Refreshes authentication tokens.
+   * Refreshes authentication tokens
+   * @param data Refresh token data
+   * @returns New authentication tokens
    */
-  static async refreshToken(data: RefreshTokenInput) {
+  static async refreshToken(data: RefreshTokenInput): Promise<{ tokens: AuthTokens }> {
+    if (!data.refreshToken) {
+      throw new PresentableError('VALIDATION_ERROR', 'Refresh token is required');
+    }
+    
+    // Verify the refresh token
     const payload = tokenService.verifyRefreshToken(data.refreshToken);
+    
+    // Check if user exists and is active
     const user = await UserService.getActiveUserById(payload.userId);
-
     if (!user) {
-      throw ApiError.unauthorized('User not found or account is disabled');
+      throw new PresentableError('UNAUTHORIZED', 'User not found or account is disabled');
     }
 
-    const tokens = tokenService.generateAuthTokens(user.id, user.roles);
+    // Generate new authentication tokens
+    const tokenResponse = tokenService.generateAuthTokens(user.id, user.roles);
+    const tokens: AuthTokens = {
+      accessToken: tokenResponse.accessToken,
+      refreshToken: tokenResponse.refreshToken,
+      expiresIn: parseInt(tokenResponse.expiresIn) || 3600
+    };
+    
     return { tokens };
   }
 
   /**
-   * Creates a new admin user.
+   * Creates a new admin user
+   * @param data Admin user data
+   * @param creatorId ID of the user creating the admin
+   * @returns Created admin user profile
    */
-  static async createAdmin(data: CreateAdminInput, creatorId: string) {
+  static async createAdmin(data: CreateAdminInput, creatorId: string): Promise<UserProfile> {
+    // Verify admin privileges
     await UserService.verifyAdminPrivileges(creatorId);
+    
+    // Check if user already exists
     await UserService.checkIfUserExists(data.email, data.phone);
-
-    // Ensure 'admin' role is present
-    const roles = [...new Set(['admin', ...(data.roles || [])])];
-    const adminUser = await UserService.createUser({ ...data, isActive: data.isActive ?? true, isPhoneVerified: true }, true);
+  
+    const allowedRoles = ['customer', 'admin', 'manager', 'staff', 'vip'] as const;
+    const roles = [...new Set(['admin', ...(data.roles || [])])].filter(
+      (role): role is typeof allowedRoles[number] => allowedRoles.includes(role as typeof allowedRoles[number])
+    );
+    
+    // Create admin user
+    const adminUser = await UserService.createUser({
+      ...data,
+      roles,
+      isActive: data.isActive ?? true,
+      isPhoneVerified: true
+    }, true);
     
     if (!adminUser) {
-      throw ApiError.internal('Failed to create admin user');
+      throw new PresentableError('SERVER_ERROR', 'Failed to create admin user');
     }
 
     return adminUser.toProfileDTO();
   }
 
   /**
-   * Bootstraps the first admin account if none exist.
+   * Bootstraps the first admin account if none exist
+   * @param data Admin user data
+   * @returns Created admin user profile
    */
-  static async bootstrapAdmin(data: CreateAdminInput) {
+  static async bootstrapAdmin(data: CreateAdminInput): Promise<UserProfile> {
+    // Check if admin accounts already exist
     const adminCount = await UserService.countAdmins();
     if (adminCount > 0) {
-      throw ApiError.conflict('Admin accounts already exist. Bootstrap is not allowed.');
+      throw new PresentableError('FORBIDDEN', 'Admin accounts already exist. Bootstrap is not allowed.');
     }
-    const adminUser = await UserService.createUser({ ...data, isActive: data.isActive ?? true, isPhoneVerified: true }, true);
+    
+    // Create bootstrap admin user
+    const adminUser = await UserService.createUser({
+      ...data,
+      isActive: data.isActive ?? true,
+      isPhoneVerified: true
+    }, true);
     
     if (!adminUser) {
-      throw ApiError.internal('Failed to bootstrap admin user');
+      throw new PresentableError('SERVER_ERROR', 'Failed to bootstrap admin user');
     }
 
     return adminUser.toProfileDTO();
   }
 
-  // ===== Mobile Authentication Methods =====
-
   /**
-   * Sends login OTP to the provided phone number
+   * Sends a login OTP to the provided phone number
    * @param phone Phone number in E.164 format
-   * @returns Object containing expiration time in seconds
+   * @returns Object containing expiration time and OTP (for development)
    */
-  static async sendLoginOtp(phone: string): Promise<{ expiresIn: number }> {
+  static async sendLoginOtp(phone: string): Promise<{ expiresIn: number; otp: string }> {
     try {
+      // Validate phone number
+      if (!phone || !/^\+[1-9]\d{1,14}$/.test(phone)) {
+        throw new PresentableError('VALIDATION_ERROR', 'Valid phone number is required');
+      }
+
       // Check for rate limiting (max 5 OTPs in 1 hour per phone number)
       const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
       const recentOtps = await OtpModel.countDocuments({
@@ -122,7 +199,7 @@ export class AuthService {
       });
 
       if (recentOtps >= 5) {
-        throw ApiError.tooManyRequests('Too many OTP requests. Please try again later.');
+        throw new PresentableError('TOO_MANY_REQUESTS', 'Too many OTP requests. Please try again later.');
       }
 
       // Generate a 6-digit OTP
@@ -134,43 +211,64 @@ export class AuthService {
       // OTP expires in 10 minutes
       const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
       
-      // Store OTP in database
-      await OtpModel.create({
-        phone,
-        otp: hashedOtp,
-        expiresAt,
-        attempts: 0,
-        verified: false,
-        isInvalidated: false
-      });
+      // Find existing OTP record or create new one
+      const existingOtp = await OtpModel.findOne({ phone });
+      
+      if (existingOtp) {
+        // Update existing OTP record
+        await OtpModel.updateOne(
+          { phone },
+          {
+            otp: hashedOtp,
+            expiresAt,
+            attempts: 0,
+            verified: false,
+            isInvalidated: false,
+            createdAt: new Date() // Update creation time for new OTP
+          }
+        );
+      } else {
+        // Create new OTP record
+        await OtpModel.create({
+          phone,
+          otp: hashedOtp,
+          expiresAt,
+          attempts: 0,
+          verified: false,
+          isInvalidated: false
+        });
+      }
 
       // Send OTP via SMS service
       await SmsService.sendOtp(phone, otp);
       
       logger.info(`OTP sent to ${phone} successfully`);
       
-      return { expiresIn: 10 * 60 }; // 10 minutes in seconds
+      return { expiresIn: 10 * 60, otp }; // 10 minutes in seconds
     } catch (error: any) {
-      // If error is already an ApiError, rethrow it
-      if (error instanceof ApiError) {
+      if (error instanceof PresentableError) {
         throw error;
       }
       
       logger.error(`Failed to send OTP to ${phone}: ${error.message}`);
-      
-      throw ApiError.internal(`Failed to send OTP: ${error.message}`);
+      throw new PresentableError('SERVER_ERROR', `Failed to send OTP: ${error.message}`);
     }
   }
 
   /**
    * Verifies OTP and authenticates the user
    * Creates a new user if they don't exist
-   * @param data Object containing phone, otp, and optional name
+   * @param data Object containing phone, OTP, and optional name
    * @returns Authentication response with user data and tokens
    */
   static async verifyOtpAndAuthenticate(data: IVerifyOtpInput): Promise<IAuthResponse> {
     try {
       const { phone, otp, name, deviceId } = data;
+      
+      // Validate phone and OTP
+      if (!phone || !otp) {
+        throw new PresentableError('VALIDATION_ERROR', 'Phone and OTP are required');
+      }
       
       // Find the most recent non-expired, non-verified OTP for this phone
       const otpRecord = await OtpModel.findOne({
@@ -180,9 +278,8 @@ export class AuthService {
         isInvalidated: { $ne: true }
       }).sort({ createdAt: -1 });
 
-      // Check if OTP exists
       if (!otpRecord) {
-        throw ApiError.unauthorized('Invalid or expired OTP. Please request a new one.');
+        throw new PresentableError('VALIDATION_ERROR', 'OTP has expired. Please request a new one.');
       }
 
       // Verify OTP
@@ -199,7 +296,7 @@ export class AuthService {
         }
         
         await otpRecord.save();
-        throw ApiError.unauthorized('Invalid OTP. Please try again.');
+        throw new PresentableError('VALIDATION_ERROR', 'Invalid OTP. Please try again.');
       }
 
       // Mark OTP as verified
@@ -214,44 +311,47 @@ export class AuthService {
       if (isNewUser) {
         // Name is required for new users
         if (!name) {
-          throw ApiError.badRequest('Name is required for new user registration.');
+          throw new PresentableError('VALIDATION_ERROR', 'Name is required for new user registration.');
         }
-
+        
         // Generate a random password for the new user
         const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-
+        
         // Create new user
         user = await UserService.createUser({
           name,
           phone,
-          email: `${phone.replace(/\+/g, '')}@temp.milqit.com`,
-          password: randomPassword, // UserService will hash this
+          mobileNumber: phone, // Ensure mobileNumber field is set
+          email: `${phone.replace(/\+/g, '')}@temp.milqit.com`, // Generate temporary email
+          password: randomPassword,
           isActive: true,
           isPhoneVerified: true,
           roles: ['customer']
         });
         
         if (!user) {
-          throw ApiError.internal('Failed to create user account');
+          throw new PresentableError('SERVER_ERROR', 'Failed to create user account');
         }
       } else {
-        // Update existing user - at this point we're sure user exists
+        // Update existing user if phone not yet verified
         if (user?.id && !user.isPhoneVerified) {
           user.isPhoneVerified = true;
-           await UserService.updateLastLogin(user.id);
+          await UserService.updateLastLogin(user.id);
         }
-       
         
-        // Update name if provided
+        // Update name if provided and different
         if (name && name !== user?.name) {
-          // Update using UserModel directly since UserService might not have this method
-          await UserModel.findByIdAndUpdate(user?.id, { name });
+          // Update both name and mobileNumber if needed
+          await UserModel.findByIdAndUpdate(user?.id, { 
+            name,
+            mobileNumber: phone 
+          });
 
-          // Get the updated user only if user.id is defined
+          // Get updated user
           if (user?.id) {
             const updatedUser = await UserService.getActiveUserById(user.id);
             if (!updatedUser) {
-              throw ApiError.internal('Failed to retrieve updated user');
+              throw new PresentableError('SERVER_ERROR', 'Failed to update user information');
             }
             user = updatedUser;
           }
@@ -259,33 +359,32 @@ export class AuthService {
       }
 
       // Save device ID if provided
-      if (deviceId && user) {
-        // Store device ID for push notifications
+      if (deviceId && user && user.id) {
         await UserModel.findByIdAndUpdate(user.id, { deviceId });
       }
 
-      // Ensure user is not null before proceeding
+      // Final check to ensure user exists
       if (!user) {
-        throw ApiError.internal('User not found after OTP verification');
+        throw new PresentableError('SERVER_ERROR', 'User not found after OTP verification');
       }
 
       // Generate auth tokens
       const tokenResponse = tokenService.generateAuthTokens(user.id, user.roles);
       
-      // Ensure expiresIn is included in tokens
+      // Format tokens with expiresIn
       const tokens: AuthTokens = {
         accessToken: tokenResponse.accessToken,
         refreshToken: tokenResponse.refreshToken,
-        expiresIn: 3600 // Default to 1 hour
+        expiresIn: parseInt(tokenResponse.expiresIn) || 3600 // Default to 1 hour if not provided
       };
 
-      // Format response - we know user exists at this point
+      // Return user profile and tokens
       return {
         user: {
           id: user.id,
           name: user.name,
           phone: user.phone || '',
-          email: user.email,
+          email: user.email || '',
           isPhoneVerified: true,
           isNewUser,
           createdAt: user.createdAt.toISOString(),
@@ -294,19 +393,20 @@ export class AuthService {
         tokens
       };
     } catch (error: any) {
-      // If error is already an ApiError, rethrow it
-      if (error instanceof ApiError) {
+      // If error is already a PresentableError, rethrow it
+      if (error instanceof PresentableError) {
         throw error;
       }
       
       logger.error(`OTP verification failed for ${data.phone}: ${error.message}`);
-      
-      throw ApiError.internal(`Authentication failed: ${error.message}`);
+      throw new PresentableError('SERVER_ERROR', `Authentication failed: ${error.message}`);
     }
   }
 
   /**
    * Hash OTP for secure storage
+   * @param otp OTP to hash
+   * @returns Hashed OTP
    */
   private static async hashOtp(otp: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
@@ -315,6 +415,9 @@ export class AuthService {
 
   /**
    * Verify OTP against stored hash
+   * @param otp OTP to verify
+   * @param hash Stored hash to compare against
+   * @returns Whether OTP is valid
    */
   private static async verifyOtpHash(otp: string, hash: string): Promise<boolean> {
     return bcrypt.compare(otp, hash);

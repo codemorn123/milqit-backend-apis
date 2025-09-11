@@ -9,6 +9,7 @@ export interface AuthTokenPayload extends JwtPayload {
 export interface TokenResponse {
     accessToken: string;
     refreshToken: string;
+    expiresIn: string; // in seconds
 }
 
 export const tokenService = {
@@ -16,7 +17,7 @@ export const tokenService = {
         const payload = { userId, roles };
         const accessToken = jwt.sign(payload, jwtConfig.secret, accessTokenOptions);
         const refreshToken = jwt.sign(payload, jwtConfig.refreshSecret, refreshTokenOptions);
-        return { accessToken, refreshToken };
+        return { accessToken, refreshToken, expiresIn: jwtConfig.accessExpiresIn };
     },
     verifyRefreshToken(token: string): AuthTokenPayload {
         return jwt.verify(token, jwtConfig.refreshSecret, {

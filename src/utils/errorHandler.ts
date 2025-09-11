@@ -66,64 +66,58 @@ function formatZodPath(path: PropertyKey[]): string {
   }).join('.');
 }
 
-// Express error handler middleware
-export function errorHandler(err: Error, req: Request, res: Response, _next: NextFunction): Response {
-  // Log the error with contextual information
-  const logLevel = err instanceof ApiError && err.status < 500 ? 'warn' : 'error';
-  logger[logLevel]({
-    err,
-    path: req.path,
-    method: req.method,
-    statusCode: err instanceof ApiError ? err.status : 500,
-    ip: req.ip,
-    userId: (req as any).user?.userId
-  }, err.message);
-  
-  // Handle Zod validation errors
-  if (err instanceof z.ZodError) {
-    // Using issues instead of errors in modern Zod versions (2025+)
-    const formattedErrors = err.issues.map(issue => ({
-      path: formatZodPath(issue.path),
-      message: issue.message,
-      code: issue.code
-    }));
+
+
+// import { Request, Response, NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { PresentableError } from '../error/clientErrorHelper'; // Adjust path if needed
+
+
+// This map translates your custom error codes into standard HTTP status codes.
+const errorCodeToHttpStatus: { [key:string]: number } = {
+  VALIDATION_ERROR: StatusCodes.UNPROCESSABLE_ENTITY, // 422
+  UNAUTHORIZED: StatusCodes.UNAUTHORIZED,             // 401
+  FORBIDDEN: StatusCodes.FORBIDDEN,                   // 403
+  NOT_FOUND: StatusCodes.NOT_FOUND,                   // 404
+  TOO_MANY_REQUESTS: StatusCodes.TOO_MANY_REQUESTS,   // 429
+  SERVER_ERROR: StatusCodes.INTERNAL_SERVER_ERROR,    // 500
+};
+
+/**
+ * Express error handling middleware.
+ * This should be the LAST middleware registered in your app.
+ */
+export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+  // If the response has already been sent, don't do anything.
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  // Check if the error is a custom, "presentable" error we created.
+  if (err instanceof PresentableError) {
+    const statusCode = errorCodeToHttpStatus[err.code] || StatusCodes.INTERNAL_SERVER_ERROR;
     
-    return res.status(422).json({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Validation failed',
-        details: formattedErrors
-      }
-    });
-  }
-  
-  // Handle TSOA validation errors
-  if (err instanceof ValidateError) {
-    return res.status(422).json({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Validation Failed',
-        details: err.fields
-      }
-    });
-  }
-  
-  // Handle our ApiError instances
-  if (err instanceof ApiError) {
-    return res.status(err.status).json({
+    logger.warn(`Client Error: ${err.message} | Code: ${err.code} | Path: ${req.path}`);
+
+    return res.status(statusCode).json({
       error: {
         code: err.code,
         message: err.message,
-        details: err.details
-      }
+      },
     });
   }
-  
-  // Handle all other errors as internal server errors
-  return res.status(500).json({
+
+  // For all other unexpected errors, log them and return a generic 500 error.
+  logger.error({
+    message: `Unhandled Internal Server Error: ${err.message}`,
+    stack: err.stack,
+    path: req.path,
+  });
+
+  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     error: {
       code: 'INTERNAL_ERROR',
-      message: 'An unexpected error occurred'
-    }
+      message: 'An unexpected error occurred',
+    },
   });
 }

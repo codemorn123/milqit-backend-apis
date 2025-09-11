@@ -17,12 +17,13 @@
     "paths": {
       "@/*": ["src/*"]
     },
+
     /* Added for better TSOA compatibility */
     "rootDir": ".",
-    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "typeRoots": ["./node_modules/@types", "./src/types","./@types",],
     "noImplicitAny": false, /* Temporarily disable to avoid issues with TSOA analysis */
     "moduleResolution": "node"
   },
-  "include": ["src/**/*", "tsoa.json", "tsoa.admin.json", "tsoa.mobile.json"],
+  "include": ["src/**/*", "tsoa.json", "tsoa.admin.json", "tsoa.mobile.json","@types/*"],
   "exclude": ["node_modules", "dist"]
 }

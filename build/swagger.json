@@ -7,6 +7,50 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"customErrorCode": {
+				"type": "string",
+				"enum": [
+					"SERVER_ERROR",
+					"UNAUTHORIZED",
+					"FORBIDDEN",
+					"NOT_FOUND",
+					"VALIDATION_ERROR",
+					"EXCEL_ERROR",
+					"AWS_ERROR",
+					"BAD_REQUEST",
+					"TOO_MANY_REQUESTS",
+					"CONFLICT"
+				],
+				"nullable": false
+			},
+			"ClientErrorInterface": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							false
+						],
+						"nullable": false
+					},
+					"code": {
+						"$ref": "#/components/schemas/customErrorCode"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"code",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ErrorDetail": {
 				"anyOf": [
 					{
@@ -52,6 +96,42 @@
 				"required": [
 					"success",
 					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__isNewUser-boolean--otp-string__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"otp": {
+								"type": "string"
+							},
+							"isNewUser": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"otp",
+							"isNewUser"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -143,6 +223,30 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SuccessResponse_IAuthResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IAuthResponse"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IVerifyOtpInput": {
 				"description": "Verify OTP request input",
 				"properties": {
@@ -166,206 +270,456 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"MobileCategoryResponse": {
+			"SuccessResponse__otp-string__": {
 				"properties": {
 					"success": {
-						"type": "boolean"
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
 					},
-					"data": {
+					"message": {
+						"type": "string"
+					},
+					"result": {
 						"properties": {
-							"pagination": {
-								"properties": {
-									"hasMore": {
-										"type": "boolean"
-									},
-									"page": {
-										"type": "number",
-										"format": "double"
-									},
-									"pages": {
-										"type": "number",
-										"format": "double"
-									},
-									"total": {
-										"type": "number",
-										"format": "double"
-									}
-								},
-								"required": [
-									"hasMore",
-									"page",
-									"pages",
-									"total"
-								],
-								"type": "object"
-							},
-							"categories": {
-								"items": {
-									"properties": {
-										"deepLink": {
-											"type": "string",
-											"nullable": true
-										},
-										"textColor": {
-											"type": "string"
-										},
-										"backgroundColor": {
-											"type": "string"
-										},
-										"slug": {
-											"type": "string"
-										},
-										"icon": {
-											"type": "string",
-											"nullable": true
-										},
-										"image": {
-											"type": "string"
-										},
-										"name": {
-											"type": "string"
-										},
-										"id": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"deepLink",
-										"textColor",
-										"backgroundColor",
-										"slug",
-										"icon",
-										"image",
-										"name",
-										"id"
-									],
-									"type": "object"
-								},
-								"type": "array"
+							"otp": {
+								"type": "string"
 							}
 						},
 						"required": [
-							"pagination",
-							"categories"
+							"otp"
 						],
 						"type": "object"
 					}
 				},
 				"required": [
 					"success",
-					"data"
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MobileCategoryResponse": {
+				"properties": {
+					"categories": {
+						"items": {
+							"properties": {
+								"deepLink": {
+									"type": "string",
+									"nullable": true
+								},
+								"textColor": {
+									"type": "string"
+								},
+								"backgroundColor": {
+									"type": "string"
+								},
+								"slug": {
+									"type": "string"
+								},
+								"icon": {
+									"type": "string",
+									"nullable": true
+								},
+								"image": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"id": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"deepLink",
+								"textColor",
+								"backgroundColor",
+								"slug",
+								"icon",
+								"image",
+								"name",
+								"id"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"pagination": {
+						"properties": {
+							"hasMore": {
+								"type": "boolean"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							},
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"hasMore",
+							"page",
+							"pages",
+							"total"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"categories",
+					"pagination"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_MobileCategoryResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/MobileCategoryResponse"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"CategoryTreeResponse": {
 				"properties": {
-					"success": {
-						"type": "boolean"
-					},
-					"data": {
-						"properties": {
-							"categoryTree": {
-								"items": {
-									"properties": {
-										"children": {
-											"items": {},
-											"type": "array"
-										},
-										"slug": {
-											"type": "string"
-										},
-										"icon": {
-											"type": "string",
-											"nullable": true
-										},
-										"image": {
-											"type": "string"
-										},
-										"name": {
-											"type": "string"
-										},
-										"id": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"children",
-										"slug",
-										"icon",
-										"image",
-										"name",
-										"id"
-									],
-									"type": "object"
+					"categoryTree": {
+						"items": {
+							"properties": {
+								"children": {
+									"items": {},
+									"type": "array"
 								},
-								"type": "array"
-							}
+								"slug": {
+									"type": "string"
+								},
+								"icon": {
+									"type": "string",
+									"nullable": true
+								},
+								"image": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"id": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"children",
+								"slug",
+								"icon",
+								"image",
+								"name",
+								"id"
+							],
+							"type": "object"
 						},
-						"required": [
-							"categoryTree"
+						"type": "array"
+					}
+				},
+				"required": [
+					"categoryTree"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_CategoryTreeResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
 						],
-						"type": "object"
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/CategoryTreeResponse"
 					}
 				},
 				"required": [
 					"success",
-					"data"
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"FeaturedCategoriesResponse": {
 				"properties": {
+					"featuredCategories": {
+						"items": {
+							"properties": {
+								"textColor": {
+									"type": "string"
+								},
+								"backgroundColor": {
+									"type": "string"
+								},
+								"deepLink": {
+									"type": "string"
+								},
+								"image": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"id": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"textColor",
+								"backgroundColor",
+								"deepLink",
+								"image",
+								"name",
+								"id"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"featuredCategories"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_FeaturedCategoriesResponse_": {
+				"properties": {
 					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/FeaturedCategoriesResponse"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserProfile": {
+				"description": "The shape of the user profile data that is safe to return to clients.\nPassword and sensitive data are omitted.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
 						"type": "boolean"
 					},
-					"data": {
+					"isEmailVerified": {
+						"type": "boolean"
+					},
+					"isPhoneVerified": {
+						"type": "boolean"
+					},
+					"lastLogin": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"email",
+					"roles",
+					"isActive",
+					"isEmailVerified",
+					"isPhoneVerified",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiSuccessResponse_UserProfile_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/UserProfile"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiSuccessResponse____": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {},
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiSuccessResponse_any-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiSuccessResponse_any_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiSuccessResponse__success-boolean__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
 						"properties": {
-							"featuredCategories": {
-								"items": {
-									"properties": {
-										"textColor": {
-											"type": "string"
-										},
-										"backgroundColor": {
-											"type": "string"
-										},
-										"deepLink": {
-											"type": "string"
-										},
-										"image": {
-											"type": "string"
-										},
-										"name": {
-											"type": "string"
-										},
-										"id": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"textColor",
-										"backgroundColor",
-										"deepLink",
-										"image",
-										"name",
-										"id"
-									],
-									"type": "object"
-								},
-								"type": "array"
+							"success": {
+								"type": "boolean"
 							}
 						},
 						"required": [
-							"featuredCategories"
+							"success"
 						],
 						"type": "object"
 					}
 				},
 				"required": [
 					"success",
-					"data"
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -603,178 +957,122 @@
 			"NullSuccessResponse": {
 				"$ref": "#/components/schemas/SuccessResponse_null_"
 			},
-			"Record_string.any_": {
+			"CategoryDTO": {
 				"properties": {},
-				"additionalProperties": {},
 				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
+				"additionalProperties": false
 			},
-			"CategoryResponse": {
-				"description": "Response interfaces for TSOA documentation",
+			"SuccessResponse_CategoryDTO_": {
 				"properties": {
 					"success": {
-						"type": "boolean"
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
 					},
 					"message": {
 						"type": "string"
 					},
-					"data": {
-						"properties": {
-							"category": {
-								"$ref": "#/components/schemas/Record_string.any_"
-							}
-						},
-						"additionalProperties": {},
-						"type": "object"
-					}
-				},
-				"required": [
-					"success"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PaginatedCategoryResponse": {
-				"properties": {
-					"success": {
-						"type": "boolean"
-					},
-					"data": {
-						"properties": {
-							"pagination": {
-								"properties": {
-									"nextPage": {
-										"type": "number",
-										"format": "double",
-										"nullable": true
-									},
-									"prevPage": {
-										"type": "number",
-										"format": "double",
-										"nullable": true
-									},
-									"hasNextPage": {
-										"type": "boolean"
-									},
-									"hasPrevPage": {
-										"type": "boolean"
-									},
-									"limit": {
-										"type": "number",
-										"format": "double"
-									},
-									"page": {
-										"type": "number",
-										"format": "double"
-									},
-									"pages": {
-										"type": "number",
-										"format": "double"
-									},
-									"total": {
-										"type": "number",
-										"format": "double"
-									}
-								},
-								"required": [
-									"nextPage",
-									"prevPage",
-									"hasNextPage",
-									"hasPrevPage",
-									"limit",
-									"page",
-									"pages",
-									"total"
-								],
-								"type": "object"
-							},
-							"categories": {
-								"items": {
-									"$ref": "#/components/schemas/Record_string.any_"
-								},
-								"type": "array"
-							}
-						},
-						"required": [
-							"pagination",
-							"categories"
-						],
-						"type": "object"
+					"result": {
+						"$ref": "#/components/schemas/CategoryDTO"
 					}
 				},
 				"required": [
 					"success",
-					"data"
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ReorderResponse": {
+			"PaginatedCategoriesDTO": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_PaginatedCategoriesDTO_": {
 				"properties": {
 					"success": {
-						"type": "boolean"
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
 					},
 					"message": {
 						"type": "string"
 					},
-					"data": {
-						"properties": {
-							"results": {
-								"items": {
-									"properties": {
-										"success": {
-											"type": "boolean"
-										},
-										"id": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"success",
-										"id"
-									],
-									"type": "object"
-								},
-								"type": "array"
-							}
-						},
-						"required": [
-							"results"
-						],
-						"type": "object"
+					"result": {
+						"$ref": "#/components/schemas/PaginatedCategoriesDTO"
 					}
 				},
 				"required": [
 					"success",
-					"message"
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CategoryReorderRequest": {
+			"CategoryTreeItem": {
 				"properties": {
-					"categories": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"children": {
 						"items": {
-							"properties": {
-								"displayOrder": {
-									"type": "number",
-									"format": "double"
-								},
-								"id": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"displayOrder",
-								"id"
-							],
-							"type": "object"
+							"$ref": "#/components/schemas/CategoryTreeItem"
 						},
 						"type": "array"
 					}
 				},
 				"required": [
-					"categories"
+					"id",
+					"name",
+					"slug",
+					"children"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__tree-CategoryTreeItem-Array__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"tree": {
+								"items": {
+									"$ref": "#/components/schemas/CategoryTreeItem"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"tree"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -796,28 +1094,11 @@
 				"operationId": "SendOtp",
 				"responses": {
 					"200": {
-						"description": "OTP Sent",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"expiresIn": {
-											"type": "number",
-											"format": "double"
-										},
-										"isNewUser": {
-											"type": "boolean"
-										},
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"expiresIn",
-										"isNewUser",
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/SuccessResponse__isNewUser-boolean--otp-string__"
 								}
 							}
 						}
@@ -832,38 +1113,77 @@
 							}
 						}
 					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
 					"422": {
 						"description": "Validation Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"429": {
-						"description": "Too Many Requests",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Initiates the login/registration flow by sending an OTP to the user's phone.\nThe client should use the response to determine if they need to ask for the user's name.",
 				"tags": [
 					"Mobile Authentication"
 				],
@@ -885,12 +1205,12 @@
 			"post": {
 				"operationId": "VerifyOtp",
 				"responses": {
-					"201": {
-						"description": "Authentication Successful",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IAuthResponse"
+									"$ref": "#/components/schemas/SuccessResponse_IAuthResponse_"
 								}
 							}
 						}
@@ -906,11 +1226,31 @@
 						}
 					},
 					"401": {
-						"description": "Invalid or Expired OTP",
+						"description": "Unauthorized",
 						"content": {
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
@@ -920,36 +1260,53 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Verifies an OTP to complete login or registration.\nIf the user is new, the `name` field is required.",
 				"tags": [
 					"Mobile Authentication"
 				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
-					"description": "The request body containing phone, OTP, and optional name.",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IVerifyOtpInput",
-								"description": "The request body containing phone, OTP, and optional name."
+								"$ref": "#/components/schemas/IVerifyOtpInput"
 							}
 						}
 					}
@@ -961,24 +1318,11 @@
 				"operationId": "ResendOtp",
 				"responses": {
 					"200": {
-						"description": "OTP Resent",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"expiresIn": {
-											"type": "number",
-											"format": "double"
-										},
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"expiresIn",
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/SuccessResponse__otp-string__"
 								}
 							}
 						}
@@ -993,8 +1337,8 @@
 							}
 						}
 					},
-					"429": {
-						"description": "Too Many Requests",
+					"401": {
+						"description": "Unauthorized",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1003,18 +1347,67 @@
 							}
 						}
 					},
-					"500": {
-						"description": "Server Error",
+					"404": {
+						"description": "Not Found",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Resends an OTP to the user's phone number.\nCan be used if the original OTP expires or wasn't received.",
 				"tags": [
 					"Mobile Authentication"
 				],
@@ -1041,13 +1434,92 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MobileCategoryResponse"
+									"$ref": "#/components/schemas/SuccessResponse_MobileCategoryResponse_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Get all active categories for mobile app",
 				"tags": [
 					"Mobile - Categories"
 				],
@@ -1085,13 +1557,92 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CategoryTreeResponse"
+									"$ref": "#/components/schemas/SuccessResponse_CategoryTreeResponse_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Get home screen categories with featured products",
 				"tags": [
 					"Mobile - Categories"
 				],
@@ -1108,7 +1659,87 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FeaturedCategoriesResponse"
+									"$ref": "#/components/schemas/SuccessResponse_FeaturedCategoriesResponse_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
@@ -1120,6 +1751,518 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/mobile/user/{userId}/profile": {
+			"get": {
+				"operationId": "GetUserProfile",
+				"responses": {
+					"200": {
+						"description": "User Profile Retrieved",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiSuccessResponse_UserProfile_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get the current user's profile based on their authentication token.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"200": {
+						"description": "Profile Updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiSuccessResponse____"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update the current user's profile.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/mobile/user/{userId}/addresses": {
+			"get": {
+				"operationId": "GetAddresses",
+				"responses": {
+					"200": {
+						"description": "Addresses Retrieved",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiSuccessResponse_any-Array_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all saved addresses for the current user.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "AddAddress",
+				"responses": {
+					"201": {
+						"description": "Address Added",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiSuccessResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Add a new delivery address for the current user.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "RemoveAddress",
+				"responses": {
+					"200": {
+						"description": "Address Removed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiSuccessResponse__success-boolean__"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a saved address for the current user.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"addressId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"addressId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mobile/user/{userId}/addresses/primary": {
+			"put": {
+				"operationId": "SetPrimaryAddress",
+				"responses": {
+					"200": {
+						"description": "Primary Address Set",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiSuccessResponse__success-boolean__"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Set a primary delivery address from the user's saved addresses.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"addressId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"addressId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/admin/products": {
@@ -1734,22 +2877,12 @@
 			"post": {
 				"operationId": "CreateCategory",
 				"responses": {
-					"201": {
-						"description": "Category created successfully",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CategoryResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/SuccessResponse_CategoryDTO_"
 								}
 							}
 						}
@@ -1759,7 +2892,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1769,7 +2902,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1779,7 +2912,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1789,7 +2922,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1799,27 +2932,52 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Create a new product category\nNote: This endpoint processes multipart/form-data with files",
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": []
 			},
 			"get": {
@@ -1830,17 +2988,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PaginatedCategoryResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedCategoriesDTO_"
 								}
 							}
 						}
@@ -1850,7 +2998,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1860,7 +3008,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1870,7 +3018,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1880,7 +3028,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -1890,33 +3038,59 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Get all categories with pagination and filtering",
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
 						"name": "page",
 						"required": false,
 						"schema": {
+							"default": 1,
 							"format": "double",
 							"type": "number"
 						}
@@ -1926,6 +3100,7 @@
 						"name": "limit",
 						"required": false,
 						"schema": {
+							"default": 20,
 							"format": "double",
 							"type": "number"
 						}
@@ -1935,6 +3110,7 @@
 						"name": "sortBy",
 						"required": false,
 						"schema": {
+							"default": "displayOrder",
 							"type": "string"
 						}
 					},
@@ -1943,6 +3119,7 @@
 						"name": "sortOrder",
 						"required": false,
 						"schema": {
+							"default": "asc",
 							"type": "string",
 							"enum": [
 								"asc",
@@ -1986,17 +3163,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CategoryResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/SuccessResponse_CategoryDTO_"
 								}
 							}
 						}
@@ -2006,7 +3173,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2016,7 +3183,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2026,7 +3193,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2036,7 +3203,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2046,27 +3213,52 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Get category by ID",
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -2086,17 +3278,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CategoryResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/SuccessResponse_CategoryDTO_"
 								}
 							}
 						}
@@ -2106,7 +3288,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2116,7 +3298,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2126,7 +3308,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2136,7 +3318,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2146,27 +3328,52 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Update an existing category\nNote: This endpoint processes multipart/form-data with files",
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -2181,32 +3388,15 @@
 			"delete": {
 				"operationId": "DeleteCategory",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CategoryResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					},
 					"401": {
 						"description": "Unauthorized",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2216,7 +3406,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2226,7 +3416,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2236,7 +3426,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2246,27 +3436,52 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Delete a category",
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -2288,17 +3503,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CategoryResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/SuccessResponse__tree-CategoryTreeItem-Array__"
 								}
 							}
 						}
@@ -2308,7 +3513,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2318,7 +3523,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2328,7 +3533,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2338,7 +3543,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2348,27 +3553,52 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Get category tree hierarchy",
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": []
 			}
 		},
@@ -2381,17 +3611,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ReorderResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/SuccessResponse_null_"
 								}
 							}
 						}
@@ -2401,7 +3621,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2411,7 +3631,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2421,7 +3641,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2431,7 +3651,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
 								}
 							}
 						}
@@ -2441,34 +3661,83 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
 								}
 							}
 						}
 					}
 				},
-				"description": "Reorder categories by updating display order",
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CategoryReorderRequest"
+								"properties": {
+									"categories": {
+										"items": {
+											"properties": {
+												"displayOrder": {
+													"type": "number",
+													"format": "double"
+												},
+												"id": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"displayOrder",
+												"id"
+											],
+											"type": "object"
+										},
+										"type": "array"
+									}
+								},
+								"required": [
+									"categories"
+								],
+								"type": "object"
 							}
 						}
 					}

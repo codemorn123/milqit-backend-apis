@@ -7,12 +7,14 @@ import swaggerUi from 'swagger-ui-express';
 import { config } from './config';
 import { logger } from './config/logger';
 import pinoHttp from 'pino-http';
-
+import morgan from 'morgan';
 import { RegisterRoutes } from '../build/routes';
-import { expressErrorHandler } from './middleware/expressErrorHandler';
 import adminCategoryRoutes from './routes/admin/category.routes';
 import adminProductRoutes from './routes/admin/productRoutes';
-import { ApiError } from './middleware/errorHandler';
+
+import cookieParser from 'cookie-parser';
+import { getPresentableError, PresentableError } from './error/clientErrorHelper';
+import { errorHandler } from './utils/errorHandler';
 const app = express();
 
 // Set up logging middleware
@@ -45,9 +47,38 @@ app.use(compression());
 app.use(bodyParser.json({ limit: '1mb' }));
 // app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
 
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+
+
+const stream = {
+	write: (message: string) => logger.info(message.trim() + '\n')
+};
+app.use(morgan('combined', { stream }));
+
+// enable cors
+app.use(
+	cors({
+		origin: '*',
+		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+		credentials: true
+	})
+);
+
+// parse cookies
+app.use(cookieParser());
+
+// parse json request body
 app.use(express.json());
+
+// parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
-app.use(expressErrorHandler);
+app.use(pinoHttp({ logger }));
+app.use(errorHandler);
+// timezone
+// app.use(timezone);
+// app.use(expressErrorHandler);
 // Health check endpoint
 app.get('/health', (_req, res) => {
   res.status(200).json({
@@ -69,17 +100,7 @@ app.get('/health', (_req, res) => {
 
 // Middleware
 
-// Security handlers
-// app.use((req, res, next) => {
-//   req.securityHandlers = {
-//     adminAuth: adminAuthMiddleware,
-//     userAuth: userAuthMiddleware
-//   };
-//   next();
-// });
 
-// Register TSOA routes
-// RegisterRoutes(app);
 const v1Router = express.Router();
 app.use('/uploads', express.static('uploads'));
 
@@ -91,38 +112,7 @@ app.use('/v1', v1Router);
 
 
 
-// app.use(function errorHandler(
-//   err: unknown,
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ): Response | void {
-//   // Handle our custom ApiError
-//   if (err instanceof ApiError) {
-//     logger.warn(`API Error for ${req.path}: ${err.message}`);
-//     return res.status(err.statusCode).json({
-//       success: false,
-//       user: 'MarotiKathoke',
-//       timestamp: '2025-09-02 02:15:30',
-//       message: err.message,
-//       details: err.details,
-//     });
-//   }
 
-//   // Handle any other unexpected errors
-//   if (err instanceof Error) {
-//     logger.error(`Internal Server Error for ${req.path}`);
-//     return res.status(500).json({
-//       success: false,
-//       user: 'MarotiKathoke',
-//       timestamp: '2025-09-02 02:15:30',
-//       message: 'An unexpected internal server error occurred.',
-//     });
-//   }
-
-//   next();
-// });
-// Swagger documentation
 
   const swaggerOptions = {
   swaggerOptions: {

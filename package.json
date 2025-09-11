@@ -31,6 +31,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
@@ -39,8 +40,10 @@
     "inversify": "^7.9.1",
     "inversify-binding-decorators": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
     "mongoose": "^8.18.0",
     "mongoose-paginate-v2": "^1.9.1",
+    "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "pino": "^9.9.0",
     "pino-http": "^10.5.0",
@@ -49,6 +52,7 @@
     "swagger-ui-express": "^5.0.1",
     "tsoa": "^6.6.0",
     "uuid": "^11.1.0",
+    "winston": "^3.17.0",
     "zod": "^4.1.5"
   },
   "devDependencies": {

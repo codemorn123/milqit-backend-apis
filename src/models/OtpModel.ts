@@ -50,10 +50,7 @@ const OtpSchema = new Schema<IOtpDocument>(
 );
 
 // Create TTL index to automatically remove expired OTPs after 24 hours
-OtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 86400 });
 
-// Create compound index for query optimization
-OtpSchema.index({ phone: 1, expiresAt: 1, verified: 1, isInvalidated: 1 });
 
 // Export model
 export const OtpModel: Model<IOtpDocument> = mongoose.model<IOtpDocument>('Otp', OtpSchema);

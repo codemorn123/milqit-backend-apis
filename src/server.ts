@@ -3,11 +3,9 @@ import { app } from './app';
 import { config } from './config';
 import { logger } from './config/logger';
 import http from 'http';
-// import { RegisterRoutes as RegisterMobileRoutes } from '../build/routes.mobile';
-// import { RegisterRoutes as RegisterAdminRoutes } from '../build/routes.admin';
+import chalk from 'chalk';
 import { errorHandler } from './utils/errorHandler';
-import ProductModel from './models/ProductModel';
-// import { registerCategoryRoutes } from './routes/admin/category.routes';
+
 
 async function connectToDatabase(): Promise<void> {
   try {
@@ -72,9 +70,10 @@ async function startServer(): Promise<void> {
         nodeVersion: process.version,
         memoryUsage: Math.round(process.memoryUsage().rss / (1024 * 1024)) + 'MB'
       }, `Server started - ${config.env} mode on port ${config.port}`);
-
+console.log(chalk.bold.green(`Server is running on port ${config.port}`));
       // Log available endpoints
       const baseUrl = `http://localhost:${config.port}/v1`;
+
       logger.info(`Mobile API: ${baseUrl}/mobile`);
       logger.info(`Admin API: ${baseUrl}/admin`);
       logger.info(`Mobile Docs: ${baseUrl}/mobile/docs`);
