@@ -18,13 +18,7 @@ export interface PaginatedResponse<T> {
   meta: PaginationMeta;
 }
 
-/**
- * ErrorDetail - flexible error payload used across controllers/services.
- * - a simple string
- * - or a structured object { code, message, details? }
- *
- * Exported here so TSOA only sees one model definition.
- */
+
 export type ErrorDetail =
   | string
   | {
@@ -48,4 +42,17 @@ export interface ApiResponseDTO<T = any> {
   error?: ErrorDetail;
   timestamp?: string;
   developer?: string;
+}
+
+
+export interface IPaginated {
+  page: number;
+  perPage: number;
+  totalRecord: number;
+  totalPage: number;
+}
+
+export interface IFilter {
+  page?: number;
+  perPage?: number;
 }

@@ -71,8 +71,7 @@
 						],
 						"type": "object"
 					}
-				],
-				"description": "ErrorDetail - flexible error payload used across controllers/services.\n- a simple string\n- or a structured object { code, message, details? }\n\nExported here so TSOA only sees one model definition."
+				]
 			},
 			"ErrorResponse": {
 				"properties": {
@@ -721,6 +720,71 @@
 					"message",
 					"result"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IImage": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"key": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPaginated": {
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"perPage": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalRecord": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"page",
+					"perPage",
+					"totalRecord",
+					"totalPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IFilter": {
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"perPage": {
+						"type": "number",
+						"format": "double"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -2263,6 +2327,194 @@
 						}
 					}
 				}
+			}
+		},
+		"/images": {
+			"post": {
+				"operationId": "GetImages",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IImage"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Image"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"get": {
+				"operationId": "GetAll",
+				"responses": {
+					"200": {
+						"description": "Successfully fetched all address",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"$ref": "#/components/schemas/IPaginated"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/IImage"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"pagination",
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Image"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "perPage",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/images/{id}": {
+			"get": {
+				"operationId": "GetById",
+				"responses": {
+					"200": {
+						"description": "Successfully fetched address by ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/IImage"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Image"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Successfully updated address by ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/IImage"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Image"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Successfully deleted address by ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"status": {
+											"type": "number",
+											"format": "double"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"status",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Image"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/admin/products": {

@@ -14,7 +14,8 @@ import adminProductRoutes from './routes/admin/productRoutes';
 
 import cookieParser from 'cookie-parser';
 import { getPresentableError, PresentableError } from './error/clientErrorHelper';
-import { errorHandler } from './utils/errorHandler';
+// import { errorHandler } from './utils/errorHandler';
+import errorHandler from './middleware/error';
 const app = express();
 
 // Set up logging middleware
@@ -75,6 +76,7 @@ app.use(express.json());
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 app.use(pinoHttp({ logger }));
+// app.use(errorHandler);
 app.use(errorHandler);
 // timezone
 // app.use(timezone);

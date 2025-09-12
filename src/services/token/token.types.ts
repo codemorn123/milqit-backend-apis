@@ -1,4 +1,3 @@
-// import { Gender, LoginSource, UserStatus, Phone } from './../../models/UserModel';
 import { RoleName } from './../../models/role';
 
 export enum TokenType {
