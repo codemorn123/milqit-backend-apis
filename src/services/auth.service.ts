@@ -129,10 +129,8 @@ export class AuthService {
   static async createAdmin(data: CreateAdminInput, creatorId: string): Promise<UserProfile> {
     // Verify admin privileges
     await UserService.verifyAdminPrivileges(creatorId);
-    
     // Check if user already exists
     await UserService.checkIfUserExists(data.email, data.phone);
-  
     const allowedRoles = ['customer', 'admin', 'manager', 'staff', 'vip'] as const;
     const roles = [...new Set(['admin', ...(data.roles || [])])].filter(
       (role): role is typeof allowedRoles[number] => allowedRoles.includes(role as typeof allowedRoles[number])
@@ -322,7 +320,7 @@ export class AuthService {
           name,
           phone,
           mobileNumber: phone, // Ensure mobileNumber field is set
-          email: `${phone.replace(/\+/g, '')}@temp.milqit.com`, // Generate temporary email
+          email:"",
           password: randomPassword,
           isActive: true,
           isPhoneVerified: true,

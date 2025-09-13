@@ -1,5 +1,4 @@
 import { Body, Controller, Post, Route, Tags, Response, Middlewares } from 'tsoa';
-import { validate } from '../../middleware/validation.middleware';
 import { StatusCodes } from 'http-status-codes/build/cjs';
 import UserService from '../../services/user.service';
 import { ISendOtpInput, IVerifyOtpInput, IAuthResponse } from '../../types/auth.types';
@@ -9,6 +8,7 @@ import { authService } from './../../services/auth.service';
 import { ClientErrorInterface } from './../../error/clientErrorHelper';
 import { NOT_FOUND_ERROR_EXAMPLE, SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from './../../error/exampleErrors';
 import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { validateSchemaMiddleware } from '../../middleware/common-validate';
 @Route('mobile/auth')
 @Tags('Mobile Authentication')
 @Response<ClientErrorInterface>(StatusCodes.UNPROCESSABLE_ENTITY, 'Validation Error', VALIDATION_ERROR_EXAMPLE)
@@ -18,7 +18,8 @@ import { success, SuccessResponse } from '../../utils/SuccessResponse';
 @Response<ErrorResponse>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 export class MobileAuthController extends Controller {
   @Post('send-otp')
-  @Middlewares(validate(sendOtpSchema))
+  // @Middlewares(validate(sendOtpSchema))
+  @Middlewares([validateSchemaMiddleware(sendOtpSchema, "body")])
   public async sendOtp(@Body() body: ISendOtpInput): Promise<SuccessResponse<{ isNewUser: boolean, otp:string }>> {
       const otpResult = await authService.sendLoginOtp(body.phone);
       const isNewUser = !(await UserService.findUserByPhone(body.phone));
@@ -26,14 +27,16 @@ export class MobileAuthController extends Controller {
   }
 
   @Post('verify-otp')  
-  @Middlewares(validate(verifyOtpSchema))
+  // @Middlewares(validate(verifyOtpSchema))
+  @Middlewares([validateSchemaMiddleware(verifyOtpSchema, "body")])
   public async verifyOtp(@Body() body: IVerifyOtpInput): Promise< SuccessResponse<IAuthResponse>> {
     const result = await authService.verifyOtpAndAuthenticate(body);
     return success(result, 'Authentication successful');
   }
 
   @Post('resend-otp')
-  @Middlewares(validate(sendOtpSchema))
+  // @Middlewares(validate(sendOtpSchema))
+  @Middlewares([validateSchemaMiddleware(sendOtpSchema, "body")])
   public async resendOtp(@Body() body: ISendOtpInput): Promise<SuccessResponse<{  otp:string }>> {
      const otpResult = await authService.sendLoginOtp(body.phone);
     	return success({ otp: otpResult.otp }, 'OTP sent successfully');

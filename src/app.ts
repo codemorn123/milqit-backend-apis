@@ -9,7 +9,6 @@ import { logger } from './config/logger';
 import pinoHttp from 'pino-http';
 import morgan from 'morgan';
 import { RegisterRoutes } from '../build/routes';
-import adminProductRoutes from './routes/admin/productRoutes'
 import cookieParser from 'cookie-parser';
 import errorHandler from './middleware/error';
 import path from 'path';
@@ -151,8 +150,7 @@ app.use(createMulterMiddleware());
 const v1Router = express.Router();
 app.use('/uploads', express.static('uploads'));
 
-// app.use('/v1/admin/categories', adminCategoryRoutes);
-app.use('/v1/admin/products', adminProductRoutes);
+
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 RegisterRoutes(v1Router);

@@ -4,8 +4,6 @@ export interface PaginationOptions {
   sort?: string;
 }
 
-
-
 export interface PaginatedResponse<T> {
   docs: T[];
   totalDocs: number;
@@ -50,8 +48,6 @@ export interface IPaginated {
   totalRecord: number;
   totalPage: number;
 }
-
-
 
 export interface IFilter {
   page?: number;

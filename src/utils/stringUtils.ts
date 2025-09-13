@@ -1,11 +1,6 @@
-/**
- * Create a URL-friendly slug from a string
- * @param text The text to convert to a slug
- * @returns A URL-friendly slug
- */
+
 export function createSlug(text: string): string {
   if (!text) return '';
-  
   return text
     .toLowerCase()
     .trim()

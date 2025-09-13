@@ -1,7 +1,6 @@
 import { Request } from 'express';
 import { IUserTokenPayload } from '../services/token/token.types';
 import { Permission } from '../services/permissions/permissions';
-
 type AuthorizedRequest = Request & {
 	authorizedUser: IUserTokenPayload;
 	permissions: Permission[];

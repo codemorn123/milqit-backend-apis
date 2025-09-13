@@ -149,59 +149,6 @@ export class ImagesController extends Controller {
   }
 
 
-  //   @Post("/")
-  //   @Middlewares([upload.single("file")])
-  //   @SuccessResponse("201", "Image uploaded successfully")
-  //   public async uploadImage(@Request() request: any): Promise<IImage> {
-  //     try {
-  //       console.log("🚀 Starting image upload...");
-
-  //       const file = request.file;
-  //       if (!file) {
-  //         this.setStatus(400);
-  //         throw new Error("No file uploaded");
-  //       }
-
-  //       // Verify file exists on disk
-  //       if (!fs.existsSync(file.path)) {
-  //         console.error(`❌ File not saved to disk: ${file.path}`);
-  //         this.setStatus(500);
-  //         throw new Error("File upload failed - file not saved");
-  //       }
-
-  //       // Create image record
-  //       const imageData = {
-  //         title: file.originalname,
-  //         filename: file.filename,
-  //         originalname: file.originalname,
-  //         url: getImageUrl(file.filename),
-  //         path: file.path,
-  //         size: file.size,
-  //         mimetype: file.mimetype,
-  //       };
-
-  //       const result = await imageService.create(imageData);
-  //       this.setStatus(201);
-  //       return result;
-
-  //     } catch (error) {
-  //       console.error("❌ Upload error:", error);
-
-  //       // Clean up failed upload
-  //       if (request.file?.path && fs.existsSync(request.file.path)) {
-  //         try {
-  //           fs.unlinkSync(request.file.path);
-  //           console.log("🧹 Cleaned up failed upload");
-  //         } catch (cleanupError) {
-  //           console.error("❌ Cleanup error:", cleanupError);
-  //         }
-  //       }
-
-  //       this.setStatus(500);
-  //       throw error;
-  //     }
-  //   }
-
 
   @Get("/")
   @SuccessResponse("200", "Successfully fetched all address")

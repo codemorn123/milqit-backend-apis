@@ -1,19 +1,18 @@
 import {
-  Body, Controller, Post, Get, Put, Delete, Path, Query, Route, Tags, Security, UploadedFiles, Middlewares, FormField,
+  Body, Controller, Post, Get, Put, Delete, Path, Route, Tags, Middlewares,
   Response,
   Example,
+  Queries,
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
-import { productService } from '../../services/productService';
-import { createProductSchema, getProductsSchema, updateProductSchema } from '../../schemas/product.schema';
+import { productService } from '../../services/product.service';
+import productSchema, { createProductSchema, getProductsSchema, productIdSchema, updateProductSchema } from '../../schemas/product.schema';
 import { success, SuccessResponse, NullSuccessResponse } from '../../utils/SuccessResponse';
-import { validate } from '../../middleware/validation.middleware';
-import { 
-  CreateProductDTO, UpdateProductDTO,
-  toProductResponseDTO, toPaginatedProductsResponseDTO,
-  ProductResponseDTO, PaginatedProductsResponseDTO,
-} from './../../dto/product.dto';
-import { ErrorResponse } from './../../types/common.types';
+import { ErrorResponse, PaginatedResponse } from './../../types/common.types';
+import { IProduct, ProductDocument } from './../../models/ProductModel';
+import { ProductFilterQueryParams } from './../../types/product.types';
+import { validateSchemaMiddleware } from './../../middleware/common-validate';
+import { idParamSchema } from './../../constants/common.validator';
 
 @Tags('ADMIN: Products')
 @Route('admin/products')
@@ -31,60 +30,41 @@ export class AdminProductController extends Controller {
    * Note: When uploading files, data must be sent as form fields.
    * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
    */
-@Post('/')
-@Middlewares(validate(createProductSchema))
-@Example({
-  name: 'Product Name',
-  price: 100,
-  categoryId: '123456789012345678901234',
-  sku: '123456789012345678901234',
-  quantity: 10,
-  unit: 'piece',
-  description: 'Product description',
-  brand: 'Brand name',
-  isActive: true,
-  images: ['image1.jpg', 'image2.jpg'],
-  
+  @Post('/')
+  // @Middlewares(validate(createProductSchema))
+  @Example({
+    name: 'Product Name',
+    price: 100,
+    categoryId: '123456789012345678901234',
+    sku: '123456789012345678901234',
+    quantity: 10,
+    unit: 'piece',
+    description: 'Product description',
+    brand: 'Brand name',
+    isActive: true,
+    images: ['image1.jpg', 'image2.jpg'],
 
 
-})
-public async createProduct(
-  @FormField() name: string,
-  @FormField() price: number,
-  @FormField() categoryId: string,
-  @FormField() sku: string,
-  @FormField() quantity: number,
-  @FormField() unit: 'piece' | 'kg' | 'gm' | 'litre' | 'ml' | 'pack' | 'dozen',
-  @FormField() description?: string,
-  @FormField() brand?: string,
-  @FormField() isActive?: boolean,
-  @UploadedFiles('images') files?: Express.Multer.File[],
-): Promise<SuccessResponse<ProductResponseDTO>> {
-  const data: CreateProductDTO = {
-    name,
-    price,
-    categoryId,
-    sku,
-    quantity,
-    unit,
-    description,
-    brand,
-    isActive: isActive ?? true,
-  };
+  })
 
-  const product = await productService.create(data, files || []);
-  this.setStatus(StatusCodes.CREATED);
-  return success(toProductResponseDTO(product), 'Product created successfully.');
-}
+  @Middlewares([validateSchemaMiddleware(createProductSchema, "body")])
+  public async createProduct(
+    @Body() data: IProduct
+  ): Promise<SuccessResponse<IProduct>> {
+    const product = await productService.create(data);
+    this.setStatus(StatusCodes.CREATED);
+    return success(product, 'Product created successfully.');
+  }
 
   @Put('{id}')
-  @Middlewares(validate(updateProductSchema))
+  @Middlewares(validateSchemaMiddleware(updateProductSchema,'body'))
+  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
   public async updateProduct(
     @Path() id: string,
-    @Body() data: UpdateProductDTO
-  ): Promise<SuccessResponse<ProductResponseDTO>> {
+    @Body() data: IProduct
+  ): Promise<SuccessResponse<IProduct>> {
     const product = await productService.update(id, data);
-    return success(toProductResponseDTO(product), 'Product updated successfully.');
+    return success(product, 'Product updated successfully.');
   }
 
   /**
@@ -92,17 +72,12 @@ public async createProduct(
    * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
    */
   @Get('/')
-  @Middlewares(validate(getProductsSchema))
+  // @Middlewares(validate(getProductsSchema))
   public async getProducts(
-    @Query() page?: number,
-    @Query() limit?: number,
-    @Query() sortBy?: string,
-    @Query() sortOrder?: 'asc' | 'desc',
-    @Query() search?: string,
-    @Query() isActive?: boolean
-  ): Promise<SuccessResponse<PaginatedProductsResponseDTO>> {
-    const paginatedResult = await productService.find({ page, limit, sortBy, sortOrder, search, isActive });
-    return success(toPaginatedProductsResponseDTO(paginatedResult), 'Products fetched successfully.');
+    @Queries() filter: ProductFilterQueryParams
+  ): Promise<SuccessResponse<PaginatedResponse<IProduct>>> {
+    const paginatedResult = await productService.find(filter);
+    return success(paginatedResult, 'Products fetched successfully.');
   }
 
   /**
@@ -110,9 +85,10 @@ public async createProduct(
    * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
    */
   @Get('{id}')
-  public async getProductById(@Path() id: string): Promise<SuccessResponse<ProductResponseDTO>> {
+  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
+  public async getProductById(@Path() id: string): Promise<SuccessResponse<{}>> {
     const product = await productService.findById(id);
-    return success(toProductResponseDTO(product), 'Product fetched successfully.');
+    return success({}, 'Product fetched successfully.');
   }
 
   /**
@@ -120,6 +96,7 @@ public async createProduct(
    * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
    */
   @Delete('{id}')
+  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
   public async deleteProduct(@Path() id: string): Promise<NullSuccessResponse> {
     await productService.remove(id);
     this.setStatus(StatusCodes.NO_CONTENT);

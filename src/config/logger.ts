@@ -1,8 +1,6 @@
 import pino from 'pino';
 import { config } from './index';
 const level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
-
-
 // Set up different configurations based on environment
 const pinoConfig: pino.LoggerOptions = {
   level: config.logging.level,

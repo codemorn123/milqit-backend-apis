@@ -69,3 +69,20 @@ export interface UpdateProductRequest {
 
 
 
+
+
+export interface ProductFilterQueryParams {
+  q?: string,
+  page?: number,
+  limit?: number,
+  search?: string,
+  categoryId?: string,
+  minPrice?: number,
+  maxPrice?: number,
+  brand?: string,
+  unit?: 'piece' | 'kg' | 'gm' | 'litre' | 'ml' | 'pack' | 'dozen',
+  sortBy?: 'name' | 'price' | 'createdAt' | 'popularity' | 'rating' | 'quantity' | 'unit' | 'relevance',
+  sortOrder?: 'asc' | 'desc',
+  isActive?: true,
+  isPublic?: true,
+};

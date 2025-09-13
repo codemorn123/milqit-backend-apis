@@ -23,6 +23,27 @@ export interface ProductDocument extends Document {
   updatedAt: Date;
 }
 
+
+
+export interface IProduct {
+  name: string;
+  slug: string;
+  description?: string;
+  price: number;
+  compareAtPrice?: number;
+  categoryId: mongoose.Types.ObjectId;
+  sku: string;
+  images: string[];
+  quantity: number;
+  isActive: boolean;
+  isFeatured: boolean;
+  inStock: boolean;
+  brand?: string;
+  unit: ValidUnit;
+  user: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 const ProductSchema = new Schema<ProductDocument>(
   {
     name: { type: String, required: true, trim: true, index: true },

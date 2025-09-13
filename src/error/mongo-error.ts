@@ -1,7 +1,6 @@
 import BaseCustomError from "./base-error";
 import { SerializedErrorOutput } from "./@types/serialized-error-output";
 import { StatusCode } from "./../utils/status-code";
-// import { StatusCode } from "../util/consts";
 
 export class MongoDuplicateKeyError extends BaseCustomError {
   private field: string;

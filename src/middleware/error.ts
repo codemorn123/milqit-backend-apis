@@ -2,9 +2,6 @@ import BaseCustomError from "./../error/base-error";
 import { MongoDuplicateKeyError } from "./../error/mongo-error";
 import { StatusCode } from "./../utils/status-code";
 import { ErrorRequestHandler } from "express";
-// import BaseCustomError from "../Error/base-error";
-// import { StatusCode } from "../util/consts";
-// import { MongoDuplicateKeyError } from "../Error/mongo-error";
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof BaseCustomError) {
