@@ -3,10 +3,7 @@ import { IImage, IImageUpdate } from "../types/image.type";
 import APIError from "./../error/api-error";
 import { IFilter, IPaginated } from "./../types/common.types";
 import { deleteImage } from "./../utils/delete";
-// import APIError from "../Error/api-error";
-// import { IFilter, IPaginated } from "../model/types/common.type";
-// import imageRepository from "../repository/image.repository";
-// import { deleteImage } from "../util/delete";
+
 
 class ImageService {
   async create(data: IImage): Promise<IImage> {
@@ -49,16 +46,16 @@ class ImageService {
   }> {
     let response = await imageRepository.getAll();
 
-    const { page = 1, perPage = 10 } = filter;
+    const { page = 1, limit = 10 } = filter;
     const totalRecord = response.length;
-    const totalPage = Math.ceil(totalRecord / perPage);
+    const totalPage = Math.ceil(totalRecord / limit);
 
-    response = response.slice((page - 1) * perPage, page * perPage);
+    response = response.slice((page - 1) * limit, page * limit);
     return {
       data: response,
       pagination: {
         page,
-        perPage,
+        limit,
         totalRecord,
         totalPage,
       },
@@ -75,16 +72,15 @@ class ImageService {
         throw new APIError(`Images with ID ${id} not found.`);
       }
 
-    //   deleteImage(exitingImages.key);
 
 
       if (exitingImages.key) {
-        deleteImage(exitingImages.key);
+        deleteImage(exitingImages.key, 'images');
       }
 
       exitingImages.updatedAt = new Date();
-
-      return imageRepository.updateById(id, update);
+      return{}
+      // return imageRepository.updateById(id, update);
     } catch (error: unknown | any) {
       if (error instanceof APIError) {
         throw error;
@@ -103,10 +99,8 @@ class ImageService {
       if (!response) {
         throw new APIError(`Images with ID ${id} not found.`);
       }
-
-    
       if (response.key) {
-        deleteImage(response.key);
+        deleteImage(response.key, 'images');
       }
 
 

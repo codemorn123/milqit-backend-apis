@@ -99,6 +99,173 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"mongoose.Types.ObjectId": {
+				"type": "string"
+			},
+			"ICategory": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"displayOrder": {
+						"type": "number",
+						"format": "double"
+					},
+					"parentId": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+							}
+						],
+						"nullable": true
+					},
+					"icon": {
+						"type": "string"
+					},
+					"bannerImage": {
+						"type": "string"
+					},
+					"backgroundColor": {
+						"type": "string"
+					},
+					"textColor": {
+						"type": "string"
+					},
+					"deepLink": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"image",
+					"slug",
+					"isActive",
+					"displayOrder"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedResponse_ICategory_": {
+				"properties": {
+					"docs": {
+						"items": {
+							"$ref": "#/components/schemas/ICategory"
+						},
+						"type": "array"
+					},
+					"totalDocs": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"hasNextPage": {
+						"type": "boolean"
+					},
+					"hasPrevPage": {
+						"type": "boolean"
+					},
+					"nextPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"prevPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					}
+				},
+				"required": [
+					"docs",
+					"totalDocs",
+					"limit",
+					"page",
+					"totalPages",
+					"hasNextPage",
+					"hasPrevPage",
+					"nextPage",
+					"prevPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_PaginatedResponse_ICategory__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/PaginatedResponse_ICategory_"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IFilter": {
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"search": {
+						"type": "string"
+					},
+					"sortBy": {
+						"type": "string"
+					},
+					"sortOrder": {
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"SuccessResponse__isNewUser-boolean--otp-string__": {
 				"properties": {
 					"success": {
@@ -291,246 +458,6 @@
 							"otp"
 						],
 						"type": "object"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MobileCategoryResponse": {
-				"properties": {
-					"categories": {
-						"items": {
-							"properties": {
-								"deepLink": {
-									"type": "string",
-									"nullable": true
-								},
-								"textColor": {
-									"type": "string"
-								},
-								"backgroundColor": {
-									"type": "string"
-								},
-								"slug": {
-									"type": "string"
-								},
-								"icon": {
-									"type": "string",
-									"nullable": true
-								},
-								"image": {
-									"type": "string"
-								},
-								"name": {
-									"type": "string"
-								},
-								"id": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"deepLink",
-								"textColor",
-								"backgroundColor",
-								"slug",
-								"icon",
-								"image",
-								"name",
-								"id"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					},
-					"pagination": {
-						"properties": {
-							"hasMore": {
-								"type": "boolean"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							},
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"hasMore",
-							"page",
-							"pages",
-							"total"
-						],
-						"type": "object"
-					}
-				},
-				"required": [
-					"categories",
-					"pagination"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_MobileCategoryResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/MobileCategoryResponse"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CategoryTreeResponse": {
-				"properties": {
-					"categoryTree": {
-						"items": {
-							"properties": {
-								"children": {
-									"items": {},
-									"type": "array"
-								},
-								"slug": {
-									"type": "string"
-								},
-								"icon": {
-									"type": "string",
-									"nullable": true
-								},
-								"image": {
-									"type": "string"
-								},
-								"name": {
-									"type": "string"
-								},
-								"id": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"children",
-								"slug",
-								"icon",
-								"image",
-								"name",
-								"id"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"categoryTree"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_CategoryTreeResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/CategoryTreeResponse"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"FeaturedCategoriesResponse": {
-				"properties": {
-					"featuredCategories": {
-						"items": {
-							"properties": {
-								"textColor": {
-									"type": "string"
-								},
-								"backgroundColor": {
-									"type": "string"
-								},
-								"deepLink": {
-									"type": "string"
-								},
-								"image": {
-									"type": "string"
-								},
-								"name": {
-									"type": "string"
-								},
-								"id": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"textColor",
-								"backgroundColor",
-								"deepLink",
-								"image",
-								"name",
-								"id"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"featuredCategories"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_FeaturedCategoriesResponse_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/FeaturedCategoriesResponse"
 					}
 				},
 				"required": [
@@ -752,7 +679,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"perPage": {
+					"limit": {
 						"type": "number",
 						"format": "double"
 					},
@@ -767,24 +694,10 @@
 				},
 				"required": [
 					"page",
-					"perPage",
+					"limit",
 					"totalRecord",
 					"totalPage"
 				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IFilter": {
-				"properties": {
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"perPage": {
-						"type": "number",
-						"format": "double"
-					}
-				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1050,63 +963,40 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PaginatedCategoriesDTO": {
-				"properties": {},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_PaginatedCategoriesDTO_": {
+			"CreateCategoryRequest": {
 				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/PaginatedCategoriesDTO"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CategoryTreeItem": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
 					"name": {
+						"type": "string"
+					},
+					"description": {
 						"type": "string"
 					},
 					"slug": {
 						"type": "string"
 					},
-					"children": {
-						"items": {
-							"$ref": "#/components/schemas/CategoryTreeItem"
-						},
-						"type": "array"
+					"isActive": {
+						"type": "boolean"
+					},
+					"image": {
+						"type": "string"
+					},
+					"icon": {
+						"type": "string"
+					},
+					"banner": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"id",
 					"name",
+					"description",
 					"slug",
-					"children"
+					"isActive"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SuccessResponse__tree-CategoryTreeItem-Array__": {
+			"SuccessResponse_ICategory_": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -1119,18 +1009,7 @@
 						"type": "string"
 					},
 					"result": {
-						"properties": {
-							"tree": {
-								"items": {
-									"$ref": "#/components/schemas/CategoryTreeItem"
-								},
-								"type": "array"
-							}
-						},
-						"required": [
-							"tree"
-						],
-						"type": "object"
+						"$ref": "#/components/schemas/ICategory"
 					}
 				},
 				"required": [
@@ -1153,6 +1032,321 @@
 		"contact": {}
 	},
 	"paths": {
+		"/mobile/categories": {
+			"get": {
+				"operationId": "ListCategories",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_ICategory__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Mobile - Categories"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/mobile/categories/featured": {
+			"get": {
+				"operationId": "GetFeaturedCategories",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_ICategory__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Get featured categories for mobile app",
+				"tags": [
+					"Mobile - Categories"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
 		"/mobile/auth/send-otp": {
 			"post": {
 				"operationId": "SendOtp",
@@ -1487,334 +1681,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/mobile/categories": {
-			"get": {
-				"operationId": "ListCategories",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_MobileCategoryResponse_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Mobile - Categories"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"default": 1,
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"default": 20,
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/mobile/categories/tree": {
-			"get": {
-				"operationId": "GetCategoryTree",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_CategoryTreeResponse_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Mobile - Categories"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/mobile/categories/featured": {
-			"get": {
-				"operationId": "GetFeaturedCategories",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_FeaturedCategoriesResponse_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"description": "Get featured categories for mobile app",
-				"tags": [
-					"Mobile - Categories"
-				],
-				"security": [],
-				"parameters": []
 			}
 		},
 		"/mobile/user/{userId}/profile": {
@@ -2331,14 +2197,30 @@
 		},
 		"/images": {
 			"post": {
-				"operationId": "GetImages",
+				"operationId": "UploadImage",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"201": {
+						"description": "Image uploaded successfully",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IImage"
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/IImage"
+										},
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"data",
+										"message",
+										"success"
+									],
+									"type": "object"
 								}
 							}
 						}
@@ -2395,11 +2277,47 @@
 					},
 					{
 						"in": "query",
-						"name": "perPage",
+						"name": "limit",
 						"required": false,
 						"schema": {
 							"format": "double",
 							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					}
 				]
@@ -2527,6 +2445,25 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse_ProductResponseDTO_"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"name": "Product Name",
+											"price": 100,
+											"categoryId": "123456789012345678901234",
+											"sku": "123456789012345678901234",
+											"quantity": 10,
+											"unit": "piece",
+											"description": "Product description",
+											"brand": "Brand name",
+											"isActive": true,
+											"images": [
+												"image1.jpg",
+												"image2.jpg"
+											]
+										}
+									}
 								}
 							}
 						}
@@ -3223,14 +3160,18 @@
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateCategoryRequest"
+							}
+						}
 					}
-				],
-				"parameters": []
+				}
 			},
 			"get": {
 				"operationId": "ListCategories",
@@ -3240,7 +3181,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_PaginatedCategoriesDTO_"
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_ICategory__"
 								}
 							}
 						}
@@ -3329,20 +3270,13 @@
 				"tags": [
 					"Admin - Categories"
 				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
 						"name": "page",
 						"required": false,
 						"schema": {
-							"default": 1,
 							"format": "double",
 							"type": "number"
 						}
@@ -3352,39 +3286,8 @@
 						"name": "limit",
 						"required": false,
 						"schema": {
-							"default": 20,
 							"format": "double",
 							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"default": "displayOrder",
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"default": "asc",
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
-						"required": false,
-						"schema": {
-							"type": "string"
 						}
 					},
 					{
@@ -3397,10 +3300,30 @@
 					},
 					{
 						"in": "query",
-						"name": "parentId",
+						"name": "search",
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					}
 				]
@@ -3415,7 +3338,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_CategoryDTO_"
+									"$ref": "#/components/schemas/SuccessResponse_ICategory_"
 								}
 							}
 						}
@@ -3530,7 +3453,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_CategoryDTO_"
+									"$ref": "#/components/schemas/SuccessResponse_ICategory_"
 								}
 							}
 						}
@@ -3635,7 +3558,17 @@
 							"type": "string"
 						}
 					}
-				]
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateCategoryRequest"
+							}
+						}
+					}
+				}
 			},
 			"delete": {
 				"operationId": "DeleteCategory",
@@ -3744,114 +3677,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/admin/categories/tree": {
-			"get": {
-				"operationId": "GetCategoryTree",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse__tree-CategoryTreeItem-Array__"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Admin - Categories"
-				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
-					}
-				],
-				"parameters": []
 			}
 		},
 		"/admin/categories/reorder": {

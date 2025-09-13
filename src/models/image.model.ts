@@ -35,6 +35,11 @@ const imageSchema = new Schema(
   }
 );
 
+
+imageSchema.index({ filename: 1 });
+imageSchema.index({ key: 1 });
+imageSchema.index({ category: 1 });
+imageSchema.index({ createdAt: -1 });
 const imageModel = mongoose.model<IImage>("Image", imageSchema);
 
 export default imageModel;

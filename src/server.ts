@@ -73,7 +73,9 @@ async function startServer(): Promise<void> {
 console.log(chalk.bold.green(`Server is running on port ${config.port}`));
       // Log available endpoints
       const baseUrl = `http://localhost:${config.port}/v1`;
-
+      console.log(chalk.bold.green(`http://localhost:${config.port}/docs`));
+     
+    
       logger.info(`Mobile API: ${baseUrl}/mobile`);
       logger.info(`Admin API: ${baseUrl}/admin`);
       logger.info(`Mobile Docs: ${baseUrl}/mobile/docs`);

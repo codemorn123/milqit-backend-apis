@@ -2,9 +2,7 @@ import imageModel from "./../models/image.model";
 import { IImage, IImageUpdate } from "./../types/image.type";
 import { StatusCode } from "./../utils/status-code";
 import { Model } from "mongoose";
-// import { StatusCode } from "../util/consts";
-// import { IImage, IImageUpdate } from "../model/types/image.type";
-// import imageModel from "../model/image.model";
+
 
 class ImageRepository {
   private model: Model<IImage>;

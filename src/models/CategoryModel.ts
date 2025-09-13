@@ -10,15 +10,13 @@ export interface ICategory {
   isActive: boolean;
   displayOrder: number;
   parentId?: mongoose.Types.ObjectId | null;
-  metaTitle?: string;
-  metaDescription?: string;
   icon?: string;
   bannerImage?: string;
   backgroundColor?: string;
   textColor?: string;
   deepLink?: string;
-  createdBy?: string;
-  updatedBy?: string;
+  // createdBy?: string;
+  // updatedBy?: string;
 }
 
 // Document interface with MongoDB fields
@@ -72,14 +70,7 @@ const CategorySchema = new Schema<ICategoryDocument>(
       default: null,
       index: true
     },
-    metaTitle: {
-      type: String,
-      trim: true
-    },
-    metaDescription: {
-      type: String,
-      trim: true
-    },
+
     icon: {
       type: String
     },
@@ -97,12 +88,12 @@ const CategorySchema = new Schema<ICategoryDocument>(
     deepLink: {
       type: String
     },
-    createdBy: {
-      type: String
-    },
-    updatedBy: {
-      type: String
-    }
+    // createdBy: {
+    //   type: String
+    // },
+    // updatedBy: {
+    //   type: String
+    // }
   },
   { 
     timestamps: true 
@@ -118,5 +109,5 @@ CategorySchema.index(
 // Add plugin for pagination
 CategorySchema.plugin(mongoosePaginate);
 
-// Create and export model
+
 export const CategoryModel = mongoose.model<ICategoryDocument, CategoryModel>('Category', CategorySchema);

@@ -1,6 +1,7 @@
 import {
   Body, Controller, Post, Get, Put, Delete, Path, Query, Route, Tags, Security, UploadedFiles, Middlewares, FormField,
   Response,
+  Example,
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { productService } from '../../services/productService';
@@ -32,6 +33,21 @@ export class AdminProductController extends Controller {
    */
 @Post('/')
 @Middlewares(validate(createProductSchema))
+@Example({
+  name: 'Product Name',
+  price: 100,
+  categoryId: '123456789012345678901234',
+  sku: '123456789012345678901234',
+  quantity: 10,
+  unit: 'piece',
+  description: 'Product description',
+  brand: 'Brand name',
+  isActive: true,
+  images: ['image1.jpg', 'image2.jpg'],
+  
+
+
+})
 public async createProduct(
   @FormField() name: string,
   @FormField() price: number,

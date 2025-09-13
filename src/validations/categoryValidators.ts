@@ -1,93 +1,77 @@
-import { z } from 'zod';
+import Joi from 'joi';
 import mongoose from 'mongoose';
 
-/**
- * Helper functions for validation
- */
-const isValidObjectId = (val: string): boolean => {
-  return mongoose.isValidObjectId(val);
-};
-
-// File validation for image uploads
-export const categoryImageSchema = z.object({
-  fieldname: z.string(),
-  originalname: z.string(),
-  mimetype: z.string().refine(
-    val => ['image/jpeg', 'image/png', 'image/webp'].includes(val),
-    { message: 'Only JPEG, PNG and WebP formats are supported' }
-  ),
-  size: z.number().refine(
-    val => val <= 5 * 1024 * 1024, // 5MB
-    { message: 'Image size must not exceed 5MB' }
-  )
+// Custom Joi extensions for ObjectId
+const customJoi = Joi.extend({
+  type: 'objectId',
+  base: Joi.string(),
+  messages: {
+    'objectId.invalid': 'Invalid ObjectId format'
+  },
+  validate(value, helpers) {
+    if (!mongoose.isValidObjectId(value)) {
+      return { value, errors: helpers.error('objectId.invalid') };
+    }
+    return { value };
+  }
 });
 
-// Base schema for category data
-export const categoryBaseSchema = z.object({
-  name: z.string()
-    .min(2, 'Category name must be at least 2 characters')
-    .max(100, 'Category name cannot exceed 100 characters')
-    .trim(),
-  slug: z.string()
-    .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens')
-    .max(120, 'Slug cannot exceed 120 characters')
-    .optional(),
-  description: z.string()
-    .max(1000, 'Description cannot exceed 1000 characters')
+export const createCategorySchema = Joi.object({
+  name: Joi.string()
+    .min(2)
+    .max(100)
     .trim()
-    .optional(),
-  displayOrder: z.number()
-    .int('Display order must be an integer')
-    .nonnegative('Display order cannot be negative')
-    .default(0),
-  isActive: z.boolean().default(true),
-  parentId: z.union([
-    z.string().trim().refine(isValidObjectId, { message: 'Invalid parent category ID format' }),
-    z.literal('null'),
-    z.null()
-  ]).optional().nullable(),
-  metaTitle: z.string()
-    .max(100, 'Meta title cannot exceed 100 characters')
+    .required()
+    .messages({
+      'string.min': 'Category name must be at least 2 characters',
+      'string.max': 'Category name cannot exceed 100 characters',
+      'any.required': 'Category name is required'
+    }),
+  
+  slug: Joi.string()
+    .min(2)
+    .max(120)
     .trim()
-    .optional(),
-  metaDescription: z.string()
-    .max(200, 'Meta description cannot exceed 200 characters')
+    .pattern(/^[a-z0-9-]+$/)
+    .required()
+    .messages({
+      'string.min': 'Slug must be at least 2 characters',
+      'string.max': 'Slug cannot exceed 120 characters',
+      'string.pattern.base': 'Slug can only contain lowercase letters, numbers, and hyphens',
+      'any.required': 'Slug is required'
+    }),
+  
+  description: Joi.string()
+    .max(1000)
     .trim()
-    .optional(),
-  backgroundColor: z.string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color format')
-    .optional(),
-  textColor: z.string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color format')
     .optional()
+    .allow('')
+    .messages({
+      'string.max': 'Description cannot exceed 1000 characters'
+    }),
+  
+  parentId: Joi.alternatives()
+    .try(
+      customJoi.objectId(),
+      Joi.string().valid('null', ''),
+      Joi.allow(null)
+    )
+    .optional()
+    .messages({
+      'objectId.invalid': 'Invalid parent category ID format'
+    }),
+  
+    isActive: Joi.boolean()
+    .optional()
+    .default(true),
+    
+  displayOrder: Joi.number()
+    .integer()
+    .min(0)
+    .optional()
+    .default(0)
+    .messages({
+      'number.integer': 'Display order must be an integer',
+      'number.min': 'Display order cannot be negative'
+    }),
 });
-
-// Schema for creating categories
-export const createCategorySchema = categoryBaseSchema.extend({
-  // Make name required for creating
-  name: z.string()
-    .min(2, 'Category name must be at least 2 characters')
-    .max(100, 'Category name cannot exceed 100 characters')
-    .trim()
-});
-
-// Schema for updating categories - all fields optional
-export const updateCategorySchema = categoryBaseSchema.partial();
-
-// Schema for reordering categories
-export const reorderCategoriesSchema = z.object({
-  categories: z.array(
-    z.object({
-      id: z.string().refine(isValidObjectId, { message: 'Invalid category ID format' }),
-      displayOrder: z.number().int('Display order must be an integer').nonnegative()
-    })
-  ).min(1, 'At least one category is required')
-});
-
-// Types derived from schemas
-export type CategoryInput = z.infer<typeof categoryBaseSchema>;
-export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
-export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>;
-export type ReorderCategoriesInput = z.infer<typeof reorderCategoriesSchema>;
-
-export type CategoryReorderInput = z.infer<typeof reorderCategoriesSchema>;

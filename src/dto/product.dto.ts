@@ -1,10 +1,6 @@
 import { PaginateResult } from 'mongoose';
 import { ProductDocument } from '../models/ProductModel';
 
-/**
- * @description Plain TypeScript interface for the request body when creating a product.
- * TSOA uses this simple interface, avoiding Zod's complexity.
- */
 export interface CreateProductDTO {
     name: string;
     description?: string;

@@ -24,41 +24,9 @@ export interface Product {
   updatedAt: string;
 }
 
-export interface ProductListItem {
-  id: string;
-  name: string;
-  price: number;
-  compareAtPrice?: number;
-  image?: string;
-  category: {
-    id: string;
-    name: string;
-  };
-  inStock: boolean;
-  unit?: string;
-  unitValue?: number;
-}
 
-export interface Category {
-  id: string;
-  name: string;
-  description?: string;
-  slug: string;
-  parentId?: string;
-  image?: string;
-  isActive: boolean;
-  order?: number;
-  createdAt: string;
-  updatedAt: string;
-}
 
-export interface CategoryListItem {
-  id: string;
-  name: string;
-  slug: string;
-  image?: string;
-  isActive: boolean;
-}
+
 
 // TSOA Product Request DTOs
 export interface CreateProductRequest {
@@ -99,38 +67,5 @@ export interface UpdateProductRequest {
   deliveryTime?: string;
 }
 
-// TSOA Category Request DTOs
-export interface CreateCategoryRequest {
-  name: string;
-  description?: string;
-  slug: string;
-  parentId?: string;
-  image?: string;
-  isActive?: boolean;
-  order?: number;
-}
 
-export interface UpdateCategoryRequest {
-  name?: string;
-  description?: string;
-  slug?: string;
-  parentId?: string;
-  image?: string;
-  isActive?: boolean;
-  order?: number;
-}
 
-// Product query parameters
-export interface ProductQueryParams {
-  page?: number;
-  limit?: number;
-  sort?: string;
-  search?: string;
-  categoryId?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  isActive?: boolean;
-  isFeatured?: boolean;
-  inStock?: boolean;
-  tags?: string | string[];
-}

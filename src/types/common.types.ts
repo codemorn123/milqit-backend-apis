@@ -4,20 +4,19 @@ export interface PaginationOptions {
   sort?: string;
 }
 
-export interface PaginationMeta {
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-  itemsPerPage: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-}
+
 
 export interface PaginatedResponse<T> {
-  items: T[];
-  meta: PaginationMeta;
+  docs: T[];
+  totalDocs: number;
+  limit: number;
+  page: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  nextPage: number | null;
+  prevPage: number | null;
 }
-
 
 export type ErrorDetail =
   | string
@@ -47,12 +46,18 @@ export interface ApiResponseDTO<T = any> {
 
 export interface IPaginated {
   page: number;
-  perPage: number;
+  limit: number;
   totalRecord: number;
   totalPage: number;
 }
 
+
+
 export interface IFilter {
   page?: number;
-  perPage?: number;
+  limit?: number;
+  isActive?: boolean;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
