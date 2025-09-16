@@ -1,4 +1,4 @@
-import express, {} from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -217,11 +217,16 @@ app.use((error: any, req: express.Request, res: express.Response, next: express.
     }
   }
 };
-app.use('/docs', swaggerUi.serve, async (_req, res) => {
-  return res.send(
-    swaggerUi.generateHTML(await import('../build/swagger.json'),swaggerOptions)
-  );
-});
+// app.use('/docs', swaggerUi.serve, async (_req, res) => {
+//   return res.send(
+//     swaggerUi.generateHTML(await import('../build/swagger.json'),swaggerOptions)
+//   );
+// });
+
+app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
+  return res.send(swaggerUi.generateHTML(await import('../build/swagger.json')))
+})
+
 
 // Admin Swagger (separate documentation)
 app.use('/admin-docs', swaggerUi.serve, async (_req, res) => {

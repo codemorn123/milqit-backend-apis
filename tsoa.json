@@ -18,6 +18,7 @@
   "routes": {
     "routesDir": "build",
     "middleware": "express",
+    
         "authenticationModule": "./src/middleware/auth-helper.ts"
   }
 }
