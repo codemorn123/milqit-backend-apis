@@ -1,4 +1,4 @@
-import { RoleName } from './../../models/role';
+
 
 export enum TokenType {
 	ACCESS = 'access',
@@ -14,7 +14,7 @@ export interface IUserTokenPayload {
 	dob: Date;
 	kpDirectory: boolean;
 	profileImage: string;
-	roleNames: RoleName[];
+	roleNames: string[];
 	
 }
 
@@ -22,5 +22,5 @@ export interface IAdminTokenPayload {
 	id: string;
 	email: string;
 	firstName: string;
-	roleNames: RoleName[];
+	roleNames: string[];
 }

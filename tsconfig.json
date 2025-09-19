@@ -24,6 +24,6 @@
     "noImplicitAny": false, /* Temporarily disable to avoid issues with TSOA analysis */
     "moduleResolution": "node"
   },
-  "include": ["src/**/*", "tsoa.json", "tsoa.admin.json", "tsoa.mobile.json","@types/*"],
+  "include": ["src/**/*", "tsoa.json","@types/*"],
   "exclude": ["node_modules", "dist"]
 }
