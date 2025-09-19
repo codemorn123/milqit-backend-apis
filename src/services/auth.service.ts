@@ -21,6 +21,9 @@ import {
 } from '../types/auth.types';
 import { CreateUserInput } from '../schemas/userSchemas';
 import { PresentableError } from '../error/clientErrorHelper';
+import { AdminService } from './admin.service';
+import { IAdminDocument } from '../models/AdminModel';
+// import Response as ExResponse from 'express';
 
 /**
  * Service for handling authentication-related operations
@@ -126,29 +129,14 @@ export class AuthService {
    * @param creatorId ID of the user creating the admin
    * @returns Created admin user profile
    */
-  static async createAdmin(data: CreateAdminInput, creatorId: string): Promise<UserProfile> {
-    // Verify admin privileges
-    await UserService.verifyAdminPrivileges(creatorId);
-    // Check if user already exists
-    await UserService.checkIfUserExists(data.email, data.phone);
-    const allowedRoles = ['customer', 'admin', 'manager', 'staff', 'vip'] as const;
-    const roles = [...new Set(['admin', ...(data.roles || [])])].filter(
-      (role): role is typeof allowedRoles[number] => allowedRoles.includes(role as typeof allowedRoles[number])
-    );
+  static async createAdmin(data: CreateAdminInput, ): Promise<UserProfile> {
+    const adminDoc = await AdminService.createAdmin(data);
     
-    // Create admin user
-    const adminUser = await UserService.createUser({
-      ...data,
-      roles,
-      isActive: data.isActive ?? true,
-      isPhoneVerified: true
-    }, true);
-    
-    if (!adminUser) {
+    if (!adminDoc) {
       throw new PresentableError('SERVER_ERROR', 'Failed to create admin user');
     }
 
-    return adminUser.toProfileDTO();
+    return adminDoc ;
   }
 
   /**
@@ -420,6 +408,9 @@ export class AuthService {
   private static async verifyOtpHash(otp: string, hash: string): Promise<boolean> {
     return bcrypt.compare(otp, hash);
   }
+
+
+  
 }
 
 // For backwards compatibility

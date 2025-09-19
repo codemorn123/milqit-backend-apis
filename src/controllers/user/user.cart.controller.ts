@@ -52,7 +52,7 @@ interface ClearCartRequest {
  * @author MarotiKathoke
  * @created 2025-09-13 15:30:15
  */
-@Route('api/v1/user/cart')
+@Route('user/cart')
 @Tags('User Cart')
 export class UserCartController extends Controller {
   

@@ -25,4 +25,11 @@ export const tokenService = {
             algorithms: [jwtConfig.algorithm],
         }) as AuthTokenPayload;
     },
+
+    verifyAccessToken(token: string): AuthTokenPayload {
+        return jwt.verify(token, jwtConfig.secret, {
+            issuer: jwtConfig.issuer,
+            algorithms: [jwtConfig.algorithm],
+        }) as AuthTokenPayload;
+    },
 };

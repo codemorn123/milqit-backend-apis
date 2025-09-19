@@ -8,8 +8,9 @@ import { CreateUserInput, UpdateUserInput } from '@/schemas/userSchemas';
 import { PresentableError } from '../error/clientErrorHelper';
 import bcrypt from 'bcrypt';
 import { logger } from '../config/logger';
-import mongoose from 'mongoose';
+import mongoose, { FlattenMaps } from 'mongoose';
 import { GeoLocation } from './../types/location.types';
+import { UserProfile } from './../types/auth.types';
 
 
 const UserService = {
@@ -386,7 +387,10 @@ const UserService = {
             logger.error(`Failed to update FCM token: ${error.message}`);
             throw new PresentableError('SERVER_ERROR', 'Failed to update notification token');
         }
-    }
+    },
+    async findOne(id: string): Promise<Partial<IUserDocument> | null> {
+        return UserModel.findOne({ _id: id }).lean().exec();
+    }      
 };
 
 export default UserService;

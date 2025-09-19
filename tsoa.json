@@ -12,13 +12,29 @@
       "title": "Milqit E-commerce API",
       "version": "1.0.0",
       "description": "E-commerce API with admin and mobile interfaces"
+    },
+    "securityDefinitions": {
+      "jwt": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "description": "Enter JWT token with `Bearer <token>`"
+      }
+    },
+    "security": [
+      {
+        "jwt": []
+      }
+    ],
+    "swaggerUiAuth": {
+      "persistAuthorization": true
     }
-  
   },
   "routes": {
     "routesDir": "build",
     "middleware": "express",
-    
-        "authenticationModule": "./src/middleware/auth-helper.ts"
+    "authenticationModule": "./src/middleware/auth-helper.ts",
+    "routesFileName": "routes.ts"
+  
   }
 }

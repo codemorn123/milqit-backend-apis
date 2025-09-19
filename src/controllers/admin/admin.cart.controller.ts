@@ -11,7 +11,7 @@ import { PaginatedResponse } from './../../types/common.types';
  * @author MarotiKathoke
  * @created 2025-09-13 16:44:44
  */
-@Route('api/v1/admin/carts')
+@Route('admin/carts')
 @Tags('Admin Cart Management')
 export class AdminCartController extends Controller {
 

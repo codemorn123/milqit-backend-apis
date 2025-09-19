@@ -35,7 +35,7 @@ export const RolesEnum = z.enum(['customer', 'admin', 'manager', 'staff', 'vip']
 export const UserRolesSchema = z
   .array(RolesEnum)
   .min(1, { message: 'At least one role is required' })
-  .default(['customer']);
+  .default(['customer','admin']);
 
 /* ----------------------------- Request schemas ---------------------------- */
 

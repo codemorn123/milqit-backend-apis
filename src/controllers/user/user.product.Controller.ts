@@ -58,7 +58,6 @@ export class UserProductController extends Controller {
         @Queries() filters: ProductFilterQueryParams
     ): Promise<SuccessResponse<PaginatedResponse<IProduct>>> {
         try {
-
             const paginatedResult = await productService.findForUsers(filters);
             console.log(`✅ User: Retrieved ${paginatedResult.docs.length} products out of ${paginatedResult.totalDocs} total`);
             return success(

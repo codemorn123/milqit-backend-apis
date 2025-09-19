@@ -86,9 +86,9 @@ export class AdminProductController extends Controller {
    */
   @Get('{id}')
   @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-  public async getProductById(@Path() id: string): Promise<SuccessResponse<{}>> {
+  public async getProductById(@Path() id: string): Promise<SuccessResponse<IProduct>> {
     const product = await productService.findById(id);
-    return success({}, 'Product fetched successfully.');
+    return success(product, 'Product fetched successfully.');
   }
 
   /**

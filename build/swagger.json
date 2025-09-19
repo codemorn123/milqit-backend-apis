@@ -7,6 +7,50 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"customErrorCode": {
+				"type": "string",
+				"enum": [
+					"SERVER_ERROR",
+					"UNAUTHORIZED",
+					"FORBIDDEN",
+					"NOT_FOUND",
+					"VALIDATION_ERROR",
+					"EXCEL_ERROR",
+					"AWS_ERROR",
+					"BAD_REQUEST",
+					"TOO_MANY_REQUESTS",
+					"CONFLICT"
+				],
+				"nullable": false
+			},
+			"ClientErrorInterface": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							false
+						],
+						"nullable": false
+					},
+					"code": {
+						"$ref": "#/components/schemas/customErrorCode"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"code",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ErrorDetail": {
 				"anyOf": [
 					{
@@ -55,46 +99,201 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"customErrorCode": {
-				"type": "string",
-				"enum": [
-					"SERVER_ERROR",
-					"UNAUTHORIZED",
-					"FORBIDDEN",
-					"NOT_FOUND",
-					"VALIDATION_ERROR",
-					"EXCEL_ERROR",
-					"AWS_ERROR",
-					"BAD_REQUEST",
-					"TOO_MANY_REQUESTS",
-					"CONFLICT"
-				],
-				"nullable": false
-			},
-			"ClientErrorInterface": {
+			"UserProfile": {
+				"description": "The shape of the user profile data that is safe to return to clients.\nPassword and sensitive data are omitted.",
 				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							false
-						],
-						"nullable": false
+					"id": {
+						"type": "string"
 					},
-					"code": {
-						"$ref": "#/components/schemas/customErrorCode"
+					"name": {
+						"type": "string"
 					},
-					"status": {
-						"type": "number",
-						"format": "double"
+					"email": {
+						"type": "string"
 					},
-					"message": {
+					"phone": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"isEmailVerified": {
+						"type": "boolean"
+					},
+					"isPhoneVerified": {
+						"type": "boolean"
+					},
+					"lastLogin": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
 						"type": "string"
 					}
 				},
 				"required": [
+					"id",
+					"name",
+					"email",
+					"roles",
+					"isActive",
+					"isEmailVerified",
+					"isPhoneVerified",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_UserProfile_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/UserProfile"
+					}
+				},
+				"required": [
 					"success",
-					"code",
-					"status"
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse____": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {},
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_UserProfile_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"isEmailVerified": {
+						"type": "boolean"
+					},
+					"isPhoneVerified": {
+						"type": "boolean"
+					},
+					"lastLogin": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"SuccessResponse_any_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__success-boolean__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"success": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"success"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1030,7 +1229,79 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SuccessResponse_any_": {
+			"ISubscription": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"productType": {
+						"type": "string",
+						"enum": [
+							"milk",
+							"vegetable"
+						]
+					},
+					"plan": {
+						"type": "string",
+						"enum": [
+							"daily",
+							"weekly",
+							"monthly"
+						]
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"productName": {
+						"type": "string"
+					},
+					"subscriptionType": {
+						"type": "string",
+						"enum": [
+							"milk",
+							"vegetable",
+							"other"
+						]
+					},
+					"planType": {
+						"type": "string",
+						"enum": [
+							"daily",
+							"weekly",
+							"monthly"
+						]
+					}
+				},
+				"required": [
+					"id",
+					"userId",
+					"productType",
+					"plan",
+					"startDate",
+					"quantity",
+					"isActive",
+					"productName",
+					"subscriptionType",
+					"planType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_ISubscription-Array_": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -1042,7 +1313,12 @@
 					"message": {
 						"type": "string"
 					},
-					"result": {}
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/ISubscription"
+						},
+						"type": "array"
+					}
 				},
 				"required": [
 					"success",
@@ -1051,6 +1327,90 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"SuccessResponse_ISubscription_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/ISubscription"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_ISubscription_": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"productType": {
+						"type": "string",
+						"enum": [
+							"milk",
+							"vegetable"
+						]
+					},
+					"plan": {
+						"type": "string",
+						"enum": [
+							"daily",
+							"weekly",
+							"monthly"
+						]
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"productName": {
+						"type": "string"
+					},
+					"subscriptionType": {
+						"type": "string",
+						"enum": [
+							"milk",
+							"vegetable",
+							"other"
+						]
+					},
+					"planType": {
+						"type": "string",
+						"enum": [
+							"daily",
+							"weekly",
+							"monthly"
+						]
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
 			},
 			"SuccessResponse__isNewUser-boolean--otp-string__": {
 				"properties": {
@@ -1242,188 +1602,6 @@
 						},
 						"required": [
 							"otp"
-						],
-						"type": "object"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UserProfile": {
-				"description": "The shape of the user profile data that is safe to return to clients.\nPassword and sensitive data are omitted.",
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"phone": {
-						"type": "string"
-					},
-					"roles": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"isEmailVerified": {
-						"type": "boolean"
-					},
-					"isPhoneVerified": {
-						"type": "boolean"
-					},
-					"lastLogin": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string"
-					},
-					"updatedAt": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"name",
-					"email",
-					"roles",
-					"isActive",
-					"isEmailVerified",
-					"isPhoneVerified",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiSuccessResponse_UserProfile_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/UserProfile"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiSuccessResponse____": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"properties": {},
-						"type": "object"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiSuccessResponse_any-Array_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"items": {},
-						"type": "array"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiSuccessResponse_any_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiSuccessResponse__success-boolean__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"properties": {
-							"success": {
-								"type": "boolean"
-							}
-						},
-						"required": [
-							"success"
 						],
 						"type": "object"
 					}
@@ -2201,7 +2379,46 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SuccessResponse____": {
+			"CreateAdminRequest": {
+				"description": "Create admin request",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"roles": {
+						"items": {
+							"type": "string",
+							"enum": [
+								"admin",
+								"manager",
+								"staff"
+							]
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"email",
+					"password",
+					"roles"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__user-UserProfile--tokens-AuthTokens__": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -2214,8 +2431,63 @@
 						"type": "string"
 					},
 					"result": {
-						"properties": {},
+						"properties": {
+							"tokens": {
+								"$ref": "#/components/schemas/AuthTokens"
+							},
+							"user": {
+								"$ref": "#/components/schemas/UserProfile"
+							}
+						},
+						"required": [
+							"tokens",
+							"user"
+						],
 						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginRequest": {
+				"description": "Login request data",
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_UserProfile-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/UserProfile"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
@@ -2344,7 +2616,14 @@
 				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"jwt": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header",
+				"description": "Enter JWT token with `Bearer <token>`"
+			}
+		}
 	},
 	"info": {
 		"title": "milqit-ecom-backend",
@@ -2355,6 +2634,528 @@
 		"contact": {}
 	},
 	"paths": {
+		"/mobile/user/{userId}/profile": {
+			"get": {
+				"operationId": "GetUserProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_UserProfile_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get the current user's profile based on their authentication token.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse____"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update the current user's profile.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_UserProfile_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mobile/user/{userId}/addresses": {
+			"get": {
+				"operationId": "GetAddresses",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all saved addresses for the current user.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "AddAddress",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_any_"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Add a new delivery address for the current user.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "RemoveAddress",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__success-boolean__"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a saved address for the current user.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"addressId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"addressId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mobile/user/{userId}/addresses/primary": {
+			"put": {
+				"operationId": "SetPrimaryAddress",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__success-boolean__"
+								},
+								"examples": {
+									"Example 1": {}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Set a primary delivery address from the user's saved addresses.",
+				"tags": [
+					"Mobile User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"addressId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"addressId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/products": {
 			"get": {
 				"operationId": "GetProducts",
@@ -3619,7 +4420,7 @@
 				]
 			}
 		},
-		"/api/v1/user/cart": {
+		"/user/cart": {
 			"post": {
 				"operationId": "AddToCart",
 				"responses": {
@@ -3970,7 +4771,7 @@
 				}
 			}
 		},
-		"/api/v1/user/cart/{productId}": {
+		"/user/cart/{productId}": {
 			"put": {
 				"operationId": "UpdateCartItem",
 				"responses": {
@@ -4126,7 +4927,7 @@
 				]
 			}
 		},
-		"/api/v1/user/cart/coupon": {
+		"/user/cart/coupon": {
 			"post": {
 				"operationId": "ApplyCoupon",
 				"responses": {
@@ -4211,7 +5012,7 @@
 				}
 			}
 		},
-		"/api/v1/user/cart/delivery": {
+		"/user/cart/delivery": {
 			"post": {
 				"operationId": "SetDeliveryInfo",
 				"responses": {
@@ -4296,7 +5097,7 @@
 				}
 			}
 		},
-		"/api/v1/user/cart/summary": {
+		"/user/cart/summary": {
 			"get": {
 				"operationId": "GetCartSummary",
 				"responses": {
@@ -4347,6 +5148,531 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/mobile/subscriptions": {
+			"get": {
+				"operationId": "GetAllSubscriptions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ISubscription-Array_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new subscription (e.g., Milk, Vegetables).",
+				"tags": [
+					"Subscriptions"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ISubscription_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Subscriptions"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_ISubscription_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mobile/subscriptions/{userId}": {
+			"get": {
+				"operationId": "GetSubscriptions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ISubscription-Array_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all subscriptions for a user.",
+				"tags": [
+					"Subscriptions"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/mobile/subscriptions/detail/{id}": {
+			"get": {
+				"operationId": "GetSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ISubscription_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a single subscription by ID.",
+				"tags": [
+					"Subscriptions"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/mobile/subscriptions/{id}": {
+			"put": {
+				"operationId": "UpdateSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ISubscription_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a subscription.",
+				"tags": [
+					"Subscriptions"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_ISubscription_"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse____"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a subscription (hard delete).",
+				"tags": [
+					"Subscriptions"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/mobile/subscriptions/{id}/cancel": {
+			"put": {
+				"operationId": "CancelSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ISubscription_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cancel a subscription (soft deactivate).",
+				"tags": [
+					"Subscriptions"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/mobile/auth/send-otp": {
@@ -4685,518 +6011,6 @@
 				}
 			}
 		},
-		"/mobile/user/{userId}/profile": {
-			"get": {
-				"operationId": "GetUserProfile",
-				"responses": {
-					"200": {
-						"description": "User Profile Retrieved",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiSuccessResponse_UserProfile_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get the current user's profile based on their authentication token.",
-				"tags": [
-					"Mobile User"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "UpdateProfile",
-				"responses": {
-					"200": {
-						"description": "Profile Updated",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiSuccessResponse____"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					}
-				},
-				"description": "Update the current user's profile.",
-				"tags": [
-					"Mobile User"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/mobile/user/{userId}/addresses": {
-			"get": {
-				"operationId": "GetAddresses",
-				"responses": {
-					"200": {
-						"description": "Addresses Retrieved",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiSuccessResponse_any-Array_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get all saved addresses for the current user.",
-				"tags": [
-					"Mobile User"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "AddAddress",
-				"responses": {
-					"201": {
-						"description": "Address Added",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiSuccessResponse_any_"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					}
-				},
-				"description": "Add a new delivery address for the current user.",
-				"tags": [
-					"Mobile User"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "RemoveAddress",
-				"responses": {
-					"200": {
-						"description": "Address Removed",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiSuccessResponse__success-boolean__"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					}
-				},
-				"description": "Delete a saved address for the current user.",
-				"tags": [
-					"Mobile User"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"addressId": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"addressId"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/mobile/user/{userId}/addresses/primary": {
-			"put": {
-				"operationId": "SetPrimaryAddress",
-				"responses": {
-					"200": {
-						"description": "Primary Address Set",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiSuccessResponse__success-boolean__"
-								},
-								"examples": {
-									"Example 1": {}
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					}
-				},
-				"description": "Set a primary delivery address from the user's saved addresses.",
-				"tags": [
-					"Mobile User"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"addressId": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"addressId"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/images": {
 			"post": {
 				"operationId": "UploadImage",
@@ -5437,7 +6251,7 @@
 				]
 			}
 		},
-		"/api/v1/admin/carts": {
+		"/admin/carts": {
 			"get": {
 				"operationId": "GetCarts",
 				"responses": {
@@ -5553,7 +6367,7 @@
 				]
 			}
 		},
-		"/api/v1/admin/carts/{cartId}": {
+		"/admin/carts/{cartId}": {
 			"get": {
 				"operationId": "GetCartById",
 				"responses": {
@@ -5592,7 +6406,7 @@
 				]
 			}
 		},
-		"/api/v1/admin/carts/analytics/stats": {
+		"/admin/carts/analytics/stats": {
 			"get": {
 				"operationId": "GetCartAnalytics",
 				"responses": {
@@ -5622,7 +6436,7 @@
 				"parameters": []
 			}
 		},
-		"/api/v1/admin/carts/cleanup/abandoned": {
+		"/admin/carts/cleanup/abandoned": {
 			"delete": {
 				"operationId": "CleanupAbandonedCarts",
 				"responses": {
@@ -5663,7 +6477,7 @@
 				]
 			}
 		},
-		"/api/v1/admin/carts/analytics/funnel": {
+		"/admin/carts/analytics/funnel": {
 			"get": {
 				"operationId": "GetCartFunnel",
 				"responses": {
@@ -5690,6 +6504,445 @@
 						]
 					}
 				],
+				"parameters": []
+			}
+		},
+		"/admin/create-admin": {
+			"post": {
+				"operationId": "CreateAdmin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_UserProfile_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new admin account. Only admins can create new admin accounts.",
+				"tags": [
+					"Admin Management"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateAdminRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__user-UserProfile--tokens-AuthTokens__"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"body": {
+												"email": "milqit@gmail.com",
+												"password": "Milqit@123"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Management"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/users-list": {
+			"get": {
+				"operationId": "ListUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_UserProfile-Array_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Management"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/admin/admin-users": {
+			"get": {
+				"operationId": "AdminlistUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_UserProfile-Array_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Management"
+				],
+				"security": [],
 				"parameters": []
 			}
 		},
@@ -6164,7 +7417,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse____"
+									"$ref": "#/components/schemas/SuccessResponse_IProduct_"
 								}
 							}
 						}
