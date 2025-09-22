@@ -233,7 +233,7 @@ const UserService = {
 
     async createCustomerUser(data: CreateUserInput): Promise<IUser> {
         const { email, password, ...restOfData } = data;
-        const finalPhone = data.phone || data.mobileNumber;
+        const finalPhone = data.phone 
 
         if (!finalPhone) {
             throw new PresentableError('VALIDATION_ERROR', 'A phone number is required to create an account.');
@@ -281,7 +281,7 @@ const UserService = {
 
                 // Merge phone number into the existing email account.
                 existingUser.phone = finalPhone;
-                existingUser.mobileNumber = finalPhone;
+                // existingUser.mobileNumber = finalPhone;
                 existingUser.isPhoneVerified = true;
                 await existingUser.save();
 

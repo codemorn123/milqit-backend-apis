@@ -20,6 +20,7 @@ export class MobileAuthController extends Controller {
   @Post('send-otp')
   // @Middlewares(validate(sendOtpSchema))
   @Middlewares([validateSchemaMiddleware(sendOtpSchema, "body")])
+
   public async sendOtp(@Body() body: ISendOtpInput): Promise<SuccessResponse<{ isNewUser: boolean, otp:string }>> {
       const otpResult = await authService.sendLoginOtp(body.phone);
       const isNewUser = !(await UserService.findUserByPhone(body.phone));
@@ -30,7 +31,7 @@ export class MobileAuthController extends Controller {
   // @Middlewares(validate(verifyOtpSchema))
   @Middlewares([validateSchemaMiddleware(verifyOtpSchema, "body")])
   public async verifyOtp(@Body() body: IVerifyOtpInput): Promise<SuccessResponse<IAuthResponse>> {
-    const result = await authService.verifyOtpAndAuthenticate(body);
+    const result = await authService.loginOrRegister(body.phone, body.otp);
     return success(result, 'Authentication successful');
   }
 

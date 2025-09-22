@@ -50,7 +50,7 @@ export const CreateUserSchema = z.object({
   roles: UserRolesSchema.optional(),
   isActive: z.boolean().optional().default(true),
   isPhoneVerified: z.boolean().optional().default(false),
-  mobileNumber: UserPhoneSchema.optional(),
+  // mobileNumber: UserPhoneSchema.optional(),
   isNewUser: z.boolean().optional().default(true),
 });
 
