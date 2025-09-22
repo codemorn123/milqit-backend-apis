@@ -6,7 +6,7 @@
     "outputDirectory": "build",
     "specVersion": 3,
     "basePath": "/v1",
-    "host": "localhost:3000",
+    "host": "localhost:5001",
     "schemes": ["http"],
     "info": {
       "title": "Milqit E-commerce API",

@@ -57,3 +57,23 @@ export interface IFilter {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
 }
+
+
+export interface DeviceInfo {
+  platform: 'ios' | 'android';
+  version: string;
+  deviceId: string;
+
+
+  appVersion?: string;
+  fcmToken?: string;
+}
+
+
+
+
+
+export interface Location {
+  latitude: number;
+  longitude: number;
+}

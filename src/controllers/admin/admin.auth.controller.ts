@@ -12,11 +12,11 @@ import {
   import { NOT_FOUND_ERROR_EXAMPLE, SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from '../../error/exampleErrors';
   import { success, SuccessResponse } from '../../utils/SuccessResponse';
   import { AuthService } from '../../services/auth.service';
-import { AuthTokens, CreateAdminRequest, IAuthResponse, LoginRequest, UserProfile } from '../../types/auth.types';
+import { AuthTokens, CreateAdminRequest,  LoginRequest, UserProfile } from '../../types/auth.types';
 import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { createAdminSchema } from '../../validations/admin.validation';
 import { AdminService } from '../../services/admin.service';
-import { IAdminDocument } from '../../models/AdminModel';
+
 
   
   @Route('admin')

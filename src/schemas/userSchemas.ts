@@ -2,12 +2,15 @@ import { z } from 'zod';
 
 /* ----------------------------- Base primitives ---------------------------- */
 
-export const UserEmailSchema = z
+
+  export const UserEmailSchema = z
   .string()
   .min(5, { message: 'Email must be at least 5 characters' })
   .max(100, { message: 'Email must be less than 100 characters' })
   .email({ message: 'Invalid email format' })
-  .transform((email) => email.toLowerCase().trim());
+  .transform((email) => email.toLowerCase().trim())
+  .nullable(); // This makes the entire schema also accept null
+
 
 export const UserNameSchema = z
   .string()
@@ -48,6 +51,7 @@ export const CreateUserSchema = z.object({
   isActive: z.boolean().optional().default(true),
   isPhoneVerified: z.boolean().optional().default(false),
   mobileNumber: UserPhoneSchema.optional(),
+  isNewUser: z.boolean().optional().default(true),
 });
 
 export const UpdateUserSchema = z
@@ -64,53 +68,17 @@ export const UpdateUserSchema = z
 
 /* ----------------------------- Query / util schemas ------------------------- */
 
-export const UserFiltersSchema = z.object({
-  search: z.string().min(1).max(100).trim().optional(),
-  role: RolesEnum.optional(),
-  isActive: z.boolean().optional(),
-  isEmailVerified: z.boolean().optional(),
-  isPhoneVerified: z.boolean().optional(),
-  sortBy: z.enum(['name', 'email', 'createdAt', 'lastLogin']).optional().default('createdAt'),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
-});
+
 
 /**
  * Use z.coerce.number() for query params (they often come as strings)
  */
-export const PaginationSchema = z.object({
-  page: z
-    .coerce
-    .number()
-    .refine((n) => !Number.isNaN(n), { message: 'page must be a number' })
-    .min(1, { message: 'page must be at least 1' })
-    .default(1),
-  limit: z
-    .coerce
-    .number()
-    .refine((n) => !Number.isNaN(n), { message: 'limit must be a number' })
-    .min(1, { message: 'limit must be at least 1' })
-    .max(100, { message: 'limit must be at most 100' })
-    .default(10),
-});
 
 /* ----------------------------- ID / Bulk schemas ---------------------------- */
 
 export const UserIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, { message: 'Invalid user ID format' });
-
-export const BulkUpdateSchema = z.object({
-  userIds: z.array(UserIdSchema).min(1).max(100),
-  updates: z
-    .object({
-      isActive: z.boolean().optional(),
-      roles: UserRolesSchema.optional(),
-      name: UserNameSchema.optional(),
-      phone: UserPhoneSchema.optional(),
-    })
-    .partial(),
-});
-
 
 
 
@@ -200,6 +168,5 @@ export default {
 
 export type CreateUserInput = z.infer<typeof CreateUserSchema>;
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
-export type BulkUpdateInput = z.infer<typeof BulkUpdateSchema>;
-export type PaginationInput = z.infer<typeof PaginationSchema>;
-export type UserFiltersInput = z.infer<typeof UserFiltersSchema>;
+
+

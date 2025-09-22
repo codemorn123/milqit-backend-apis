@@ -1,3 +1,4 @@
+import { DeviceInfo } from './../types/common.types';
 import mongoose, { Schema, Document, PaginateModel, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 export type CouponType = 'percentage' | 'fixed' | 'buy_x_get_y' | 'free_delivery' | 'cashback';
@@ -32,18 +33,7 @@ export interface UsageRestrictions {
   };
 }
 
-/**
- * Device Info interface for mobile tracking
- * @author MarotiKathoke
- * @created 2025-09-13 17:01:51
- */
-export interface DeviceInfo {
-  platform: 'ios' | 'android';
-  version: string;
-  deviceId: string;
-  appVersion?: string;
-  fcmToken?: string;
-}
+
 
 /**
  * Location interface - Enhanced for delivery zones

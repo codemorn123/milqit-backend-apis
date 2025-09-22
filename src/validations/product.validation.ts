@@ -1,9 +1,7 @@
 import { z } from 'zod';
 import mongoose from 'mongoose';
 
-// Current context
-const CURRENT_TIMESTAMP = '20250901045437';
-const CURRENT_USER = 'MarotiKathoke';
+
 
 // Valid units
 const VALID_UNITS = ['piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen'] as const;

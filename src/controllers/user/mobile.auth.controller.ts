@@ -29,7 +29,7 @@ export class MobileAuthController extends Controller {
   @Post('verify-otp')  
   // @Middlewares(validate(verifyOtpSchema))
   @Middlewares([validateSchemaMiddleware(verifyOtpSchema, "body")])
-  public async verifyOtp(@Body() body: IVerifyOtpInput): Promise< SuccessResponse<IAuthResponse>> {
+  public async verifyOtp(@Body() body: IVerifyOtpInput): Promise<SuccessResponse<IAuthResponse>> {
     const result = await authService.verifyOtpAndAuthenticate(body);
     return success(result, 'Authentication successful');
   }

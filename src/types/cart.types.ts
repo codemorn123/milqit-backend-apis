@@ -5,6 +5,9 @@
  * @created 2025-09-13 16:44:44
  */
 
+import { DeviceInfo } from "./common.types";
+import { Address } from "./location.types";
+
 // Simple, direct interfaces without "I" prefix
 export interface CartItem {
     productId: string;
@@ -32,24 +35,12 @@ export interface CartItem {
     email?: string;
   }
   
-  export interface Address {
-    id: string;
-    address: string;
-    city: string;
-    state: string;
-    pincode?: string;
-  }
-  
-  export interface DeviceInfo {
-    platform: 'ios' | 'android';
-    version: string;
-    deviceId: string;
-  }
+
+
   
   export interface Location {
     latitude: number;
     longitude: number;
-    address: string;
   }
   
   export interface Cart {
@@ -223,13 +214,14 @@ export interface CartItem {
       savings: cartDoc.savings || 0,
       status: cartDoc.status || 'active',
       deliveryType: cartDoc.deliveryType || 'standard',
-      deliveryAddress: cartDoc.deliveryAddress && typeof cartDoc.deliveryAddress === 'object' ? {
-        id: cartDoc.deliveryAddress._id?.toString() || cartDoc.deliveryAddress.id,
-        address: cartDoc.deliveryAddress.address || '',
-        city: cartDoc.deliveryAddress.city || '',
-        state: cartDoc.deliveryAddress.state || '',
-        pincode: cartDoc.deliveryAddress.pincode
-      } : undefined,
+      deliveryAddress: cartDoc.deliveryAddress || '',
+      // deliveryAddress: cartDoc.deliveryAddress && typeof cartDoc.deliveryAddress === 'object' ? {
+      //   id: cartDoc.deliveryAddress._id?.toString() || cartDoc.deliveryAddress.id,
+      //   address: cartDoc.deliveryAddress.address || '',
+      //   city: cartDoc.deliveryAddress.city || '',
+      //   state: cartDoc.deliveryAddress.state || '',
+      //   pincode: cartDoc.deliveryAddress.pincode
+      // } : undefined,
       scheduledDelivery: cartDoc.scheduledDelivery?.toISOString(),
       estimatedDelivery: cartDoc.estimatedDelivery?.toISOString(),
       appliedCoupons: cartDoc.appliedCoupons || [],

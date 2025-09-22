@@ -7,7 +7,7 @@ import { tokenService } from './token.service';
 import { logger } from '../config/logger';
 import { SmsService } from './sms.service';
 import UserService from './user.service';
-import { UserModel } from '../models/UserModel';
+import { IUser, UserModel } from '../models/UserModel';
 
 import {
   IVerifyOtpInput,
@@ -22,8 +22,6 @@ import {
 import { CreateUserInput } from '../schemas/userSchemas';
 import { PresentableError } from '../error/clientErrorHelper';
 import { AdminService } from './admin.service';
-import { IAdminDocument } from '../models/AdminModel';
-// import Response as ExResponse from 'express';
 
 /**
  * Service for handling authentication-related operations
@@ -34,7 +32,7 @@ export class AuthService {
    * @param data Registration data
    * @returns User profile and authentication tokens
    */
-  static async register(data: RegisterInput): Promise<{ user: UserProfile; tokens: AuthTokens }> {
+  static async register(data: RegisterInput): Promise<{ user: IUser; tokens: AuthTokens }> {
     // Validate input
     if (!data.email) {
       throw new PresentableError('VALIDATION_ERROR', 'Email is required');
@@ -57,11 +55,11 @@ export class AuthService {
       expiresIn: parseInt(tokenResponse.expiresIn) || 3600
     };
     
-    return { user: newUser.toProfileDTO(), tokens };
+    return { user: newUser, tokens };
   }
 
 
-  static async login(data: LoginInput): Promise<{ user: UserProfile; tokens: AuthTokens }> {
+  static async login(data: LoginInput): Promise<{ user: IUser; tokens: AuthTokens }> {
     // Validate input
     if (!data.email || !data.password) {
       throw new PresentableError('VALIDATION_ERROR', 'Email and password are required');
@@ -90,7 +88,7 @@ export class AuthService {
       expiresIn: parseInt(tokenResponse.expiresIn) || 3600
     };
 
-    return { user: user.toProfileDTO(), tokens };
+    return { user: user, tokens };
   }
 
   /**
@@ -144,26 +142,28 @@ export class AuthService {
    * @param data Admin user data
    * @returns Created admin user profile
    */
-  static async bootstrapAdmin(data: CreateAdminInput): Promise<UserProfile> {
-    // Check if admin accounts already exist
-    const adminCount = await UserService.countAdmins();
-    if (adminCount > 0) {
-      throw new PresentableError('FORBIDDEN', 'Admin accounts already exist. Bootstrap is not allowed.');
-    }
+  // static async bootstrapAdmin(data: CreateAdminInput): Promise<IUser> {
+  //   // Check if admin accounts already exist
+  //   const adminCount = await UserService.countAdmins();
+  //   if (adminCount > 0) {
+  //     throw new PresentableError('FORBIDDEN', 'Admin accounts already exist. Bootstrap is not allowed.');
+  //   }
     
-    // Create bootstrap admin user
-    const adminUser = await UserService.createUser({
-      ...data,
-      isActive: data.isActive ?? true,
-      isPhoneVerified: true
-    }, true);
+  //   // Create bootstrap admin user
+  //   const adminUser = await UserService.createUser({
+  //     ...data,
+  //     isActive: data.isActive ?? true,
+  //     isPhoneVerified: true
+  //   }, true);
     
-    if (!adminUser) {
-      throw new PresentableError('SERVER_ERROR', 'Failed to bootstrap admin user');
-    }
+  //   if (!adminUser) {
+  //     throw new PresentableError('SERVER_ERROR', 'Failed to bootstrap admin user');
+  //   }
 
-    return adminUser.toProfileDTO();
-  }
+    
+
+  //   // return adminUser.toProfileDTO();
+  // }
 
   /**
    * Sends a login OTP to the provided phone number
@@ -291,6 +291,7 @@ export class AuthService {
 
       // Check if user exists
       let user = await UserService.findUserByPhone(phone);
+      console.log("🚀 ~ file: auth.service.ts:333 ~ AuthService ~ verifyOtpAndAuthenticate ~ user:", user)
       const isNewUser = !user;
 
       // Handle new user registration
@@ -302,15 +303,16 @@ export class AuthService {
         
         // Generate a random password for the new user
         const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-        
-        // Create new user
-        user = await UserService.createUser({
+
+
+        user = await UserService.createCustomerUser({
           name,
           phone,
           mobileNumber: phone, // Ensure mobileNumber field is set
-          email:"",
+          email:  null,
           password: randomPassword,
           isActive: true,
+          isNewUser:isNewUser,
           isPhoneVerified: true,
           roles: ['customer']
         });
@@ -366,16 +368,7 @@ export class AuthService {
 
       // Return user profile and tokens
       return {
-        user: {
-          id: user.id,
-          name: user.name,
-          phone: user.phone || '',
-          email: user.email || '',
-          isPhoneVerified: true,
-          isNewUser,
-          createdAt: user.createdAt.toISOString(),
-          updatedAt: user.updatedAt.toISOString()
-        },
+        user: user,
         tokens
       };
     } catch (error: any) {

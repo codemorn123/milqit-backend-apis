@@ -1,20 +1,5 @@
-/**
- * Core user model interface representing user data in the database
- */
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  password: string; // Stored as hashed value
-  roles: string[];
-  isActive: boolean;
-  isEmailVerified: boolean;
-  isPhoneVerified: boolean;
-  lastLogin?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IUser } from "./../models/UserModel";
+
 
 /**
  * The shape of the user profile data that is safe to return to clients.
@@ -136,16 +121,7 @@ export interface OtpVerificationResponse {
  * Mobile authentication response
  */
 export interface IAuthResponse {
-  user: {
-    id: string;
-    name: string;
-    phone: string;
-    email?: string;
-    isPhoneVerified: boolean;
-    isNewUser: boolean;
-    createdAt: string;
-    updatedAt: string;
-  };
+  user: IUser
   tokens: AuthTokens;
 }
 

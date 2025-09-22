@@ -311,6 +311,7 @@ const emailSchema = Joi.string()
  */
 const deviceIdSchema = Joi.string()
   .trim()
+  .allow('') 
   .min(MOBILE_AUTH_CONFIG.deviceIdMinLength)
   .max(255)
   .optional()

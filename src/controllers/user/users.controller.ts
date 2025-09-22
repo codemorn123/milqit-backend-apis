@@ -21,6 +21,7 @@ import { UserProfile } from'./../../types/auth.types';
 
 import UserService from './../../services/user.service';
 import { success, SuccessResponse } from './../../utils/SuccessResponse';
+import { IUser } from './../../models/UserModel';
 
 
 // Example mock data
@@ -67,12 +68,12 @@ export class MobileUserController extends Controller {
   )
   public async getUserProfile(
     @Path() userId: string
-  ): Promise<SuccessResponse<UserProfile>> {
+  ): Promise<SuccessResponse<IUser>> {
     const user = await UserService.getActiveUserById(userId); // return IUserDocument | null
     if (!user) {
       throw new PresentableError('NOT_FOUND', 'User not found');
     }
-    return success(user.toProfileDTO(), 'User profile retrieved successfully');
+    return success(user, 'User profile retrieved successfully');
   }
 
   /**

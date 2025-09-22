@@ -29,13 +29,6 @@ export interface PaginatedList<Item = any> {
 
 
 
-
-// interface ApiResponse<T> {
-//   data: T;
-//   meta?: Pagination;
-//   isAppError?: boolean;
-// }
-
 // export abstract class BaseResponse<T> {
 //   protected abstract statusCode: StatusCodes;
 

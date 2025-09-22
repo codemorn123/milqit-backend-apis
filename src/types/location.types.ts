@@ -7,12 +7,13 @@ export interface GeoLocation {
     accuracy?: number;
 }
 
-/**
- * GeoJSON point for MongoDB
- */
+
+
+
+
 export interface GeoPoint {
     type: 'Point';
-    coordinates: [number, number]; // [longitude, latitude]
+    coordinates: number[]; // [longitude, latitude]
 }
 
 /**

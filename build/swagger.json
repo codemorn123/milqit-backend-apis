@@ -99,19 +99,84 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserProfile": {
-				"description": "The shape of the user profile data that is safe to return to clients.\nPassword and sensitive data are omitted.",
+			"Address": {
+				"description": "Address information",
 				"properties": {
 					"id": {
 						"type": "string"
 					},
-					"name": {
+					"label": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"pincode": {
+						"type": "string"
+					},
+					"landmark": {
+						"type": "string"
+					},
+					"latitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"longitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"addressType": {
+						"type": "string",
+						"enum": [
+							"home",
+							"work",
+							"other"
+						]
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"label",
+					"address",
+					"city",
+					"state",
+					"pincode",
+					"addressType",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUser": {
+				"properties": {
+					"id": {
 						"type": "string"
 					},
 					"email": {
 						"type": "string"
 					},
+					"name": {
+						"type": "string"
+					},
 					"phone": {
+						"type": "string"
+					},
+					"passwordHash": {
 						"type": "string"
 					},
 					"roles": {
@@ -130,30 +195,73 @@
 						"type": "boolean"
 					},
 					"lastLogin": {
-						"type": "string"
+						"type": "string",
+						"format": "date-time"
 					},
 					"createdAt": {
-						"type": "string"
+						"type": "string",
+						"format": "date-time"
 					},
 					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"mobileNumber": {
 						"type": "string"
+					},
+					"primaryAddressId": {
+						"type": "string"
+					},
+					"addresses": {
+						"items": {
+							"$ref": "#/components/schemas/Address"
+						},
+						"type": "array"
+					},
+					"isNewUser": {
+						"type": "boolean"
+					},
+					"currentLocation": {
+						"properties": {
+							"coordinates": {
+								"items": {
+									"type": "number",
+									"format": "double"
+								},
+								"type": "array"
+							},
+							"type": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"coordinates",
+							"type"
+						],
+						"type": "object"
+					},
+					"lastLocationUpdate": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
 					"id",
-					"name",
 					"email",
+					"name",
+					"passwordHash",
 					"roles",
 					"isActive",
 					"isEmailVerified",
 					"isPhoneVerified",
 					"createdAt",
-					"updatedAt"
+					"updatedAt",
+					"isNewUser"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SuccessResponse_UserProfile_": {
+			"SuccessResponse_IUser_": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -166,7 +274,7 @@
 						"type": "string"
 					},
 					"result": {
-						"$ref": "#/components/schemas/UserProfile"
+						"$ref": "#/components/schemas/IUser"
 					}
 				},
 				"required": [
@@ -1487,42 +1595,7 @@
 				"description": "Mobile authentication response",
 				"properties": {
 					"user": {
-						"properties": {
-							"updatedAt": {
-								"type": "string"
-							},
-							"createdAt": {
-								"type": "string"
-							},
-							"isNewUser": {
-								"type": "boolean"
-							},
-							"isPhoneVerified": {
-								"type": "boolean"
-							},
-							"email": {
-								"type": "string"
-							},
-							"phone": {
-								"type": "string"
-							},
-							"name": {
-								"type": "string"
-							},
-							"id": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"updatedAt",
-							"createdAt",
-							"isNewUser",
-							"isPhoneVerified",
-							"phone",
-							"name",
-							"id"
-						],
-						"type": "object"
+						"$ref": "#/components/schemas/IUser"
 					},
 					"tokens": {
 						"$ref": "#/components/schemas/AuthTokens"
@@ -1768,7 +1841,6 @@
 				"additionalProperties": false
 			},
 			"CartItem": {
-				"description": "Admin Cart DTOs - Clean and Simple Structure\nOptimized for React Native mobile apps (RFS, SmartFlow, home_fresh_app, core_mobile_app, shree-react-naive-app)",
 				"properties": {
 					"productId": {
 						"type": "string"
@@ -1848,33 +1920,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Address": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"address": {
-						"type": "string"
-					},
-					"city": {
-						"type": "string"
-					},
-					"state": {
-						"type": "string"
-					},
-					"pincode": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"address",
-					"city",
-					"state"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"DeviceInfo": {
 				"properties": {
 					"platform": {
@@ -1888,6 +1933,12 @@
 						"type": "string"
 					},
 					"deviceId": {
+						"type": "string"
+					},
+					"appVersion": {
+						"type": "string"
+					},
+					"fcmToken": {
 						"type": "string"
 					}
 				},
@@ -1908,15 +1959,11 @@
 					"longitude": {
 						"type": "number",
 						"format": "double"
-					},
-					"address": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"latitude",
-					"longitude",
-					"address"
+					"longitude"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2379,6 +2426,190 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"BannerPlacement": {
+				"enum": [
+					"HOME_HERO_CAROUSEL",
+					"HOME_CATEGORY_STRIP",
+					"HOME_STATIC_TILE",
+					"CATEGORY_HEADER",
+					"PRODUCT_LIST_INLINE",
+					"SEARCH_PAGE_BANNER",
+					"CHECKOUT_PAGE_OFFER"
+				],
+				"type": "string"
+			},
+			"BannerPlatform": {
+				"description": "Defines the target platform for the banner.",
+				"enum": [
+					"WEB",
+					"MOBILE"
+				],
+				"type": "string"
+			},
+			"BannerPurpose": {
+				"enum": [
+					"GENERAL_PROMOTION",
+					"NEW_LAUNCH",
+					"SALE_EVENT",
+					"BANK_OFFER",
+					"PAYMENT_WALLET_OFFER",
+					"APP_FEATURE_AWARENESS",
+					"BRAND_AWARENESS"
+				],
+				"type": "string"
+			},
+			"IBanner": {
+				"description": "Represents the structure of a banner document in MongoDB.",
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"placement": {
+						"$ref": "#/components/schemas/BannerPlacement"
+					},
+					"platform": {
+						"$ref": "#/components/schemas/BannerPlatform"
+					},
+					"purpose": {
+						"$ref": "#/components/schemas/BannerPurpose"
+					},
+					"imageUrl": {
+						"type": "string"
+					},
+					"redirectLink": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"endDate": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"title",
+					"placement",
+					"platform",
+					"imageUrl",
+					"isActive"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IBannerFilter": {
+				"description": "Defines the available query parameters for filtering banners.",
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"placement": {
+						"$ref": "#/components/schemas/BannerPlacement"
+					},
+					"purpose": {
+						"$ref": "#/components/schemas/BannerPurpose"
+					},
+					"platform": {
+						"$ref": "#/components/schemas/BannerPlatform"
+					},
+					"isActive": {
+						"type": "string",
+						"enum": [
+							"true",
+							"false"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserProfile": {
+				"description": "The shape of the user profile data that is safe to return to clients.\nPassword and sensitive data are omitted.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"isEmailVerified": {
+						"type": "boolean"
+					},
+					"isPhoneVerified": {
+						"type": "boolean"
+					},
+					"lastLogin": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"email",
+					"roles",
+					"isActive",
+					"isEmailVerified",
+					"isPhoneVerified",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_UserProfile_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/UserProfile"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateAdminRequest": {
 				"description": "Create admin request",
 				"properties": {
@@ -2643,7 +2874,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_UserProfile_"
+									"$ref": "#/components/schemas/SuccessResponse_IUser_"
 								},
 								"examples": {
 									"Example 1": {}
@@ -6507,6 +6738,236 @@
 				"parameters": []
 			}
 		},
+		"/banners": {
+			"post": {
+				"operationId": "CreateBanner",
+				"responses": {
+					"201": {
+						"description": "Banner Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/IBanner"
+										},
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"data",
+										"message",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					}
+				},
+				"description": "Upload a new banner. The form fields are validated before the file is processed.",
+				"tags": [
+					"Banner"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"get": {
+				"operationId": "GetAllBanners",
+				"responses": {
+					"200": {
+						"description": "Successfully fetched all banners",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"$ref": "#/components/schemas/IPaginated"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/IBanner"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"pagination",
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					}
+				},
+				"description": "Retrieve all banners with validated filtering and pagination.",
+				"tags": [
+					"Banner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "placement",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPlacement"
+						}
+					},
+					{
+						"in": "query",
+						"name": "purpose",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPurpose"
+						}
+					},
+					{
+						"in": "query",
+						"name": "platform",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPlatform"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"true",
+								"false"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/banners/{id}": {
+			"get": {
+				"operationId": "GetBannerById",
+				"responses": {
+					"200": {
+						"description": "Successfully fetched banner by ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/IBanner"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid ID Format"
+					},
+					"404": {
+						"description": "Banner Not Found"
+					}
+				},
+				"description": "Retrieve a specific banner by its ID (validated).",
+				"tags": [
+					"Banner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The banner's unique MongoDB ObjectID.",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteBanner",
+				"responses": {
+					"200": {
+						"description": "Successfully deleted banner",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"status": {
+											"type": "number",
+											"format": "double"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"status",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid ID Format"
+					},
+					"404": {
+						"description": "Banner Not Found"
+					}
+				},
+				"description": "Delete a banner by its ID (validated).",
+				"tags": [
+					"Banner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The banner's unique MongoDB ObjectID.",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/admin/create-admin": {
 			"post": {
 				"operationId": "CreateAdmin",
@@ -6944,6 +7405,164 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/admin/users": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IUser"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieves a list of users. Can be filtered by status.\nThis action requires admin privileges.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Filter users by their status. 'active' for active users, 'inactive' for deactivated users. Defaults to all users.",
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"active",
+								"inactive"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/users/{userId}": {
+			"delete": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse____"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User Not Found"
+					}
+				},
+				"description": "Deactivates a user account (Soft Delete).\nThis action requires admin privileges.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The identifier of the user to be deactivated.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "GetUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUser"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User Not Found"
+					}
+				},
+				"description": "Retrieves a single user by their ID.\nThis action requires admin privileges.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The identifier of the user.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/users/{userId}/force": {
+			"delete": {
+				"operationId": "HardDeleteUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"message",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User Not Found"
+					}
+				},
+				"description": "Permanently deletes a user from the database (Hard Delete).\nThis is a destructive and irreversible action.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The identifier of the user to be permanently deleted.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/admin/products": {
@@ -8374,7 +8993,7 @@
 	},
 	"servers": [
 		{
-			"url": "http://localhost:3000/v1"
+			"url": "http://localhost:5001/v1"
 		}
 	]
 }
