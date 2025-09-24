@@ -168,8 +168,7 @@
 						"type": "string"
 					},
 					"email": {
-						"type": "string",
-						"nullable": true
+						"type": "string"
 					},
 					"name": {
 						"type": "string"
@@ -206,9 +205,6 @@
 					"updatedAt": {
 						"type": "string",
 						"format": "date-time"
-					},
-					"mobileNumber": {
-						"type": "string"
 					},
 					"primaryAddressId": {
 						"type": "string"
@@ -248,8 +244,8 @@
 				},
 				"required": [
 					"id",
-					"email",
 					"name",
+					"phone",
 					"passwordHash",
 					"roles",
 					"isActive",
@@ -2843,6 +2839,66 @@
 					"success",
 					"message",
 					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IKisanCommunity": {
+				"properties": {
+					"farmerName": {
+						"type": "string"
+					},
+					"farmName": {
+						"type": "string"
+					},
+					"farmLocation": {
+						"type": "string"
+					},
+					"mobile": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"products": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"profileImage": {
+						"properties": {
+							"key": {
+								"type": "string"
+							},
+							"url": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"key",
+							"url"
+						],
+						"type": "object"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"farmerName",
+					"farmName",
+					"farmLocation",
+					"mobile",
+					"products",
+					"description",
+					"createdAt",
+					"updatedAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -8989,6 +9045,312 @@
 						}
 					}
 				}
+			}
+		},
+		"/dashbord/cms/kisan-community": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IKisanCommunity"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					}
+				},
+				"tags": [
+					"Kisan Community"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"farmerName": {
+										"type": "string"
+									},
+									"farmName": {
+										"type": "string"
+									},
+									"farmLocation": {
+										"type": "string"
+									},
+									"mobile": {
+										"type": "string"
+									},
+									"products": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"profileImage": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"farmerName",
+									"farmName",
+									"farmLocation",
+									"mobile",
+									"products",
+									"description"
+								]
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAll",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"$ref": "#/components/schemas/IPaginated"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/IKisanCommunity"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"pagination",
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Kisan Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/dashbord/cms/kisan-community/{id}": {
+			"get": {
+				"operationId": "GetById",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IKisanCommunity"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Kisan Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IKisanCommunity"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Kisan Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"farmerName": {
+										"type": "string"
+									},
+									"farmName": {
+										"type": "string"
+									},
+									"farmLocation": {
+										"type": "string"
+									},
+									"mobile": {
+										"type": "string"
+									},
+									"products": {
+										"type": "string"
+									},
+									"description": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"profileImage": {
+										"type": "string",
+										"format": "binary"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Kisan Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		}
 	},

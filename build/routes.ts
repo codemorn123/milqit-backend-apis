@@ -29,9 +29,13 @@ import { AdminUsersController } from './../src/controllers/admin/AdminUserContro
 import { AdminProductController } from './../src/controllers/admin/AdminProductController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AdminCategoryController } from './../src/controllers/admin/AdminCategoriesController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { KisanCommunityController } from './../src/controllers/admin/cms/kisan-community.controller';
 import { expressAuthentication } from './../src/middleware/auth-helper';
 // @ts-ignore - no great way to install types from subpackage
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
+const multer = require('multer');
+
 
 const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, securityName: string, scopes?: string[], res?: ExResponse) => Promise<any>;
 
@@ -94,9 +98,9 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"string","required":true},
-            "email": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "email": {"dataType":"string"},
             "name": {"dataType":"string","required":true},
-            "phone": {"dataType":"string"},
+            "phone": {"dataType":"string","required":true},
             "passwordHash": {"dataType":"string","required":true},
             "roles": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "isActive": {"dataType":"boolean","required":true},
@@ -105,7 +109,6 @@ const models: TsoaRoute.Models = {
             "lastLogin": {"dataType":"datetime"},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
-            "mobileNumber": {"dataType":"string"},
             "primaryAddressId": {"dataType":"string"},
             "addresses": {"dataType":"array","array":{"dataType":"refObject","ref":"Address"}},
             "isNewUser": {"dataType":"boolean","required":true},
@@ -977,6 +980,23 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IKisanCommunity": {
+        "dataType": "refObject",
+        "properties": {
+            "farmerName": {"dataType":"string","required":true},
+            "farmName": {"dataType":"string","required":true},
+            "farmLocation": {"dataType":"string","required":true},
+            "mobile": {"dataType":"string","required":true},
+            "email": {"dataType":"string"},
+            "products": {"dataType":"string","required":true},
+            "description": {"dataType":"string","required":true},
+            "profileImage": {"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"dataType":"string","required":true},"url":{"dataType":"string","required":true}}},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
@@ -985,13 +1005,14 @@ const templateService = new ExpressTemplateService(models, {"noImplicitAdditiona
 
 
 
-export function RegisterRoutes(app: Router) {
+export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof multer>}) {
 
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
 
+    const upload = opts?.multer ||  multer({"limits":{"fileSize":8388608}});
 
     
         const argsMobileUserController_getUserProfile: Record<string, TsoaRoute.ParameterSchema> = {
@@ -3016,6 +3037,183 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsKisanCommunityController_create: Record<string, TsoaRoute.ParameterSchema> = {
+                farmerName: {"in":"formData","name":"farmerName","required":true,"dataType":"string"},
+                farmName: {"in":"formData","name":"farmName","required":true,"dataType":"string"},
+                farmLocation: {"in":"formData","name":"farmLocation","required":true,"dataType":"string"},
+                mobile: {"in":"formData","name":"mobile","required":true,"dataType":"string"},
+                products: {"in":"formData","name":"products","required":true,"dataType":"string"},
+                description: {"in":"formData","name":"description","required":true,"dataType":"string"},
+                email: {"in":"formData","name":"email","dataType":"string"},
+                profileImage: {"in":"formData","name":"profileImage","dataType":"file"},
+        };
+        app.post('/dashbord/cms/kisan-community',
+            upload.fields([
+                {
+                    name: "profileImage",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.create)),
+
+            async function KisanCommunityController_create(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsKisanCommunityController_create, request, response });
+
+                const controller = new KisanCommunityController();
+
+              await templateService.apiHandler({
+                methodName: 'create',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsKisanCommunityController_getAll: Record<string, TsoaRoute.ParameterSchema> = {
+                queryParams: {"in":"queries","name":"queryParams","required":true,"ref":"IFilter"},
+        };
+        app.get('/dashbord/cms/kisan-community',
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.getAll)),
+
+            async function KisanCommunityController_getAll(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsKisanCommunityController_getAll, request, response });
+
+                const controller = new KisanCommunityController();
+
+              await templateService.apiHandler({
+                methodName: 'getAll',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsKisanCommunityController_getById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/dashbord/cms/kisan-community/:id',
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.getById)),
+
+            async function KisanCommunityController_getById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsKisanCommunityController_getById, request, response });
+
+                const controller = new KisanCommunityController();
+
+              await templateService.apiHandler({
+                methodName: 'getById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsKisanCommunityController_update: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                farmerName: {"in":"formData","name":"farmerName","dataType":"string"},
+                farmName: {"in":"formData","name":"farmName","dataType":"string"},
+                farmLocation: {"in":"formData","name":"farmLocation","dataType":"string"},
+                mobile: {"in":"formData","name":"mobile","dataType":"string"},
+                products: {"in":"formData","name":"products","dataType":"string"},
+                description: {"in":"formData","name":"description","dataType":"string"},
+                email: {"in":"formData","name":"email","dataType":"string"},
+                profileImage: {"in":"formData","name":"profileImage","dataType":"file"},
+        };
+        app.put('/dashbord/cms/kisan-community/:id',
+            upload.fields([
+                {
+                    name: "profileImage",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.update)),
+
+            async function KisanCommunityController_update(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsKisanCommunityController_update, request, response });
+
+                const controller = new KisanCommunityController();
+
+              await templateService.apiHandler({
+                methodName: 'update',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsKisanCommunityController_delete: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/dashbord/cms/kisan-community/:id',
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
+            ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.delete)),
+
+            async function KisanCommunityController_delete(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsKisanCommunityController_delete, request, response });
+
+                const controller = new KisanCommunityController();
+
+              await templateService.apiHandler({
+                methodName: 'delete',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
               });
             } catch (err) {
                 return next(err);
