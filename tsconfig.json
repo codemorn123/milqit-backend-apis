@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "strict": true,
     
-    "outDir": "build", /* Changed from "dist" to "build" to match where TSOA is looking */
+
     "sourceMap": true,
     "declaration": true,
     "experimentalDecorators": true,
@@ -19,11 +19,12 @@
     },
 
     /* Added for better TSOA compatibility */
-    "rootDir": ".",
+"outDir": "./build",      // Correct: Output to a top-level 'build' folder
+    "rootDir": "./src", 
     "typeRoots": ["./node_modules/@types", "./src/types","./@types",],
     "noImplicitAny": false, /* Temporarily disable to avoid issues with TSOA analysis */
     "moduleResolution": "node"
   },
   "include": ["src/**/*", "tsoa.json","@types/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "build"]
 }

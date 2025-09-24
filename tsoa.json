@@ -31,10 +31,10 @@
     }
   },
   "routes": {
-    "routesDir": "build",
     "middleware": "express",
     "authenticationModule": "./src/middleware/auth-helper.ts",
-    "routesFileName": "routes.ts"
+    "routesFileName": "routes.ts",
+    "routesDir": "src/generated"
   
   }
 }

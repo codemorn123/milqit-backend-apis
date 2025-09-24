@@ -8,7 +8,7 @@ import { config } from './config';
 import { logger } from './config/logger';
 import pinoHttp from 'pino-http';
 import morgan from 'morgan';
-import { RegisterRoutes } from '../build/routes';
+import { RegisterRoutes } from '../src/generated/routes';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middleware/error';
 import path from 'path';
