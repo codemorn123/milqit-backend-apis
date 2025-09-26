@@ -1,6 +1,7 @@
 import { success, SuccessResponse } from './../../utils/SuccessResponse';
 import { IUser } from './../../models/UserModel';
 import { AdminUserService } from  './../../services/admin/admin.users.service';
+import { errorSuccess } from '../../utils/SuccessResponse';
 import {
     Route,
     Tags,
@@ -80,7 +81,7 @@ import {
         return { success: true, message: "User permanently deleted successfully" };
       } catch (error: any) {
         if (error.code === 'NOT_FOUND') {
-          this.setStatus(404);
+       errorSuccess(error);
           throw error;
         }
         this.setStatus(500);

@@ -9,8 +9,6 @@ import {
     SuccessResponse,
     Path,
     Delete,
-    UploadedFile,
-    FormField,
     Response,
     Request,
   } from 'tsoa';

@@ -1,13 +1,7 @@
 import { BannerPlacement, BannerPurpose } from "./../types/banner.enums";
 import { BannerPlatform } from "./../types/banner.types";
 import Joi from "joi";
-// import { BannerPlacement, BannerPurpose } from "../types/banner.enums";
-// import { BannerPlatform } from "../types/banner.types";
 
-/**
- * Schema for validating the creation of a new banner.
- * TSOA uses this to validate the @FormField inputs from multipart/form-data.
- */
 export const createBannerSchema = Joi.object({
   title: Joi.string().trim().min(3).max(100).required().messages({
     "string.empty": '"title" cannot be empty',

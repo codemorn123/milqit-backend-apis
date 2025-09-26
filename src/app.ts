@@ -15,7 +15,6 @@ import path from 'path';
 import upload from './utils/upload';
 const app = express();
 
-// Set up logging middleware
 app.use(pinoHttp({
   logger,
   autoLogging: {
@@ -23,9 +22,7 @@ app.use(pinoHttp({
   }
 }));
 
-// Security and utility middleware
 app.use(helmet({
-  // Allow Swagger UI to function properly
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -44,11 +41,6 @@ app.use(cors({
 app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
 
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-
-
 const stream = {
 	write: (message: string) => logger.info(message.trim() + '\n')
 };
@@ -63,20 +55,12 @@ app.use(
 	})
 );
 
-// parse cookies
+
 app.use(cookieParser());
-
-// parse json request body
 app.use(express.json());
-
-// parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 app.use(pinoHttp({ logger }));
-// app.use(errorHandler);
 app.use(errorHandler);
-// timezone
-// app.use(timezone);
-// Health check endpoint
 app.get('/health', (_req, res) => {
   res.status(200).json({
     status: 'ok',
@@ -88,13 +72,6 @@ app.get('/health', (_req, res) => {
 
 
 
-
-
-
-
-
-
-
 // Middleware
 const createMulterMiddleware = () => {
   return (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -103,8 +80,6 @@ const createMulterMiddleware = () => {
     console.log('- Method:', req.method);
     console.log('- Content-Type:', req.get('Content-Type'));
     console.log('- Content-Length:', req.get('Content-Length'));
-
-    // Only apply multer to POST requests on image routes
     if (req.method === 'POST' && req.url.includes('/images')) {
       console.log('📁 Applying multer to image upload request');
       
@@ -203,63 +178,10 @@ app.use((error: any, req: express.Request, res: express.Response, next: express.
 });
 
 
-
-
-  const swaggerOptions = {
-  swaggerOptions: {
-    persistAuthorization: true,
-    securityDefinitions: {
-      jwt: {
-        type: 'apiKey',
-        name: 'Authorization',
-        in: 'header'
-      }
-    }
-  }
-};
-// app.use('/docs', swaggerUi.serve, async (_req, res) => {
-//   return res.send(
-//     swaggerUi.generateHTML(await import('../build/swagger.json'),swaggerOptions)
-//   );
-// });
-
 app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
   return res.send(swaggerUi.generateHTML(await import('../build/swagger.json')))
 })
 
 
-// Admin Swagger (separate documentation)
-app.use('/admin-docs', swaggerUi.serve, async (_req, res) => {
-  const swaggerDoc = await import('../build/swagger.json');
-  // Filter only admin routes
-  const adminSwagger = {
-    ...swaggerDoc,
-    paths: Object.keys(swaggerDoc.paths)
-      .filter(path => path.startsWith('/admin'))
-      .reduce((obj, key) => {
-        obj[key] = swaggerDoc.paths[key];
-        return obj;
-      }, {})
-  };
-  
-  return res.send(swaggerUi.generateHTML(adminSwagger));
-});
-
-// Mobile Swagger (separate documentation)
-app.use('/mobile-docs', swaggerUi.serve, async (_req, res) => {
-  const swaggerDoc = await import('../build/swagger.json');
-  // Filter only mobile routes
-  const mobileSwagger = {
-    ...swaggerDoc,
-    paths: Object.keys(swaggerDoc.paths)
-      .filter(path => path.startsWith('/mobile'))
-      .reduce((obj, key) => {
-        obj[key] = swaggerDoc.paths[key];
-        return obj;
-      }, {})
-  };
-  
-  return res.send(swaggerUi.generateHTML(mobileSwagger));
-});
 
 export { app };

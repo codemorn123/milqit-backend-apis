@@ -26,7 +26,7 @@ import { validateSchemaMiddleware } from "./../../middleware/common-validate";
 import { idParamSchema } from "./../../constants/common.validator";
 import upload from "./../../utils/upload";
 import express from 'express';
-import { uuidv4 } from "zod";
+
 
 
 interface MulterRequest extends express.Request {

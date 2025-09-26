@@ -1,6 +1,4 @@
-// src/features/kisan-community/kisan-community.types.ts
 
-import { Document } from 'mongoose';
 
 export interface IKisanCommunity  {
   farmerName: string;

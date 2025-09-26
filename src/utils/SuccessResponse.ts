@@ -1,5 +1,5 @@
-// Success response structure
-import { StatusCodes } from 'http-status-codes/build/cjs';
+import Joi from "joi";
+
 export interface SuccessResponse<T> {
 	success: true;
 	message: string;
@@ -12,6 +12,18 @@ export const success = <T>(data: T, message?: string): SuccessResponse<T> => ({
 	result: data
 });
 
+
+export const successNull = (message?: string): SuccessResponse<null> => ({
+  success: true,
+  message: message || 'Success',
+  result: null
+})
+
+export const errorSuccess = (message: Joi.ValidationError): SuccessResponse<null> => ({
+  success: true,
+  message: message.message,
+  result: null
+})
 export type NullSuccessResponse = SuccessResponse<null>;
 
 
@@ -26,28 +38,3 @@ export interface PaginatedList<Item = any> {
   data: Item[];
   meta: Pagination;
 }
-
-
-
-// export abstract class BaseResponse<T> {
-//   protected abstract statusCode: StatusCodes;
-
-//   protected abstract apiResponse: ApiResponse<T>;
-
-//   constructor(private res: Response) {}
-
-//   send = () => this.res.status(this.statusCode).json(this.apiResponse);
-// }
-
-// export class ListResponse<T> extends BaseResponse<T> {
-//   protected statusCode = StatusCodes.OK;
-
-//   protected apiResponse = {
-//     meta: this.meta,
-//     data: this.data,
-//   };
-
-//   constructor(res: Response, private data: T, private meta: Pagination) {
-//     super(res);
-//   }
-// }

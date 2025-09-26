@@ -1,5 +1,3 @@
-// src/features/kisan-community/kisan-community.controller.ts
-
 import kisanCommunityUpload from  './../../../utils/kisan-community-upload';
 import APIError from './../../../error/api-error';
 import { validateSchemaMiddleware } from './../../../middleware/common-validate';
@@ -23,8 +21,9 @@ import {
     UploadedFile,
     FormField,
     Response,
+    Example,
   } from 'tsoa';
-import { success, SuccessResponse as SuccessDataResponse } from './../../../utils/SuccessResponse';
+import { errorSuccess, success, SuccessResponse as SuccessDataResponse } from './../../../utils/SuccessResponse';
 
   
  
@@ -45,7 +44,7 @@ export class KisanCommunityController extends Controller {
     const dataToValidate = { farmerName, farmName, farmLocation, mobile, products, description, email };
     const { error, value } = createKisanCommunitySchema.validate(dataToValidate);
     if (error) {
-        this.setStatus(400);
+      errorSuccess(error);
         throw new APIError(error.details[0].message, 400);
     }
     const result = await kisanCommunityService.create(value, profileImage);
@@ -55,6 +54,12 @@ export class KisanCommunityController extends Controller {
   @Get("/")
   @SuccessResponse(200, "Success")
   @Middlewares(validateSchemaMiddleware(filterQuerySchema, "query"))
+  @Example({
+    queryParams: {
+      page: 1,
+      limit: 10
+    }
+  })
   public async getAll(@Queries() queryParams: IFilter): Promise<{ data: IKisanCommunity[]; pagination: IPaginated }> {
     return kisanCommunityService.getAll(queryParams);
   }
