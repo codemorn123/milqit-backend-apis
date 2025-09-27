@@ -15,13 +15,13 @@ import {
   Example,
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
-import { ClientErrorInterface, PresentableError } from './../../error/clientErrorHelper';
+import { ClientErrorInterface, PresentableError } from '../../error/clientErrorHelper';
 
-import { UserProfile } from'./../../types/auth.types';
+import { UserProfile } from'../../types/auth.types';
 
-import UserService from './../../services/user.service';
-import { success, SuccessResponse } from './../../utils/SuccessResponse';
-import { IUser } from './../../models/UserModel';
+import UserService from '../../services/user.service';
+import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { IUser } from '../../models/UserModel';
 
 
 // Example mock data

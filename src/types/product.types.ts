@@ -1,73 +1,59 @@
-export interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  compareAtPrice?: number;
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  sku: string;
-  barcode?: string;
-  images: string[];
-  quantity: number;
-  isActive: boolean;
-  isFeatured: boolean;
-  attributes?: Record<string, string>;
-  tags?: string[];
-  unit?: string;
-  unitValue?: number;
-  deliveryTime?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { ProductType, ValidUnit } from "./../models/product.model";
 
-
-
-
-
-// TSOA Product Request DTOs
 export interface CreateProductRequest {
   name: string;
   description?: string;
-  price: number;
-  compareAtPrice?: number;
-  categoryId: string;
-  sku: string;
-  barcode?: string;
-  images: string[];
+  mrp: number;
+  sellingPrice: number;
+  unit: ValidUnit;
+  category: string;
   quantity: number;
+  productType: ProductType;
+  brand?: string;
+  sku?: string;
   isActive?: boolean;
   isFeatured?: boolean;
-  attributes?: Record<string, string>;
-  tags?: string[];
-  unit?: string;
-  unitValue?: number;
-  deliveryTime?: string;
+  productDetails?: string; // JSON string
 }
 
 export interface UpdateProductRequest {
   name?: string;
   description?: string;
-  price?: number;
-  compareAtPrice?: number;
-  categoryId?: string;
-  sku?: string;
-  barcode?: string;
-  images?: string[];
+  mrp?: number;
+  sellingPrice?: number;
+  unit?: ValidUnit;
+  category?: string;
   quantity?: number;
+  productType?: ProductType;
+  brand?: string;
+  sku?: string;
   isActive?: boolean;
   isFeatured?: boolean;
-  attributes?: Record<string, string>;
-  tags?: string[];
-  unit?: string;
-  unitValue?: number;
-  deliveryTime?: string;
+  productDetails?: string; // JSON string
 }
 
+export interface ProductStatsResponse {
+  totalProducts: number;
+  activeProducts: number;
+  inactiveProducts: number;
+  featuredProducts: number;
+  outOfStockProducts: number;
+  lowStockProducts: number;
+  categoriesCount: number;
+  brandsCount: number;
+}
 
+export interface BulkDeleteRequest {
+  productIds: string[];
+}
+
+export interface UpdateStockRequest {
+  quantity: number;
+}
+
+interface RemoveImagesRequest {
+  imageKeys: string[];
+}
 
 
 
@@ -85,4 +71,5 @@ export interface ProductFilterQueryParams {
   sortOrder?: 'asc' | 'desc',
   isActive?: true,
   isPublic?: true,
+  inStock?: true
 };

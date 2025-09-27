@@ -1,36 +1,100 @@
+import { objectIdValidator } from './../constants/common.validator';
 import Joi from 'joi';
-import mongoose from 'mongoose';
 
-/**
- * Valid unit types for products
- * Based on fresh grocery delivery and restaurant apps
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
 export type ValidUnit = 'piece' | 'kg' | 'gm' | 'litre' | 'ml' | 'pack' | 'dozen' | 'bundle';
+export type ProductType = 'Food' | 'Electronics' | 'Apparel' | 'General';
 
-/**
- * Custom Joi validator for MongoDB ObjectId
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
-const objectIdValidator = Joi.string().custom((value, helpers) => {
-  if (!mongoose.Types.ObjectId.isValid(value)) {
-    return helpers.error('any.invalid');
-  }
-  return value;
-}, 'MongoDB ObjectId validation').messages({
-  'any.invalid': 'Invalid MongoDB ObjectId format'
+// Common image schema
+export const imageSchema = Joi.object({
+  url: Joi.string().uri().required().messages({
+    'string.uri': 'Image URL must be a valid URI',
+    'any.required': 'Image URL is required'
+  }),
+  key: Joi.string().required().messages({
+    'any.required': 'Image key is required'
+  })
 });
 
-/**
- * Product validation schema based on IProduct interface
- * Optimized for React Native mobile apps (RFS, SmartFlow, home_fresh_app, core_mobile_app, shree-react-naive-app)
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
-export const productSchema = Joi.object({
-  // Required fields
+// Product details schemas for different product types
+export const foodProductDetailsSchema = Joi.object({
+  fssaiLicenceNumber: Joi.string().trim().optional().messages({
+    'string.empty': 'FSSAI licence number cannot be empty'
+  }),
+  isVegetarian: Joi.boolean().default(true).messages({
+    'boolean.base': 'Vegetarian flag must be a boolean value'
+  }),
+  shelfLife: Joi.string().trim().optional().messages({
+    'string.empty': 'Shelf life cannot be empty'
+  }),
+  keyFeatures: Joi.array().items(Joi.string().trim()).optional().messages({
+    'array.base': 'Key features must be an array of strings'
+  })
+}).optional();
+
+export const electronicsProductDetailsSchema = Joi.object({
+  modelNumber: Joi.string().trim().optional().messages({
+    'string.empty': 'Model number cannot be empty'
+  }),
+  warranty: Joi.string().trim().optional().messages({
+    'string.empty': 'Warranty information cannot be empty'
+  }),
+  specifications: Joi.array().items(
+    Joi.object({
+      key: Joi.string().required().messages({
+        'any.required': 'Specification key is required'
+      }),
+      value: Joi.string().required().messages({
+        'any.required': 'Specification value is required'
+      })
+    })
+  ).optional().messages({
+    'array.base': 'Specifications must be an array of key-value pairs'
+  })
+}).optional();
+
+export const apparelProductDetailsSchema = Joi.object({
+  size: Joi.array().items(Joi.string().trim()).optional().messages({
+    'array.base': 'Sizes must be an array of strings'
+  }),
+  color: Joi.array().items(Joi.string().trim()).optional().messages({
+    'array.base': 'Colors must be an array of strings'
+  }),
+  material: Joi.string().trim().optional().messages({
+    'string.empty': 'Material cannot be empty'
+  }),
+  careInstructions: Joi.array().items(Joi.string().trim()).optional().messages({
+    'array.base': 'Care instructions must be an array of strings'
+  })
+}).optional();
+
+export const generalProductDetailsSchema = Joi.object().pattern(
+  Joi.string(),
+  Joi.alternatives().try(
+    Joi.string(),
+    Joi.number(),
+    Joi.boolean(),
+    Joi.array(),
+    Joi.object()
+  )
+).optional();
+
+// Dynamic product details validation based on product type
+const getProductDetailsSchema = (productType: ProductType) => {
+  switch (productType) {
+    case 'Food':
+      return foodProductDetailsSchema;
+    case 'Electronics':
+      return electronicsProductDetailsSchema;
+    case 'Apparel':
+      return apparelProductDetailsSchema;
+    case 'General':
+    default:
+      return generalProductDetailsSchema;
+  }
+};
+
+// Main product creation schema
+export const createProductSchema = Joi.object({
   name: Joi.string()
     .min(2)
     .max(200)
@@ -43,510 +107,495 @@ export const productSchema = Joi.object({
       'any.required': 'Product name is required'
     }),
 
-  slug: Joi.string()
-    .min(2)
-    .max(250)
-    .pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  description: Joi.string()
     .trim()
-    .lowercase()
-    .required()
+    .max(2000)
+    .optional()
+    .allow('')
     .messages({
-      'string.min': 'Product slug must be at least 2 characters long',
-      'string.max': 'Product slug cannot exceed 250 characters',
-      'string.pattern.base': 'Product slug must contain only lowercase letters, numbers, and hyphens',
-      'any.required': 'Product slug is required'
+      'string.max': 'Product description cannot exceed 2000 characters'
     }),
 
-  price: Joi.number()
+  // Blinkit-style pricing
+  mrp: Joi.number()
     .positive()
     .precision(2)
-    .min(0.01)
-    .max(999999.99)
     .required()
     .messages({
-      'number.positive': 'Price must be a positive number',
-      'number.min': 'Price must be at least 0.01',
-      'number.max': 'Price cannot exceed 999,999.99',
-      'any.required': 'Price is required'
+      'number.positive': 'MRP must be a positive number',
+      'number.precision': 'MRP must have at most 2 decimal places',
+      'any.required': 'MRP (Maximum Retail Price) is required'
     }),
 
-  categoryId: objectIdValidator
+  sellingPrice: Joi.number()
+    .positive()
+    .precision(2)
     .required()
+    .custom((value, helpers) => {
+      const { mrp } = helpers.state.ancestors[0];
+      if (mrp && value > mrp) {
+        return helpers.error('sellingPrice.greater');
+      }
+      return value;
+    })
     .messages({
-      'any.required': 'Category ID is required'
-    }),
-
-  sku: Joi.string()
-    .min(3)
-    .max(50)
-    .pattern(/^[A-Z0-9-_]+$/)
-    .trim()
-    .uppercase()
-    .required()
-    .messages({
-      'string.min': 'SKU must be at least 3 characters long',
-      'string.max': 'SKU cannot exceed 50 characters',
-      'string.pattern.base': 'SKU must contain only uppercase letters, numbers, hyphens, and underscores',
-      'any.required': 'SKU is required'
-    }),
-
-  images: Joi.array()
-    .items(
-      Joi.string()
-        .uri({ scheme: ['http', 'https'] })
-        .messages({
-          'string.uri': 'Each image must be a valid HTTP/HTTPS URL'
-        })
-    )
-    .min(0)
-    .max(10)
-    .default([])
-    .messages({
-      'array.max': 'Cannot have more than 10 product images',
-      'array.base': 'Images must be an array'
-    }),
-
-  quantity: Joi.number()
-    .integer()
-    .min(0)
-    .max(999999)
-    .required()
-    .messages({
-      'number.integer': 'Quantity must be a whole number',
-      'number.min': 'Quantity cannot be negative',
-      'number.max': 'Quantity cannot exceed 999,999',
-      'any.required': 'Quantity is required'
-    }),
-
-  isActive: Joi.boolean()
-    .default(true)
-    .messages({
-      'boolean.base': 'isActive must be a boolean value'
-    }),
-
-  isFeatured: Joi.boolean()
-    .default(false)
-    .messages({
-      'boolean.base': 'isFeatured must be a boolean value'
-    }),
-
-  inStock: Joi.boolean()
-    .default(true)
-    .messages({
-      'boolean.base': 'inStock must be a boolean value'
+      'number.positive': 'Selling price must be a positive number',
+      'number.precision': 'Selling price must have at most 2 decimal places',
+      'any.required': 'Selling price is required',
+      'sellingPrice.greater': 'Selling price cannot be greater than MRP'
     }),
 
   unit: Joi.string()
     .valid('piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen', 'bundle')
     .required()
     .messages({
-      'any.only': 'Unit must be one of: piece, kg, gm, litre, ml, pack, dozen, bundle',
-      'any.required': 'Unit is required'
+      'string.valid': 'Product unit must be one of: piece, kg, gm, litre, ml, pack, dozen, bundle',
+      'any.required': 'Product unit is required'
     }),
 
-  user: Joi.string()
-    .min(2)
+  quantity: Joi.number()
+    .integer()
+    .min(0)
+    .max(10000)
+    .required()
+    .messages({
+      'number.integer': 'Product quantity must be an integer',
+      'number.min': 'Product quantity cannot be negative',
+      'number.max': 'Product quantity cannot exceed 10,000',
+      'any.required': 'Product quantity is required'
+    }),
+
+  stock: Joi.number()
+    .integer()
+    .min(0)
+    .optional()
+    .messages({
+      'number.integer': 'Stock must be an integer',
+      'number.min': 'Stock cannot be negative'
+    }),
+
+  category: objectIdValidator
+    .required()
+    .messages({
+      'any.required': 'Product category is required'
+    }),
+
+  sku: Joi.string()
+    .trim()
     .max(100)
-    .trim()
-    .default('MarotiKathoke')
-    .messages({
-      'string.min': 'User must be at least 2 characters long',
-      'string.max': 'User cannot exceed 100 characters'
-    }),
-
-  createdAt: Joi.date()
-    .iso()
-    .default(() => new Date())
-    .messages({
-      'date.base': 'Created date must be a valid date',
-      'date.format': 'Created date must be in ISO format'
-    }),
-
-  updatedAt: Joi.date()
-    .iso()
-    .default(() => new Date())
-    .messages({
-      'date.base': 'Updated date must be a valid date',
-      'date.format': 'Updated date must be in ISO format'
-    }),
-
-  // Optional fields
-  description: Joi.string()
-    .max(2000)
-    .trim()
-    .allow('')
     .optional()
     .messages({
-      'string.max': 'Description cannot exceed 2000 characters'
-    }),
-
-  compareAtPrice: Joi.number()
-    .positive()
-    .precision(2)
-    .min(0.01)
-    .max(999999.99)
-    .when('price', {
-      is: Joi.exist(),
-      then: Joi.number().greater(Joi.ref('price'))
-    })
-    .optional()
-    .messages({
-      'number.positive': 'Compare at price must be a positive number',
-      'number.min': 'Compare at price must be at least 0.01',
-      'number.max': 'Compare at price cannot exceed 999,999.99',
-      'number.greater': 'Compare at price must be greater than regular price'
+      'string.max': 'SKU cannot exceed 100 characters'
     }),
 
   brand: Joi.string()
-    .max(100)
     .trim()
+    .min(1)
+    .max(100)
+    .optional()
+    .messages({
+      'string.min': 'Brand name must be at least 1 character long',
+      'string.max': 'Brand name cannot exceed 100 characters'
+    }),
+
+  productType: Joi.string()
+    .valid('Food', 'Electronics', 'Apparel', 'General')
+    .required()
+    .messages({
+      'string.valid': 'Product type must be one of: Food, Electronics, Apparel, General',
+      'any.required': 'Product type is required'
+    }),
+
+  productDetails: Joi.when('productType', {
+    is: 'Food',
+    then: foodProductDetailsSchema.default({}),
+    otherwise: Joi.when('productType', {
+      is: 'Electronics',
+      then: electronicsProductDetailsSchema.default({}),
+      otherwise: Joi.when('productType', {
+        is: 'Apparel',
+        then: apparelProductDetailsSchema.default({}),
+        otherwise: generalProductDetailsSchema.default({})
+      })
+    })
+  }),
+
+  images: Joi.array()
+    .items(imageSchema)
+    .optional()
+    .messages({
+      'array.base': 'Images must be an array'
+    }),
+
+  isActive: Joi.boolean()
+    .default(true)
+    .messages({
+      'boolean.base': 'Active status must be a boolean value'
+    }),
+
+  isFeatured: Joi.boolean()
+    .default(false)
+    .messages({
+      'boolean.base': 'Featured status must be a boolean value'
+    }),
+
+  inStock: Joi.boolean()
+    .optional()
+    .messages({
+      'boolean.base': 'In stock status must be a boolean value'
+    }),
+
+  averageRating: Joi.number()
+    .min(0)
+    .max(5)
+    .precision(2)
+    .default(0)
+    .optional()
+    .messages({
+      'number.min': 'Average rating cannot be less than 0',
+      'number.max': 'Average rating cannot be more than 5',
+      'number.precision': 'Average rating must have at most 2 decimal places'
+    }),
+
+  reviewCount: Joi.number()
+    .integer()
+    .min(0)
+    .default(0)
+    .optional()
+    .messages({
+      'number.integer': 'Review count must be an integer',
+      'number.min': 'Review count cannot be negative'
+    })
+});
+
+// Product update schema (all fields optional except some validations)
+export const updateProductSchema = Joi.object({
+  name: Joi.string()
+    .min(2)
+    .max(200)
+    .trim()
+    .optional()
+    .messages({
+      'string.min': 'Product name must be at least 2 characters long',
+      'string.max': 'Product name cannot exceed 200 characters',
+      'string.empty': 'Product name cannot be empty'
+    }),
+
+  description: Joi.string()
+    .trim()
+    .max(2000)
     .optional()
     .allow('')
     .messages({
+      'string.max': 'Product description cannot exceed 2000 characters'
+    }),
+
+  mrp: Joi.number()
+    .positive()
+    .precision(2)
+    .optional()
+    .messages({
+      'number.positive': 'MRP must be a positive number',
+      'number.precision': 'MRP must have at most 2 decimal places'
+    }),
+
+  sellingPrice: Joi.number()
+    .positive()
+    .precision(2)
+    .optional()
+    .messages({
+      'number.positive': 'Selling price must be a positive number',
+      'number.precision': 'Selling price must have at most 2 decimal places'
+    }),
+
+  unit: Joi.string()
+    .valid('piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen', 'bundle')
+    .optional()
+    .messages({
+      'string.valid': 'Product unit must be one of: piece, kg, gm, litre, ml, pack, dozen, bundle'
+    }),
+
+  quantity: Joi.number()
+    .integer()
+    .min(0)
+    .max(10000)
+    .optional()
+    .messages({
+      'number.integer': 'Product quantity must be an integer',
+      'number.min': 'Product quantity cannot be negative',
+      'number.max': 'Product quantity cannot exceed 10,000'
+    }),
+
+  stock: Joi.number()
+    .integer()
+    .min(0)
+    .optional()
+    .messages({
+      'number.integer': 'Stock must be an integer',
+      'number.min': 'Stock cannot be negative'
+    }),
+
+  category: objectIdValidator.optional(),
+
+  sku: Joi.string()
+    .trim()
+    .max(100)
+    .optional()
+    .messages({
+      'string.max': 'SKU cannot exceed 100 characters'
+    }),
+
+  brand: Joi.string()
+    .trim()
+    .min(1)
+    .max(100)
+    .optional()
+    .messages({
+      'string.min': 'Brand name must be at least 1 character long',
       'string.max': 'Brand name cannot exceed 100 characters'
+    }),
+
+  productType: Joi.string()
+    .valid('Food', 'Electronics', 'Apparel', 'General')
+    .optional()
+    .messages({
+      'string.valid': 'Product type must be one of: Food, Electronics, Apparel, General'
+    }),
+
+  productDetails: Joi.alternatives().try(
+    foodProductDetailsSchema,
+    electronicsProductDetailsSchema,
+    apparelProductDetailsSchema,
+    generalProductDetailsSchema
+  ).optional(),
+
+  images: Joi.array()
+    .items(imageSchema)
+    .optional()
+    .messages({
+      'array.base': 'Images must be an array'
+    }),
+
+  isActive: Joi.boolean()
+    .optional()
+    .messages({
+      'boolean.base': 'Active status must be a boolean value'
+    }),
+
+  isFeatured: Joi.boolean()
+    .optional()
+    .messages({
+      'boolean.base': 'Featured status must be a boolean value'
+    }),
+
+  inStock: Joi.boolean()
+    .optional()
+    .messages({
+      'boolean.base': 'In stock status must be a boolean value'
+    }),
+
+  averageRating: Joi.number()
+    .min(0)
+    .max(5)
+    .precision(2)
+    .optional()
+    .messages({
+      'number.min': 'Average rating cannot be less than 0',
+      'number.max': 'Average rating cannot be more than 5',
+      'number.precision': 'Average rating must have at most 2 decimal places'
+    }),
+
+  reviewCount: Joi.number()
+    .integer()
+    .min(0)
+    .optional()
+    .messages({
+      'number.integer': 'Review count must be an integer',
+      'number.min': 'Review count cannot be negative'
     })
 });
 
-/**
- * Product creation validation schema
- * For creating new products via API
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
-export const createProductSchema = productSchema.fork(
-  ['slug', 'createdAt', 'updatedAt'], 
-  (schema) => schema.optional()
-).messages({
-  'object.unknown': 'Unknown field: {#label}'
-})
-
-/**
- * Product update validation schema
- * For updating existing products via API
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
-export const updateProductSchema = productSchema.fork(
-  [
-    'name', 'slug', 'price', 'categoryId', 'sku', 
-    'images', 'quantity', 'isActive', 'isFeatured', 
-    'inStock', 'unit', 'user', 'createdAt'
-  ],
-  (schema) => schema.optional()
-).with('name', 'slug').messages({
-  'object.with': 'When updating name, slug must also be provided',
-  'object.unknown': 'Unknown field: {#label}',
-  'object.min': 'At least one field must be provided for update'
-}).min(1);
-
+// Product filter/query schema
 export const getProductsSchema = Joi.object({
-  query: Joi.object({
-    // Pagination
-    page: Joi.number()
-      .integer()
-      .min(1)
-      .max(1000)
-      .default(1)
-      .messages({
-        'number.min': 'Page must be at least 1',
-        'number.max': 'Page cannot exceed 1000'
-      }),
+  page: Joi.number()
+    .integer()
+    .min(1)
+    .default(1)
+    .optional()
+    .messages({
+      'number.integer': 'Page must be an integer',
+      'number.min': 'Page must be at least 1'
+    }),
 
-    limit: Joi.number()
-      .integer()
-      .min(1)
-      .max(100)
-      .default(20)
-      .messages({
-        'number.min': 'Limit must be at least 1',
-        'number.max': 'Limit cannot exceed 100 for mobile performance'
-      }),
+  limit: Joi.number()
+    .integer()
+    .min(1)
+    .max(100)
+    .default(10)
+    .optional()
+    .messages({
+      'number.integer': 'Limit must be an integer',
+      'number.min': 'Limit must be at least 1',
+      'number.max': 'Limit cannot exceed 100'
+    }),
 
-    // Sorting
-    sortBy: Joi.string()
-      .valid(
-        'name', 'price', 'createdAt', 'updatedAt', 'quantity',
-        'popularity', 'rating', 'discount', 'featured'
-      )
-      .default('createdAt')
-      .messages({
-        'any.only': 'Sort field must be one of the allowed values'
-      }),
+  search: Joi.string()
+    .trim()
+    .min(1)
+    .max(200)
+    .optional()
+    .messages({
+      'string.min': 'Search query must be at least 1 character long',
+      'string.max': 'Search query cannot exceed 200 characters'
+    }),
 
-    sortOrder: Joi.string()
-      .valid('asc', 'desc')
-      .default('desc')
-      .messages({
-        'any.only': 'Sort order must be either asc or desc'
-      }),
+  category: objectIdValidator.optional(),
 
-    // Search
-    search: Joi.string()
-      .max(100)
-      .trim()
-      .optional()
-      .messages({
-        'string.max': 'Search query cannot exceed 100 characters'
-      }),
+  brand: Joi.string()
+    .trim()
+    .max(100)
+    .optional()
+    .messages({
+      'string.max': 'Brand filter cannot exceed 100 characters'
+    }),
 
-    // Basic filters
-    isActive: Joi.boolean()
-      .default(true),
+  productType: Joi.string()
+    .valid('Food', 'Electronics', 'Apparel', 'General')
+    .optional()
+    .messages({
+      'string.valid': 'Product type must be one of: Food, Electronics, Apparel, General'
+    }),
 
-    isFeatured: Joi.boolean()
-      .optional(),
+  minPrice: Joi.number()
+    .min(0)
+    .precision(2)
+    .optional()
+    .messages({
+      'number.min': 'Minimum price cannot be negative',
+      'number.precision': 'Minimum price must have at most 2 decimal places'
+    }),
 
-    inStock: Joi.boolean()
-      .optional(),
-
-    // Category filtering
-    categoryId: objectIdValidator.optional(),
-
-    categoryIds: Joi.array()
-      .items(objectIdValidator)
-      .max(10)
-      .optional()
-      .messages({
-        'array.max': 'Cannot filter by more than 10 categories at once'
-      }),
-
-    // Price filtering
-    minPrice: Joi.number()
-      .min(0)
-      .precision(2)
-      .optional()
-      .messages({
-        'number.min': 'Minimum price cannot be negative'
-      }),
-
-    maxPrice: Joi.number()
-      .positive()
-      .precision(2)
-      .when('minPrice', {
-        is: Joi.exist(),
-        then: Joi.number().greater(Joi.ref('minPrice'))
-      })
-      .optional()
-      .messages({
-        'number.positive': 'Maximum price must be positive',
-        'number.greater': 'Maximum price must be greater than minimum price'
-      }),
-
-    // Brand filtering
-    brand: Joi.string()
-      .max(100)
-      .trim()
-      .optional(),
-
-    brands: Joi.array()
-      .items(Joi.string().trim().max(100))
-      .max(5)
-      .optional()
-      .messages({
-        'array.max': 'Cannot filter by more than 5 brands at once'
-      }),
-
-    // Unit filtering
-    unit: Joi.string()
-      .valid('piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen', 'bundle')
-      .optional(),
-
-    units: Joi.array()
-      .items(Joi.string().valid('piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen', 'bundle'))
-      .max(4)
-      .optional()
-      .messages({
-        'array.max': 'Cannot filter by more than 4 units at once'
-      }),
-
-    // Stock filtering
-    minQuantity: Joi.number()
-      .integer()
-      .min(0)
-      .optional(),
-
-    maxQuantity: Joi.number()
-      .integer()
-      .min(1)
-      .when('minQuantity', {
-        is: Joi.exist(),
-        then: Joi.number().greater(Joi.ref('minQuantity'))
-      })
-      .optional()
-      .messages({
-        'number.greater': 'Maximum quantity must be greater than minimum quantity'
-      }),
-
-    // Date filtering
-    createdAfter: Joi.date()
-      .iso()
-      .optional(),
-
-    createdBefore: Joi.date()
-      .iso()
-      .optional(),
-
-    updatedAfter: Joi.date()
-      .iso()
-      .optional(),
-
-    updatedBefore: Joi.date()
-      .iso()
-      .optional(),
-
-    // Mobile app specific filters
-    hasImages: Joi.boolean()
-      .optional(),
-
-    // Fresh grocery specific (home_fresh_app)
-    isOrganic: Joi.boolean()
-      .optional(),
-
-    isVegetarian: Joi.boolean()
-      .optional(),
-
-    // Restaurant specific (RFS-Mobile-App)
-    mealType: Joi.string()
-      .valid('breakfast', 'lunch', 'dinner', 'snacks', 'beverages')
-      .optional(),
-
-    spiceLevel: Joi.string()
-      .valid('mild', 'medium', 'hot', 'extra_hot')
-      .optional(),
-
-    // SmartFlow specific filters
-    workflow: Joi.string()
-      .max(100)
-      .optional(),
-
-    status: Joi.string()
-      .valid('pending', 'approved', 'rejected', 'processing')
-      .optional()
-
-  }).optional()
-});
-
-/**
- * Product ID validation schema
- * For single product operations
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
-export const productIdSchema = Joi.object({
-  params: Joi.object({
-    id: objectIdValidator.required().messages({
-      'any.required': 'Product ID is required'
+  maxPrice: Joi.number()
+    .min(0)
+    .precision(2)
+    .optional()
+    .custom((value, helpers) => {
+      const { minPrice } = helpers.state.ancestors[0];
+      if (minPrice && value < minPrice) {
+        return helpers.error('maxPrice.less');
+      }
+      return value;
     })
-  }).required()
+    .messages({
+      'number.min': 'Maximum price cannot be negative',
+      'number.precision': 'Maximum price must have at most 2 decimal places',
+      'maxPrice.less': 'Maximum price cannot be less than minimum price'
+    }),
+
+  isActive: Joi.boolean()
+    .optional()
+    .messages({
+      'boolean.base': 'Active filter must be a boolean value'
+    }),
+
+  isFeatured: Joi.boolean()
+    .optional()
+    .messages({
+      'boolean.base': 'Featured filter must be a boolean value'
+    }),
+
+  inStock: Joi.boolean()
+    .optional()
+    .messages({
+      'boolean.base': 'In stock filter must be a boolean value'
+    }),
+
+  sortBy: Joi.string()
+    .valid('name', 'mrp', 'sellingPrice', 'createdAt', 'updatedAt', 'averageRating', 'quantity', 'brand')
+    .default('createdAt')
+    .optional()
+    .messages({
+      'string.valid': 'Sort field must be one of: name, mrp, sellingPrice, createdAt, updatedAt, averageRating, quantity, brand'
+    }),
+
+  sortOrder: Joi.string()
+    .valid('asc', 'desc')
+    .default('desc')
+    .optional()
+    .messages({
+      'string.valid': 'Sort order must be either asc or desc'
+    })
 });
 
-
-/**
- * Product image update validation schema
- * For separate image management
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
-export const updateProductImagesSchema = Joi.object({
-  body: Joi.object({
-    images: Joi.array()
-      .items(
-        Joi.string()
-          .uri({ scheme: ['http', 'https'] })
-          .messages({
-            'string.uri': 'Each image must be a valid HTTP/HTTPS URL'
-          })
-      )
-      .min(0)
-      .max(10)
-      .required()
-      .messages({
-        'array.max': 'Cannot have more than 10 images',
-        'any.required': 'Images array is required'
-      })
-  }).required(),
-
-  params: Joi.object({
-    id: objectIdValidator.required()
-  }).required()
+// Stock update schema
+export const updateStockSchema = Joi.object({
+  quantity: Joi.number()
+    .integer()
+    .min(0)
+    .max(10000)
+    .required()
+    .messages({
+      'number.integer': 'Quantity must be an integer',
+      'number.min': 'Quantity cannot be negative',
+      'number.max': 'Quantity cannot exceed 10,000',
+      'any.required': 'Quantity is required'
+    })
 });
 
+// Bulk delete schema
+export const bulkDeleteProductsSchema = Joi.object({
+  productIds: Joi.array()
+    .items(objectIdValidator)
+    .min(1)
+    .max(100)
+    .required()
+    .messages({
+      'array.min': 'At least one product ID is required',
+      'array.max': 'Cannot delete more than 100 products at once',
+      'any.required': 'Product IDs array is required'
+    })
+});
 
+// Remove images schema
+export const removeImagesSchema = Joi.object({
+  imageKeys: Joi.array()
+    .items(Joi.string().required())
+    .min(1)
+    .max(20)
+    .required()
+    .messages({
+      'array.min': 'At least one image key is required',
+      'array.max': 'Cannot remove more than 20 images at once',
+      'any.required': 'Image keys array is required'
+    })
+});
 
-export interface CreateProductInput {
-  name: string;
-  description?: string;
-  price: number;
-  compareAtPrice?: number;
-  categoryId: string;
-  sku: string;
-  images?: string[];
-  quantity: number;
-  isActive?: boolean;
-  isFeatured?: boolean;
-  inStock?: boolean;
-  brand?: string;
-  unit: ValidUnit;
-}
+// Search schema
+export const searchProductsSchema = getProductsSchema.keys({
+  q: Joi.string()
+    .trim()
+    .min(1)
+    .max(200)
+    .required()
+    .messages({
+      'string.min': 'Search query must be at least 1 character long',
+      'string.max': 'Search query cannot exceed 200 characters',
+      'any.required': 'Search query is required'
+    })
+});
 
-export interface UpdateProductInput extends Partial<CreateProductInput> {
-  slug?: string;
-  updatedAt?: Date;
-}
-
-export interface GetProductsInput {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  search?: string;
-  isActive?: boolean;
-  isFeatured?: boolean;
-  inStock?: boolean;
-  categoryId?: string;
-  categoryIds?: string[];
-  minPrice?: number;
-  maxPrice?: number;
-  brand?: string;
-  brands?: string[];
-  unit?: ValidUnit;
-  units?: ValidUnit[];
-  minQuantity?: number;
-  maxQuantity?: number;
-  createdAfter?: Date;
-  createdBefore?: Date;
-  updatedAfter?: Date;
-  updatedBefore?: Date;
-  hasImages?: boolean;
-  isOrganic?: boolean;
-  isVegetarian?: boolean;
-  mealType?: string;
-  spiceLevel?: string;
-  workflow?: string;
-  status?: string;
-}
-
-export interface BulkProductOperation {
-  productIds: string[];
-  action: 'activate' | 'deactivate' | 'feature' | 'unfeature' | 'delete';
-}
-
-export interface UpdateProductImagesInput {
-  images: string[];
-}
-
-
-/**
- * Export all schemas and utilities
- * @author MarotiKathoke
- * @created 2025-09-13 10:58:50
- */
+// Export all schemas
 export default {
-  productSchema,
   createProductSchema,
   updateProductSchema,
   getProductsSchema,
-  productIdSchema,
-  updateProductImagesSchema,
-
+  updateStockSchema,
+  bulkDeleteProductsSchema,
+  removeImagesSchema,
+  searchProductsSchema,
+  imageSchema,
+  foodProductDetailsSchema,
+  electronicsProductDetailsSchema,
+  apparelProductDetailsSchema,
+  generalProductDetailsSchema
 };

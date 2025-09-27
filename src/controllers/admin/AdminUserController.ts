@@ -10,7 +10,6 @@ import {
     Path,
     Response,
     Security,
-    // SuccessResponse,
     Get,
     Query,
     NoSecurity,
@@ -25,11 +24,7 @@ import {
     
     private adminUserService = new AdminUserService();
   
-    /**
-     * Retrieves a list of users. Can be filtered by status.
-     * This action requires admin privileges.
-     * @param status Filter users by their status. 'active' for active users, 'inactive' for deactivated users. Defaults to all users.
-     */
+
     @Get("/")
     // @SuccessResponse("200", "Users retrieved")
     public async getUsers(

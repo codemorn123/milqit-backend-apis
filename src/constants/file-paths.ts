@@ -1,11 +1,4 @@
-/**
- * This file contains constants for all file upload destinations.
- * Using this ensures consistency and makes future updates easier.
- */
 
-// --- User & Community ---
-
-// Kisan Community
 export const KISAN_COMMUNITY_IMAGES_PATH = 'uploads/kisan-community/images';
 
 // User Profiles

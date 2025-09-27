@@ -1,18 +1,16 @@
 import mongoose from 'mongoose';
 import { logger } from '../config/logger';
-import ProductModel, { ProductDocument, IProduct } from '../models/ProductModel';
+import  {ProductModel, ProductDocument, IProduct } from '../models/product.model';
 import APIError from '../error/api-error';
 import { createSlug } from '../utils/stringUtils';
-import { PaginatedResponse } from './../types/common.types';
+import { IcommonImage, IProductFilter } from './../types/common.types';
 import { ProductFilterQueryParams } from  './../types/product.types';
+import customFileService from './custom-file.service';
+import { PRODUCT_MAIN_IMAGES_PATH } from  './../constants/file-paths';
+import { PaginatedResponse } from '../types/common.types';
+import { CategoryModel } from '../models/category.model';
 
 
-/**
- * Product Service
- * Handles all product-related business logic and database operations
- * @author MarotiKathoke
- * @created 2025-09-13 08:23:07
- */
 class ProductService {
   private readonly USER_CONTEXT = 'MarotiKathoke';
 
@@ -36,50 +34,106 @@ class ProductService {
     }
   }
 
-  /**
-   * Process uploaded product images
-   */
-  
-  /**
-   * Create a new product
-   */
-  public async create(
-    productData: IProduct, 
-  ): Promise<ProductDocument> {
+
+
+
+
+  public async listOfProducts(options: IProductFilter): Promise<PaginatedResponse<IProduct>> {
+    const page = Number(options.page) || 1;
+    const limit = Number(options.limit) || 10;
+    const search = options.search;
+
+    const filter: mongoose.FilterQuery<IProduct> = {};
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
+      filter.$or = [{ name: searchRegex }, { slug: searchRegex }];
+    }
+
+    const totalDocs = await ProductModel.countDocuments(filter);
+    const docs = await ProductModel.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<IProduct[]>()
+      .exec();
+      
+    return {
+      docs: docs,
+      totalDocs: totalDocs,
+      limit: limit,
+      page: page,
+      totalPages: Math.ceil(totalDocs / limit),
+      hasNextPage: page < Math.ceil(totalDocs / limit),
+      hasPrevPage: page > 1,
+      nextPage: page < Math.ceil(totalDocs / limit) ? page + 1 : null,
+      prevPage: page > 1 ? page - 1 : null
+    };
+  }
+
+
+  public async createProduct(
+    payload: IProduct, 
+    images?: Express.Multer.File[]
+  ): Promise<IProduct> {
     try {
-      console.log('🆕 Creating new product:', productData.name);
+      console.log('🆕 Creating new product:', payload.name);
+      if (!images?.length) {
+        throw new APIError('At least one product image is required.', 400);
+      }
+
+      // Save multiple images with validation
+      const savedImages = await customFileService.saveMultipleFilesWithValidation(
+        images, 
+        PRODUCT_MAIN_IMAGES_PATH,
+        {
+          maxFiles: 10,
+          maxFileSize: 5 * 1024 * 1024, // 5MB
+          allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp'],
+          requiredFiles: 1
+        }
+      );
+
+      // Convert to IcommonImage format
+      const productImages: IcommonImage[] = savedImages.map(img => ({
+        url: img.url,
+        key: img.key
+      }));
+
+      // Generate unique slug
+      const slug = await this.generateUniqueSlug(payload.name, payload.sku || '');
+
+      // Prepare product data
+      const productData = {
+        ...payload,
+        slug,
+        images: productImages,
+        inStock: payload.quantity > 0
+      };
+  
       const product = new ProductModel(productData);
       await product.save();
+  
+      console.log('✅ Product created successfully:', product.name);
       
-      logger.info({ 
-        productId: product._id, 
-        name: product.name,
-        sku: product.sku 
-      }, `Product created by ${this.USER_CONTEXT}`);
+      // Convert Mongoose document to plain object and ensure images array exists
+      const productObject = product.toObject();
       
-      console.log(`✅ Product created successfully with ID: ${product._id}`);
+      // Type assertion with runtime safety check
+      const result: IProduct = {
+        ...productObject,
+        _id: productObject._id,
+        images: productObject.images || [], // Ensure images is always an array
+        category: productObject.category,
+        createdAt: productObject.createdAt,
+        updatedAt: productObject.updatedAt
+      };
       
-      return product;
+      return result;
       
-    } catch (error: any) {
+      
+    } catch (error: unknown) {
       console.error('❌ Error creating product:', error);
-      
-      // Handle MongoDB duplicate key error
-      if (error.code === 11000) {
-        const field = Object.keys(error.keyValue || {})[0] || 'unknown field';
-        const value = error.keyValue?.[field];
-        
-        logger.warn({ field, value }, `Duplicate key error for ${this.USER_CONTEXT}`);
-        throw new APIError(`A product with this ${field} already exists: ${value}`, 409);
-      }
-
-      // Handle validation errors
-      if (error.name === 'ValidationError') {
-        const validationErrors = Object.values(error.errors || {}).map((err: any) => err.message);
-        throw new APIError(`Validation failed: ${validationErrors.join(', ')}`, 400);
-      }
-
-      throw new APIError(`Product creation failed: ${error.message}`, 500);
+      throw new APIError(`Product creation failed: ${error}`, 500);
     }
   }
 
@@ -87,57 +141,35 @@ class ProductService {
    * Find products with pagination and filtering (Admin)
    */
   public async find(filters: ProductFilterQueryParams): Promise<PaginatedResponse<IProduct>> {
-    try {
-      console.log('📋 Fetching products with filters:', filters);
-      const { 
-        page = 1, 
-        limit = 20, 
-        search,
-        sortBy = 'createdAt',
-        sortOrder = 'desc'
-      } = filters;
-      const filter: mongoose.FilterQuery<IProduct> = {};
-      const skip = (page - 1) * limit;
-      // Execute queries in parallel
-      const [docs, totalDocs] = await Promise.all([
-        ProductModel.find(filter)
-          .populate('categoryId', 'name slug')
-          // .sort(sort)
-          .skip(skip)
-          .limit(limit)
-          .lean()
-          .exec(),
-        ProductModel.countDocuments(filter).exec()
-      ]);
+    const page = Number(filters.page) || 1;
+    const limit = Number(filters.limit) || 10;
+    const search = filters.search;
 
-
-      
-
-      // Calculate pagination metadata
-      const totalPages = Math.ceil(totalDocs / limit);
-      const hasNextPage = page < totalPages;
-      const hasPrevPage = page > 1;
-      const nextPage = hasNextPage ? page + 1 : null;
-      const prevPage = hasPrevPage ? page - 1 : null;
-      const pagingCounter = (page - 1) * limit + 1;
-      console.log(`✅ Found ${docs.length} products out of ${totalDocs} total`);
-      return {
-        docs,
-        totalDocs,
-        limit,
-        page,
-        totalPages,
-        hasNextPage,
-        hasPrevPage,
-        nextPage,
-        prevPage
-      };
-
-    } catch (error: any) {
-      console.error('❌ Error fetching products:', error);
-      logger.error({ error: error.message }, 'Error fetching products');
-      throw new APIError(`Error fetching products: ${error.message}`, 500);
+    const filter: mongoose.FilterQuery<IProduct> = {};
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
+      filter.$or = [{ name: searchRegex }, { slug: searchRegex }];
     }
+
+    const totalDocs = await ProductModel.countDocuments(filter);
+    const docs = await ProductModel.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<IProduct[]>()
+      .exec();
+      
+    return {
+      docs: docs,
+      totalDocs: totalDocs,
+      limit: limit,
+      page: page,
+      totalPages: Math.ceil(totalDocs / limit),
+      hasNextPage: page < Math.ceil(totalDocs / limit),
+      hasPrevPage: page > 1,
+      nextPage: page < Math.ceil(totalDocs / limit) ? page + 1 : null,
+      prevPage: page > 1 ? page - 1 : null
+    };
   }
 
   /**
@@ -231,7 +263,7 @@ class ProductService {
         // isActive: true,
         // isPublic: true
       })
-        .populate('categoryId', 'name slug')
+        .populate('category', 'name slug')
         .lean()
         .exec();
       
@@ -405,7 +437,7 @@ class ProductService {
         isActive: true,
         isPublic: true,
         $or: [
-          { categoryId: product.categoryId },
+          { categoryId: product.category },
           { brand: product.brand }
         ]
       })
@@ -496,8 +528,6 @@ class ProductService {
         outOfStockProducts,
         lowStockProducts
       };
-
-      console.log('✅ Product statistics:', stats);
       logger.info(stats, 'Product statistics fetched');
       
       return stats;
@@ -507,6 +537,67 @@ class ProductService {
       throw new APIError(`Error fetching product statistics: ${error.message}`, 500);
     }
   }
+
+  public async getProductsByCategory(categoryId: string, filters: ProductFilterQueryParams, isPublic: boolean): Promise<PaginatedResponse<IProduct>> {
+    try {
+
+      const page = Number(filters.page) || 1;
+      const limit = Number(filters.limit) || 10;
+      const search = filters.search;
+  
+      const filter: mongoose.FilterQuery<IProduct> = {};
+      if (search) {
+        const searchRegex = new RegExp(search, 'i');
+        filter.$or = [{ name: searchRegex }, { slug: searchRegex }];
+      }
+
+      
+      console.log(`🔍 Fetching products by category: ${categoryId}`);
+      
+      const category = await CategoryModel.findById(categoryId);
+      if (!category) {
+        console.log(`⚠️ Category with ID ${categoryId} not found`);
+        throw new APIError('Category not found', 404);
+      }
+
+      const products = await ProductModel.find({
+        categoryId,
+        ...filters,
+        isActive: true,   
+        isPublic
+      })
+        .populate('categoryId', 'name slug')
+        .sort({ createdAt: -1 })
+        // .limit(filters.limit)
+        // .skip((filters.page - 1) * filters.limit)
+        .lean()
+        .exec();
+
+      const total = await ProductModel.countDocuments({
+        categoryId,
+        ...filters,
+        isActive: true,
+        isPublic
+      }).exec();
+
+      return {
+        docs: products,
+        totalDocs: total,
+        limit: limit,
+        page:page,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page < Math.ceil(total / limit),
+        hasPrevPage:page > 1,
+        prevPage: page > 1 ? page - 1 : null,
+        nextPage: page < Math.ceil(total / limit) ? page + 1 : null,
+      };
+      
+    } catch (error: any) {
+      console.error(`❌ Error fetching products by category ${categoryId}:`, error);
+      throw new APIError(`Error fetching products by category: ${error.message}`, 500);
+    }
+  }
+
 }
 
 // Export singleton instance

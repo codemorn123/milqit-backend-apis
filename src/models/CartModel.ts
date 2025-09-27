@@ -1,10 +1,7 @@
-
-
-
-
 import mongoose, { Schema, Document, PaginateModel, Types } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { ValidUnit } from './ProductModel';
+import { ValidUnit } from './product.model';
+import { IcommonImage } from './../types/common.types';
 
 export type CartStatus = 'active' | 'checkout' | 'completed' | 'abandoned';
 export type DeliveryType = 'standard' | 'express' | 'scheduled' | 'pickup';
@@ -22,7 +19,7 @@ export interface ICartItem {
   compareAtPrice?: number;
   quantity: number;
   unit: ValidUnit;
-  images: string[];
+  images: IcommonImage[];
   brand?: string;
   categoryId: Types.ObjectId;
   sku: string;
@@ -98,15 +95,6 @@ export interface CartDocument extends ICart ,Document {
 
 
 
-/**
- * Cart Model interface with static methods
- * @author MarotiKathoke
- * @created 2025-09-13 15:46:39
- */
-// export interface CartModel extends PaginateModel<CartDocument> {
-//   findActiveCart(userId: string): Promise<CartDocument | null>;
-//   cleanupExpiredCarts(): Promise<number>;
-// }
 
 export interface CartModel extends PaginateModel<CartDocument> {
       findActiveCart(userId: string): Promise<CartDocument | null>;
@@ -490,12 +478,5 @@ CartSchema.statics.cleanupExpiredCarts = async function() {
 // Apply pagination plugin
 CartSchema.plugin(mongoosePaginate);
 
-// Create and export the model
-// const CartModelClass = mongoose.model<CartDocument, CartModel>('Cart', CartSchema);
-
-// console.log(`✅ CartModel initialized with TypeScript support by MarotiKathoke at ${new Date().toISOString()}`);
-
-// export { CartModelClass as CartModel };
-// export default CartModelClass;
 
 export const CartModelClass = mongoose.model<CartDocument, CartModel>('Cart', CartSchema);

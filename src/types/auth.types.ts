@@ -8,11 +8,9 @@ import { IUser } from "./../models/UserModel";
 export interface UserProfile {
   id: string;
   name: string;
-  email: string;
   phone?: string;
   roles: string[];
   isActive: boolean;
-  isEmailVerified: boolean;
   isPhoneVerified: boolean;
   lastLogin?: string; // ISO string format
   createdAt: string;  // ISO string format
@@ -46,16 +44,7 @@ export interface AuthResponse {
   tokens: AuthTokens;
 }
 
-/**
- * Error response structure
- */
 
-
-// ===== Request DTOs =====
-
-/**
- * Login request data
- */
 export interface LoginRequest {
   email: string;
   password: string;
@@ -96,14 +85,12 @@ export interface ISendOtpInput {
   phone: string;
 }
 
-/**
- * Verify OTP request input
- */
+
 export interface IVerifyOtpInput {
   phone: string;
   otp: string;
-  name?: string; // Required for new users
-  deviceId?: string; // Optional device identifier for push notifications
+  name?: string; 
+  deviceId?: string;
 }
 
 /**
@@ -121,6 +108,7 @@ export interface OtpVerificationResponse {
  * Mobile authentication response
  */
 export interface IAuthResponse {
+
   user: IUser
   tokens: AuthTokens;
 }

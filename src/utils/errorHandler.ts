@@ -1,7 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
-import { z, ZodIssue } from 'zod';
 import { logger } from '../config/logger';
-import { ValidateError } from 'tsoa';
+
 
 export class ApiError extends Error {
   status: number;
@@ -50,25 +49,9 @@ export class ApiError extends Error {
   }
 }
 
-/**
- * Format a Zod validation error path
- * In latest Zod versions (2025+), path can include symbols as well
- */
-function formatZodPath(path: PropertyKey[]): string {
-  return path.map(p => {
-    if (typeof p === 'number') {
-      return `[${p}]`;
-    } else if (typeof p === 'symbol') {
-      return `[${String(p)}]`; // Convert symbol to string representation
-    } else {
-      return p; // It's already a string
-    }
-  }).join('.');
-}
 
 
 
-// import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { PresentableError } from '../error/clientErrorHelper'; // Adjust path if needed
 
@@ -88,12 +71,10 @@ const errorCodeToHttpStatus: { [key:string]: number } = {
  * This should be the LAST middleware registered in your app.
  */
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-  // If the response has already been sent, don't do anything.
   if (res.headersSent) {
     return next(err);
   }
 
-  // Check if the error is a custom, "presentable" error we created.
   if (err instanceof PresentableError) {
     const statusCode = errorCodeToHttpStatus[err.code] || StatusCodes.INTERNAL_SERVER_ERROR;
     

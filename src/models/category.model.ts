@@ -1,32 +1,55 @@
-import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
+import mongoose, { Schema, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { IBase } from './base';
+import slugify from 'slugify';
 
-// Category base interface (without the MongoDB document stuff)
 export interface ICategory {
   name: string;
   description?: string;
-  image: string;
+  slug: string;
+  isActive: boolean;
+  parentId?: mongoose.Types.ObjectId | null;
+  icon?: string;
+
+  backgroundColor?: string;
+  deepLink?: string;
+
+  bannerImage?: {
+    url: string;
+    key: string;
+  };
+
+  categoryImage?: {
+    url: string;
+    key: string;
+  };
+}
+
+
+export interface ICategoryDocument extends  IBase  {
+  name: string;
+  description?: string;
   slug: string;
   isActive: boolean;
   displayOrder: number;
   parentId?: mongoose.Types.ObjectId | null;
   icon?: string;
-  bannerImage?: string;
   backgroundColor?: string;
   textColor?: string;
   deepLink?: string;
-  // createdBy?: string;
-  // updatedBy?: string;
+  categoryImage?: {
+    url: string;
+    key: string;
+  };
+
+  bannerImage?: {
+    url: string;
+    key: string;
+  };
+
 }
 
-// Document interface with MongoDB fields
-export interface ICategoryDocument extends ICategory, Document {
-  _id: mongoose.Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
-// Define the paginate model type
 export interface CategoryModel extends PaginateModel<ICategoryDocument> {}
 
 // Create category schema
@@ -42,9 +65,11 @@ const CategorySchema = new Schema<ICategoryDocument>(
       type: String, 
       trim: true
     },
-    image: { 
-      type: String, 
-      required: true 
+   
+    categoryImage: {
+      url: { type: String },
+      key: { type: String },
+  
     },
     slug: { 
       type: String, 
@@ -59,11 +84,7 @@ const CategorySchema = new Schema<ICategoryDocument>(
       default: true,
       index: true
     },
-    displayOrder: {
-      type: Number,
-      default: 0,
-      index: true
-    },
+  
     parentId: {
       type: Schema.Types.ObjectId,
       ref: 'Category',
@@ -74,9 +95,10 @@ const CategorySchema = new Schema<ICategoryDocument>(
     icon: {
       type: String
     },
-    bannerImage: {
-      type: String
-    },
+   bannerImage: {
+     url: { type: String },
+     key: { type: String },
+   },
     backgroundColor: {
       type: String,
       default: "#FFFFFF"
@@ -88,25 +110,39 @@ const CategorySchema = new Schema<ICategoryDocument>(
     deepLink: {
       type: String
     },
-    // createdBy: {
-    //   type: String
-    // },
-    // updatedBy: {
-    //   type: String
-    // }
+    
   },
   { 
-    timestamps: true 
+    timestamps: true ,
+    toJSON: {
+      virtuals: true,
+      transform: (_, ret: any) => {
+        delete ret._id;
+        delete ret.__v;
+        
+      },
+    },
   }
 );
 
-// Add text search index
+
+CategorySchema.pre('save', function(next) {
+  // Only generate a new slug if the name has changed or if it's a new document
+  if (this.isModified('name') || this.isNew) {
+    this.slug = slugify(this.name, {
+      lower: true,    // convert to lower case
+      strict: true,   // remove special characters
+      trim: true      // trim leading/trailing spaces
+    });
+  }
+  next();
+});
+
 CategorySchema.index(
   { name: 'text', description: 'text' },
   { weights: { name: 10, description: 5 } }
 );
 
-// Add plugin for pagination
 CategorySchema.plugin(mongoosePaginate);
 
 

@@ -1,7 +1,4 @@
-// src/features/kisan-community/kisan-community.service.ts
 
-import fs from 'fs/promises';
-import path from 'path';
 import { IKisanCommunity } from './../../../types/kisan-community.types';
 import KisanCommunityModel from  './../../../models/cms/kisan-community.model';
 import APIError  from './../../../error/api-error';
@@ -12,14 +9,13 @@ import { KISAN_COMMUNITY_IMAGES_PATH } from '../../../constants/file-paths';
 class KisanCommunityService {
   public async create(data: Partial<IKisanCommunity>, file?: Express.Multer.File): Promise<IKisanCommunity> {
     const payload: Partial<IKisanCommunity> = { ...data };
-
     if (!file) {
-        throw new APIError('Profile image is required.', 400); // Throw a Bad Request error
+        throw new APIError('Profile image is required.', 400); 
       }
       const { url, key } = await fileService.saveFile(file, KISAN_COMMUNITY_IMAGES_PATH);
       payload.profileImage = { url, key };
     const newMember = await KisanCommunityModel.create(payload);
-    return newMember.toObject();
+    return newMember;
   }
 
   public async getAll(queryParams: IFilter): Promise<{ data: IKisanCommunity[]; pagination: IPaginated }> {
@@ -101,54 +97,6 @@ class KisanCommunityService {
   }
 }
 
-//   public async update(id: string, updateData: Partial<IKisanCommunity>, file?: Express.Multer.File): Promise<IKisanCommunity> {
-//     const member = await KisanCommunityModel.findById(id);
-//     if (!member) {
-//       throw new APIError(`Kisan Community member not found.`, 404);
-//     }
-
-//     const payload: Partial<IKisanCommunity> = { ...updateData };
-
-//     if (file) {
-//       // If a new file is uploaded, delete the old one from the disk
-//       if (member.profileImage?.key) {
-//         try {
-//           const oldImagePath = path.join('uploads/kisan-community/images', member.profileImage.key);
-//           await fs.unlink(oldImagePath);
-//         } catch (err) {
-//           console.error(`Failed to delete old image: ${member.profileImage.key}`, err);
-//         }
-//       }
-//       payload.profileImage = {
-//         url: `/uploads/kisan-community/images/${file.filename}`,
-//         key: file.filename,
-//       };
-//     }
-
-//     const updatedMember = await KisanCommunityModel.findByIdAndUpdate(id, payload, { new: true }).lean<IKisanCommunity>();
-//     if (!updatedMember) {
-//       throw new APIError(`Failed to update Kisan Community member.`, 500);
-//     }
-//     return updatedMember;
-//   }
-
-//   public async delete(id: string): Promise<{ message: string }> {
-//     const member = await KisanCommunityModel.findByIdAndDelete(id);
-//     if (!member) {
-//       throw new APIError(`Kisan Community member not found.`, 404);
-//     }
-
-//     // Delete the associated image file from the disk
-//     if (member.profileImage?.key) {
-//       try {
-//         const imagePath = path.join('uploads/kisan-community/images', member.profileImage.key);
-//         await fs.unlink(imagePath);
-//       } catch (err) {
-//         console.error(`Failed to delete image on delete: ${member.profileImage.key}`, err);
-//       }
-//     }
-//     return { message: `Member deleted successfully.` };
-//   }
 
 
 export default new KisanCommunityService();

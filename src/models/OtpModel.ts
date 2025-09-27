@@ -5,59 +5,29 @@ export interface IOtp {
   otp: string;
   expiresAt: Date;
   attempts: number;
-  // verified: boolean;
   isInvalidated: boolean; 
   createdAt: Date;
   updatedAt: Date;
   isVerified: boolean;
-  email: string;
   
 }
 
 export interface IOtpDocument extends IOtp, Document {}
-
-// OTP schema
 const OtpSchema = new Schema<IOtpDocument>(
-  {
-    // phone: { 
-    //   type: String, 
-    //   required: true,
-    //   index: true
-    // },
-    // otp: { 
-    //   type: String, 
-    //   required: true 
-    // },
-
-
-    phone: {
+  {phone: {
       type: String,
-      required: function () {
-        return !this.email; 
-      },
+      required: true,
+      index: true,
+      unique: true ,
       validate: {
-        validator: function () {
-          return !(this.phone && this.email); 
+        validator: function (v) {
+          return /^\+[1-9]\d{1,14}$/.test(v);
         },
-        message: "Only one of phone or email should be provided, not both.",
-      },
+        message: 'Please provide a valid phone number',
     },
-    email: {
-      type: String,
-      required: function () {
-        return !this.phone; 
-      },
+
     },
-    // otp: {
-    //   type: String,
-    //   required: true,
-    //   validate: {
-    //     validator: function (v) {
-    //       return /^\d{6}$/.test(v); 
-    //     },
-    //     message: props => `The OTP ${props.value} must be a 6-digit numeric code.`,
-    //   },
-    // },
+   
     otp: {
       type: String,
       required: true,
@@ -69,10 +39,7 @@ const OtpSchema = new Schema<IOtpDocument>(
       type: Number, 
       default: 0 
     },
-    // verified: { 
-    //   type: Boolean, 
-    //   default: false 
-    // },
+    
     isVerified: {
       type: Boolean,
       default: false
@@ -87,6 +54,6 @@ const OtpSchema = new Schema<IOtpDocument>(
   }
 );
 
-OtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+// OtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const OtpModel: Model<IOtpDocument> = mongoose.model<IOtpDocument>('Otp', OtpSchema);

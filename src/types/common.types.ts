@@ -32,14 +32,7 @@ export interface ErrorResponse {
   developer?: string;
 }
 
-export interface ApiResponseDTO<T = any> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: ErrorDetail;
-  timestamp?: string;
-  developer?: string;
-}
+
 
 
 export interface IPaginated {
@@ -59,12 +52,27 @@ export interface IFilter {
 }
 
 
+
+export interface IProductFilter {
+  page?: number;
+  limit?: number;
+  isActive?: boolean;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  brand?: string;
+  unit?: 'piece' | 'kg' | 'gm' | 'litre' | 'ml' | 'pack' | 'dozen';
+}
+
+
+
 export interface DeviceInfo {
   platform: 'ios' | 'android';
   version: string;
   deviceId: string;
-
-
   appVersion?: string;
   fcmToken?: string;
 }
@@ -76,4 +84,10 @@ export interface DeviceInfo {
 export interface Location {
   latitude: number;
   longitude: number;
+}
+
+
+export interface IcommonImage {
+  url: string;
+  key: string;
 }

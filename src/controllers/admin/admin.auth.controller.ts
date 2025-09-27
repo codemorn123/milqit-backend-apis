@@ -2,12 +2,14 @@ import {
     Body, Controller, Post, Route, Tags, Response, Middlewares,
     Example,
     Get,
-    NoSecurity
+    NoSecurity,
+    Queries,
+    Query
   } from 'tsoa';
   import { StatusCodes } from 'http-status-codes/build/cjs';
   import { validateSchemaMiddleware } from '../../middleware/common-validate';
 ;
-  import { ErrorResponse } from '../../types/common.types';
+  import { ErrorResponse, IFilter, PaginatedResponse } from '../../types/common.types';
   import { ClientErrorInterface } from '../../error/clientErrorHelper';
   import { NOT_FOUND_ERROR_EXAMPLE, SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from '../../error/exampleErrors';
   import { success, SuccessResponse } from '../../utils/SuccessResponse';
@@ -16,6 +18,7 @@ import { AuthTokens, CreateAdminRequest,  LoginRequest, UserProfile } from '../.
 import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { createAdminSchema } from '../../validations/admin.validation';
 import { AdminService } from '../../services/admin.service';
+import { IUser } from '../../models/UserModel';
 
 
   
@@ -61,11 +64,11 @@ import { AdminService } from '../../services/admin.service';
 
   
 
-    @Get('/users-list')
+    @Get('/customer-list')
     // @Middlewares([jwtAuthMiddleware])
     @NoSecurity()
-    public async listUsers(): Promise<SuccessResponse<UserProfile[]>> {
-      const users = await AdminService.listUsers();
+    public async listUsers(@Queries() queryParams: IFilter): Promise<SuccessResponse<PaginatedResponse<IUser>>> {
+      const users = await AdminService.listCustomers(queryParams);
       return success(users || [], 'Users fetched successfully');
     }
 
@@ -77,5 +80,22 @@ import { AdminService } from '../../services/admin.service';
       return success(users || [], 'Users fetched successfully');
     }
     
+
+    // @Get("/")
+    // // @SuccessResponse("200", "Users retrieved")
+    // public async getUsers(
+    //   @Query() status?: 'active' | 'inactive'
+    // ): Promise<IUser[]> {
+    //   if (status === 'active') {
+    //     return AdminService.getAllActiveUsers();
+    //   }
+    //   if (status === 'inactive') {
+    //     return AdminService.getAllInactiveUsers();
+    //   }
+    //   return AdminService.getAllUsers();
+    // }
+  
+
+
 
   }
