@@ -1,4 +1,5 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response  ,urlencoded, json} from 'express';
+import cron from 'node-cron';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -8,12 +9,18 @@ import { config } from './config';
 import { logger } from './config/logger';
 import pinoHttp from 'pino-http';
 import morgan from 'morgan';
-import { RegisterRoutes } from '../src/generated/routes';
+import { RegisterRoutes } from './generated/routes';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middleware/error';
 import path from 'path';
 import upload from './utils/upload';
+import { createServer } from 'http';
+// import { initializeSocketServer } from './config/socket.server';
+import { locationService } from './services/location.service';
 const app = express();
+
+const httpServer = createServer(app);
+// const socketServer = initializeSocketServer(httpServer);
 
 app.use(pinoHttp({
   logger,
@@ -58,7 +65,8 @@ app.use(
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 app.use(pinoHttp({ logger }));
 app.use(errorHandler);
 app.get('/health', (_req, res) => {
@@ -72,55 +80,66 @@ app.get('/health', (_req, res) => {
 
 
 
-// Middleware
-const createMulterMiddleware = () => {
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.log('🔍 Multer Middleware - Request Details:');
-    console.log('- URL:', req.url);
-    console.log('- Method:', req.method);
-    console.log('- Content-Type:', req.get('Content-Type'));
-    console.log('- Content-Length:', req.get('Content-Length'));
-    if (req.method === 'POST' && req.url.includes('/images')) {
-      console.log('📁 Applying multer to image upload request');
+cron.schedule('*/10 * * * *', async () => {
+  try {
+    const cleaned = await locationService.cleanupStaleLocations();
+    console.log(`🧹 Cleaned up ${cleaned} stale location records`);
+  } catch (error) {
+    console.error('Cleanup error:', error);
+  }
+});
+
+
+
+// // Middleware
+// const createMulterMiddleware = () => {
+//   return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+//     console.log('🔍 Multer Middleware - Request Details:');
+//     console.log('- URL:', req.url);
+//     console.log('- Method:', req.method);
+//     console.log('- Content-Type:', req.get('Content-Type'));
+//     console.log('- Content-Length:', req.get('Content-Length'));
+//     if (req.method === 'POST' && req.url.includes('/images')) {
+//       console.log('📁 Applying multer to image upload request');
       
-      // Use multer single file upload
-      const multerSingle = upload.single('file');
+//       // Use multer single file upload
+//       const multerSingle = upload.single('file');
       
-      multerSingle(req, res, (err) => {
-        if (err) {
-          console.error('❌ Multer error:', err);
-          return res.status(400).json({
-            success: false,
-            message: `File upload error: ${err.message}`
-          });
-        }
+//       multerSingle(req, res, (err) => {
+//         if (err) {
+//           console.error('❌ Multer error:', err);
+//           return res.status(400).json({
+//             success: false,
+//             message: `File upload error: ${err.message}`
+//           });
+//         }
         
-        console.log('✅ Multer processed successfully');
-        console.log('- File:', (req as any).file ? 'Present' : 'Missing');
-        console.log('- Body:', req.body);
+//         console.log('✅ Multer processed successfully');
+//         console.log('- File:', (req as any).file ? 'Present' : 'Missing');
+//         console.log('- Body:', req.body);
         
-        // Log file details if present
-        if ((req as any).file) {
-          console.log('📄 File details:', {
-            fieldname: (req as any).file.fieldname,
-            originalname: (req as any).file.originalname,
-            filename: (req as any).file.filename,
-            size: (req as any).file.size,
-            mimetype: (req as any).file.mimetype
-          });
-        }
+//         // Log file details if present
+//         if ((req as any).file) {
+//           console.log('📄 File details:', {
+//             fieldname: (req as any).file.fieldname,
+//             originalname: (req as any).file.originalname,
+//             filename: (req as any).file.filename,
+//             size: (req as any).file.size,
+//             mimetype: (req as any).file.mimetype
+//           });
+//         }
         
-        next();
-      });
-    } else {
-      // For non-upload requests, proceed normally
-      next();
-    }
-  };
-};
+//         next();
+//       });
+//     } else {
+//       // For non-upload requests, proceed normally
+//       next();
+//     }
+//   };
+// };
 
 // Apply the multer middleware BEFORE TSOA routes
-app.use(createMulterMiddleware());
+// app.use(createMulterMiddleware());
 
 const v1Router = express.Router();
 app.use('/uploads', express.static('uploads'));
@@ -185,3 +204,5 @@ app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
 
 
 export { app };
+
+

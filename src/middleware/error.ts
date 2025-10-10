@@ -14,7 +14,11 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     const messages = Object.values(err.fields).map(field => field.message);
     const error = new PresentableError('VALIDATION_ERROR', messages.join(', '));
     return res.status(error.status).json(error);
+
   }
+
+
+
 
   // ✅ START: New logic for handling Joi Validation Errors
   if (err.isJoi) {

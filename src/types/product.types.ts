@@ -73,3 +73,22 @@ export interface ProductFilterQueryParams {
   isPublic?: true,
   inStock?: true
 };
+
+
+
+
+export interface CreateProductPayload {
+  name: string;
+  description?: string;
+  mrp: number;
+  sellingPrice: number;
+  unit: string;
+  category: string;
+  stock: number;
+  productType: string;
+  productDetails: object;
+  brand?: string;
+  sku?: string;
+  isActive?: boolean;
+  isFeatured?: boolean;
+}

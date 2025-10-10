@@ -35,6 +35,7 @@
     "authenticationModule": "./src/middleware/auth-helper.ts",
     "routesFileName": "routes.ts",
     "routesDir": "src/generated"
+
   
   }
 }

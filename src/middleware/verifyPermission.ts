@@ -2,8 +2,8 @@ import { Response, NextFunction } from 'express';
 
 import { AuthorizedRequest } from '../constants/core.type';
 
-import { PresentableError } from '@/error/clientErrorHelper';
-import { Permission } from '@/services/permissions/permissions';
+import { PresentableError } from './../error/clientErrorHelper';
+import { Permission } from './../services/permissions/permissions';
 
 export const authorizePermission = (requiredPermission: Permission) => {
 	return (req: AuthorizedRequest, _: Response, next: NextFunction) => {

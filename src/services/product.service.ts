@@ -4,34 +4,30 @@ import  {ProductModel, ProductDocument, IProduct } from '../models/product.model
 import APIError from '../error/api-error';
 import { createSlug } from '../utils/stringUtils';
 import { IcommonImage, IProductFilter } from './../types/common.types';
-import { ProductFilterQueryParams } from  './../types/product.types';
+import { CreateProductPayload, ProductFilterQueryParams } from  './../types/product.types';
 import customFileService from './custom-file.service';
 import { PRODUCT_MAIN_IMAGES_PATH } from  './../constants/file-paths';
 import { PaginatedResponse } from '../types/common.types';
 import { CategoryModel } from '../models/category.model';
+import slugify from 'slugify';
 
+// export type CreateProductPayload = Omit<IProduct, 'slug' | 'images' | '_id' | 'createdAt' | 'updatedAt' | 'inStock'>;
 
 class ProductService {
   private readonly USER_CONTEXT = 'MarotiKathoke';
 
-  private async generateUniqueSlug(name: string, sku: string): Promise<string> {
-    try {
-      console.log(`🔗 Generating unique slug for: ${name}`);
-      const baseSlug = createSlug(name) || createSlug(sku) || 'product';
-      let finalSlug = baseSlug;
-      let counter = 1;
-      
-      while (await ProductModel.exists({ slug: finalSlug })) {
-        finalSlug = `${baseSlug}-${counter++}`;
-      }
-      
-      console.log(`✅ Generated unique slug: ${finalSlug}`);
-      return finalSlug;
-      
-    } catch (error: any) {
-      console.error('❌ Error generating slug:', error);
-      throw new APIError(`Error generating slug: ${error.message}`, 500);
+
+
+
+  private async generateUniqueSlug(name: string, sku?: string): Promise<string> {
+    const baseSlug = slugify(name, { lower: true, strict: true, trim: true });
+    let slug = baseSlug;
+    let counter = 1;
+    // Ensure slug is unique
+    while (await ProductModel.exists({ slug })) {
+      slug = `${baseSlug}-${sku || counter++}`;
     }
+    return slug;
   }
 
 
@@ -72,7 +68,7 @@ class ProductService {
 
 
   public async createProduct(
-    payload: IProduct, 
+    payload: CreateProductPayload, 
     images?: Express.Multer.File[]
   ): Promise<IProduct> {
     try {
@@ -107,7 +103,7 @@ class ProductService {
         ...payload,
         slug,
         images: productImages,
-        inStock: payload.quantity > 0
+        inStock: payload.stock 
       };
   
       const product = new ProductModel(productData);

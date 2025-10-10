@@ -7,11 +7,12 @@ import {
   UploadedFiles,
   Consumes,
   FormField,
+  SuccessResponse,
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { productService } from '../../services/product.service';
 import  {  createProductSchema } from '../../schemas/product.schema';
-import { success, SuccessResponse, NullSuccessResponse } from '../../utils/SuccessResponse';
+import { success, SuccessResponse as CustomSuccessResponse, NullSuccessResponse } from '../../utils/SuccessResponse';
 import { ErrorResponse, IProductFilter, PaginatedResponse } from '../../types/common.types';
 import { IProduct, ProductType, ValidUnit } from '../../models/product.model';
 import {  CreateProductRequest, ProductFilterQueryParams } from '../../types/product.types';
@@ -59,9 +60,10 @@ export class AdminProductController extends Controller {
       keyFeatures: ["Organic", "Farm Fresh", "Rich in Calcium"]
     })
   })
+
   @Consumes("multipart/form-data")
-  // @SuccessResponse(201, "Created")
-  @Response(400, "Validation Failed")
+  @SuccessResponse(StatusCodes.CREATED, "Created")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   // @Middlewares([validateSchemaMiddleware(createProductSchema, "body")])
   public async createProduct(
     @FormField() name: string,
@@ -79,7 +81,7 @@ export class AdminProductController extends Controller {
     @FormField() productDetails?: string, // JSON string that will be parsed
     @UploadedFiles("images") images?: Express.Multer.File[]
 
-  ): Promise<SuccessResponse<{}>> {
+  ): Promise<CustomSuccessResponse<{}>> {
    
     const dataToValidate = {
       name,
@@ -125,7 +127,7 @@ export class AdminProductController extends Controller {
   @Get('/')
   public async getAllProducts(
     @Queries() filter: ProductFilterQueryParams
-  ): Promise<SuccessResponse<PaginatedResponse<IProduct>>> {
+  ): Promise<CustomSuccessResponse<PaginatedResponse<IProduct>>> {
     const paginatedResult = await productService.listOfProducts(filter);
     return success(paginatedResult, 'Products fetched successfully.');
   }

@@ -146,6 +146,92 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Partial_ISettings_": {
+				"properties": {
+					"splashScreen": {
+						"properties": {
+							"durationSeconds": {
+								"type": "number",
+								"format": "double"
+							},
+							"imageUrl": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"durationSeconds",
+							"imageUrl"
+						],
+						"type": "object"
+					},
+					"maintenanceMode": {
+						"properties": {
+							"message": {
+								"type": "string"
+							},
+							"isEnabled": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"message",
+							"isEnabled"
+						],
+						"type": "object"
+					},
+					"forceUpdate": {
+						"properties": {
+							"updateMessage": {
+								"type": "string"
+							},
+							"minVersion": {
+								"type": "string"
+							},
+							"isRequired": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"updateMessage",
+							"minVersion",
+							"isRequired"
+						],
+						"type": "object"
+					},
+					"supportInfo": {
+						"properties": {
+							"phone": {
+								"type": "string"
+							},
+							"email": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"phone",
+							"email"
+						],
+						"type": "object"
+					},
+					"featureFlags": {
+						"properties": {
+							"isNewPaymentGatewayVisible": {
+								"type": "boolean"
+							},
+							"isReferralEnabled": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"isNewPaymentGatewayVisible",
+							"isReferralEnabled"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
 			"Address": {
 				"description": "Address information",
 				"properties": {
@@ -1386,6 +1472,956 @@
 				"type": "object",
 				"description": "Make all properties in T optional"
 			},
+			"IOrderItem": {
+				"properties": {
+					"product": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"productName": {
+						"type": "string"
+					},
+					"productImage": {
+						"type": "string"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"unit": {
+						"type": "string"
+					},
+					"mrp": {
+						"type": "number",
+						"format": "double"
+					},
+					"sellingPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"discount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"product",
+					"productName",
+					"quantity",
+					"unit",
+					"mrp",
+					"sellingPrice",
+					"totalPrice",
+					"discount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IShippingAddress": {
+				"properties": {
+					"fullName": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"addressLine1": {
+						"type": "string"
+					},
+					"addressLine2": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"pincode": {
+						"type": "string"
+					},
+					"landmark": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"fullName",
+					"phone",
+					"addressLine1",
+					"city",
+					"state",
+					"pincode"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OrderStatus": {
+				"type": "string",
+				"enum": [
+					"pending",
+					"confirmed",
+					"processing",
+					"shipped",
+					"delivered",
+					"cancelled",
+					"refunded"
+				]
+			},
+			"PaymentStatus": {
+				"type": "string",
+				"enum": [
+					"pending",
+					"paid",
+					"failed",
+					"refunded"
+				]
+			},
+			"PaymentMethod": {
+				"type": "string",
+				"enum": [
+					"card",
+					"upi",
+					"netbanking",
+					"wallet",
+					"cod"
+				]
+			},
+			"IOrder": {
+				"properties": {
+					"_id": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"orderNumber": {
+						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/IOrderItem"
+						},
+						"type": "array"
+					},
+					"shippingAddress": {
+						"$ref": "#/components/schemas/IShippingAddress"
+					},
+					"subtotal": {
+						"type": "number",
+						"format": "double"
+					},
+					"discount": {
+						"type": "number",
+						"format": "double"
+					},
+					"deliveryCharge": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderStatus": {
+						"$ref": "#/components/schemas/OrderStatus"
+					},
+					"paymentStatus": {
+						"$ref": "#/components/schemas/PaymentStatus"
+					},
+					"paymentMethod": {
+						"$ref": "#/components/schemas/PaymentMethod"
+					},
+					"trackingNumber": {
+						"type": "string"
+					},
+					"estimatedDelivery": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deliveredAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"notes": {
+						"type": "string"
+					},
+					"cancellationReason": {
+						"type": "string"
+					},
+					"cancelledAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"orderNumber",
+					"user",
+					"items",
+					"shippingAddress",
+					"subtotal",
+					"discount",
+					"deliveryCharge",
+					"totalAmount",
+					"orderStatus",
+					"paymentStatus",
+					"paymentMethod"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedResponse_IOrder_": {
+				"properties": {
+					"docs": {
+						"items": {
+							"$ref": "#/components/schemas/IOrder"
+						},
+						"type": "array"
+					},
+					"totalDocs": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"hasNextPage": {
+						"type": "boolean"
+					},
+					"hasPrevPage": {
+						"type": "boolean"
+					},
+					"nextPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"prevPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					}
+				},
+				"required": [
+					"docs",
+					"totalDocs",
+					"limit",
+					"page",
+					"totalPages",
+					"hasNextPage",
+					"hasPrevPage",
+					"nextPage",
+					"prevPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_PaginatedResponse_IOrder__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/PaginatedResponse_IOrder_"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OrderFilterQueryParams": {
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderStatus": {
+						"$ref": "#/components/schemas/OrderStatus"
+					},
+					"paymentStatus": {
+						"$ref": "#/components/schemas/PaymentStatus"
+					},
+					"user": {
+						"type": "string"
+					},
+					"orderNumber": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"sortBy": {
+						"type": "string"
+					},
+					"sortOrder": {
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IOrder_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IOrder"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUpdateOrderRequest": {
+				"properties": {
+					"orderStatus": {
+						"$ref": "#/components/schemas/OrderStatus"
+					},
+					"paymentStatus": {
+						"$ref": "#/components/schemas/PaymentStatus"
+					},
+					"trackingNumber": {
+						"type": "string"
+					},
+					"estimatedDelivery": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"cancellationReason": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_null_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NullSuccessResponse": {
+				"$ref": "#/components/schemas/SuccessResponse_null_"
+			},
+			"ICreateOrderRequest": {
+				"properties": {
+					"user": {
+						"type": "string"
+					},
+					"items": {
+						"items": {
+							"properties": {
+								"quantity": {
+									"type": "number",
+									"format": "double"
+								},
+								"product": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"quantity",
+								"product"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"shippingAddress": {
+						"$ref": "#/components/schemas/IShippingAddress"
+					},
+					"paymentMethod": {
+						"$ref": "#/components/schemas/PaymentMethod"
+					},
+					"notes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user",
+					"items",
+					"shippingAddress",
+					"paymentMethod"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"INotification": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"targetAudience": {
+						"type": "string",
+						"enum": [
+							"all",
+							"customers",
+							"vendors"
+						]
+					},
+					"scheduledAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"pending",
+							"sent",
+							"failed"
+						]
+					},
+					"imageUrl": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"title",
+					"message",
+					"targetAudience",
+					"status",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedResponse_INotification_": {
+				"properties": {
+					"docs": {
+						"items": {
+							"$ref": "#/components/schemas/INotification"
+						},
+						"type": "array"
+					},
+					"totalDocs": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"hasNextPage": {
+						"type": "boolean"
+					},
+					"hasPrevPage": {
+						"type": "boolean"
+					},
+					"nextPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"prevPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					}
+				},
+				"required": [
+					"docs",
+					"totalDocs",
+					"limit",
+					"page",
+					"totalPages",
+					"hasNextPage",
+					"hasPrevPage",
+					"nextPage",
+					"prevPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessDataResponse_PaginatedResponse_INotification__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/PaginatedResponse_INotification_"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IFilter": {
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"search": {
+						"type": "string"
+					},
+					"sortBy": {
+						"type": "string"
+					},
+					"sortOrder": {
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LocationType": {
+				"type": "string",
+				"enum": [
+					"customer",
+					"delivery_partner"
+				]
+			},
+			"ILocationPoint": {
+				"properties": {
+					"type": {
+						"type": "string",
+						"enum": [
+							"Point"
+						],
+						"nullable": false
+					},
+					"coordinates": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"type",
+					"coordinates"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TrackingStatus": {
+				"type": "string",
+				"enum": [
+					"active",
+					"inactive",
+					"completed"
+				]
+			},
+			"ILocationHistory": {
+				"properties": {
+					"coordinates": {
+						"$ref": "#/components/schemas/ILocationPoint"
+					},
+					"timestamp": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"speed": {
+						"type": "number",
+						"format": "double"
+					},
+					"accuracy": {
+						"type": "number",
+						"format": "double"
+					},
+					"heading": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"coordinates",
+					"timestamp"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ILiveLocation": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"userType": {
+						"$ref": "#/components/schemas/LocationType"
+					},
+					"orderId": {
+						"type": "string"
+					},
+					"currentLocation": {
+						"$ref": "#/components/schemas/ILocationPoint"
+					},
+					"lastUpdated": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"status": {
+						"$ref": "#/components/schemas/TrackingStatus"
+					},
+					"sessionId": {
+						"type": "string"
+					},
+					"speed": {
+						"type": "number",
+						"format": "double"
+					},
+					"accuracy": {
+						"type": "number",
+						"format": "double"
+					},
+					"heading": {
+						"type": "number",
+						"format": "double"
+					},
+					"batteryLevel": {
+						"type": "number",
+						"format": "double"
+					},
+					"locationHistory": {
+						"items": {
+							"$ref": "#/components/schemas/ILocationHistory"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"userId",
+					"userType",
+					"currentLocation",
+					"lastUpdated",
+					"status",
+					"sessionId",
+					"locationHistory"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_ILiveLocation_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/ILiveLocation"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IStartTrackingRequest": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"userType": {
+						"$ref": "#/components/schemas/LocationType"
+					},
+					"orderId": {
+						"type": "string"
+					},
+					"latitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"longitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"sessionId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userId",
+					"userType",
+					"latitude",
+					"longitude",
+					"sessionId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUpdateLocationRequest": {
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"userType": {
+						"$ref": "#/components/schemas/LocationType"
+					},
+					"latitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"longitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderId": {
+						"type": "string"
+					},
+					"sessionId": {
+						"type": "string"
+					},
+					"speed": {
+						"type": "number",
+						"format": "double"
+					},
+					"accuracy": {
+						"type": "number",
+						"format": "double"
+					},
+					"heading": {
+						"type": "number",
+						"format": "double"
+					},
+					"batteryLevel": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"userId",
+					"userType",
+					"latitude",
+					"longitude",
+					"sessionId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_ILiveLocation-or-null_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ILiveLocation"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_ILiveLocation-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/ILiveLocation"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__distance-number--eta-number__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"eta": {
+								"type": "number",
+								"format": "double"
+							},
+							"distance": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"eta",
+							"distance"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ICategory": {
 				"properties": {
 					"name": {
@@ -1532,36 +2568,6 @@
 					"message",
 					"result"
 				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IFilter": {
-				"properties": {
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit": {
-						"type": "number",
-						"format": "double"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"search": {
-						"type": "string"
-					},
-					"sortBy": {
-						"type": "string"
-					},
-					"sortOrder": {
-						"type": "string",
-						"enum": [
-							"asc",
-							"desc"
-						]
-					}
-				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1755,6 +2761,129 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ICoupon": {
+				"properties": {
+					"code": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"discountType": {
+						"type": "string",
+						"enum": [
+							"percentage",
+							"fixed"
+						]
+					},
+					"discountValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxDiscountAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"minOrderValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"validFrom": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"validUntil": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"totalUsageLimit": {
+						"type": "number",
+						"format": "double"
+					},
+					"timesUsed": {
+						"type": "number",
+						"format": "double"
+					},
+					"usageLimitPerUser": {
+						"type": "number",
+						"format": "double"
+					},
+					"usedBy": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"code",
+					"description",
+					"discountType",
+					"discountValue",
+					"minOrderValue",
+					"validFrom",
+					"validUntil",
+					"totalUsageLimit",
+					"timesUsed",
+					"usageLimitPerUser",
+					"usedBy",
+					"isActive"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessDataResponse_ICoupon-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/ICoupon"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessDataResponse_any_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IImage": {
 				"properties": {
 					"title": {
@@ -1802,6 +2931,31 @@
 					"limit",
 					"totalRecord",
 					"totalPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CustomSuccessResponse____": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {},
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1861,7 +3015,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SuccessResponse_PaginatedResponse_IProduct__": {
+			"CustomSuccessResponse_PaginatedResponse_IProduct__": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -1971,37 +3125,6 @@
 				},
 				"type": "object",
 				"additionalProperties": false
-			},
-			"SuccessResponse_null_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"NullSuccessResponse": {
-				"$ref": "#/components/schemas/SuccessResponse_null_"
 			},
 			"SuccessResponse__message-string__": {
 				"properties": {
@@ -3354,6 +4477,179 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ISettings": {
+				"properties": {
+					"splashScreen": {
+						"properties": {
+							"durationSeconds": {
+								"type": "number",
+								"format": "double"
+							},
+							"imageUrl": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"durationSeconds",
+							"imageUrl"
+						],
+						"type": "object"
+					},
+					"maintenanceMode": {
+						"properties": {
+							"message": {
+								"type": "string"
+							},
+							"isEnabled": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"message",
+							"isEnabled"
+						],
+						"type": "object"
+					},
+					"forceUpdate": {
+						"properties": {
+							"updateMessage": {
+								"type": "string"
+							},
+							"minVersion": {
+								"type": "string"
+							},
+							"isRequired": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"updateMessage",
+							"minVersion",
+							"isRequired"
+						],
+						"type": "object"
+					},
+					"supportInfo": {
+						"properties": {
+							"phone": {
+								"type": "string"
+							},
+							"email": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"phone",
+							"email"
+						],
+						"type": "object"
+					},
+					"featureFlags": {
+						"properties": {
+							"isNewPaymentGatewayVisible": {
+								"type": "boolean"
+							},
+							"isReferralEnabled": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"isNewPaymentGatewayVisible",
+							"isReferralEnabled"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"splashScreen",
+					"maintenanceMode",
+					"forceUpdate",
+					"supportInfo",
+					"featureFlags"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseTags_ISettings_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/ISettings"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseTags_INotification_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/INotification"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponseTags__message-string__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IKisanCommunity": {
 				"properties": {
 					"farmerName": {
@@ -3437,6 +4733,122 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"SuccessDataResponse_ICoupon_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/ICoupon"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_ICoupon_": {
+				"properties": {
+					"code": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"discountType": {
+						"type": "string",
+						"enum": [
+							"percentage",
+							"fixed"
+						]
+					},
+					"discountValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxDiscountAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"minOrderValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"validFrom": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"validUntil": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"totalUsageLimit": {
+						"type": "number",
+						"format": "double"
+					},
+					"timesUsed": {
+						"type": "number",
+						"format": "double"
+					},
+					"usageLimitPerUser": {
+						"type": "number",
+						"format": "double"
+					},
+					"usedBy": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"SuccessDataResponse__message-string__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -3457,6 +4869,28 @@
 		"contact": {}
 	},
 	"paths": {
+		"/settings": {
+			"get": {
+				"operationId": "GetSettings",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Partial_ISettings_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Public Settings"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/mobile/user/{userId}/profile": {
 			"get": {
 				"operationId": "GetUserProfile",
@@ -5168,6 +6602,1910 @@
 				]
 			}
 		},
+		"/admin/orders": {
+			"get": {
+				"operationId": "GetAllOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"page": 1,
+											"limit": 10,
+											"orderStatus": "pending",
+											"paymentStatus": "paid",
+											"sortBy": "createdAt",
+											"sortOrder": "desc"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all orders with pagination and filters",
+				"summary": "Get list of all orders",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderStatus",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/OrderStatus"
+						}
+					},
+					{
+						"in": "query",
+						"name": "paymentStatus",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/PaymentStatus"
+						}
+					},
+					{
+						"in": "query",
+						"name": "user",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderNumber",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "startDate",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "endDate",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/{id}": {
+			"get": {
+				"operationId": "GetOrderById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a single order by its ID",
+				"summary": "Get order details",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"orderStatus": "confirmed",
+											"paymentStatus": "paid",
+											"trackingNumber": "TRK123456789",
+											"estimatedDelivery": "2025-10-05T00:00:00.000Z"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update order status and details",
+				"summary": "Update order",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUpdateOrderRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NullSuccessResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete an order",
+				"summary": "Delete order",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/order-number/{orderNumber}": {
+			"get": {
+				"operationId": "GetOrderByOrderNumber",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get order by order number",
+				"summary": "Get order by order number",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderNumber",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/{id}/cancel": {
+			"post": {
+				"operationId": "CancelOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cancel an order",
+				"summary": "Cancel order",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"reason": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"reason"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/orders/stats/overview": {
+			"get": {
+				"operationId": "GetOrderStats",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get order statistics",
+				"summary": "Get order statistics",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/user/orders": {
+			"post": {
+				"operationId": "CreateOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"user": "60f7b3b3b3f1b40015c8e8a1",
+											"items": [
+												{
+													"product": "60f7b3b3b3f1b40015c8e8a2",
+													"quantity": 2
+												},
+												{
+													"product": "60f7b3b3b3f1b40015c8e8a3",
+													"quantity": 1
+												}
+											],
+											"shippingAddress": {
+												"fullName": "John Doe",
+												"phone": "+919876543210",
+												"addressLine1": "123, Main Street",
+												"addressLine2": "Near City Mall",
+												"city": "Mumbai",
+												"state": "Maharashtra",
+												"pincode": "400001",
+												"landmark": "Opposite Bank"
+											},
+											"paymentMethod": "upi",
+											"notes": "Please deliver between 10 AM to 2 PM"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new order",
+				"summary": "Place a new order",
+				"tags": [
+					"USER: Orders"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ICreateOrderRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetMyOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get user's orders",
+				"summary": "Get my orders",
+				"tags": [
+					"USER: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderStatus",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/OrderStatus"
+						}
+					},
+					{
+						"in": "query",
+						"name": "paymentStatus",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/PaymentStatus"
+						}
+					},
+					{
+						"in": "query",
+						"name": "user",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderNumber",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "startDate",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "endDate",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/user/orders/{id}": {
+			"get": {
+				"operationId": "GetOrderById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get specific order details",
+				"summary": "Get order details",
+				"tags": [
+					"USER: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/orders/{id}/cancel": {
+			"post": {
+				"operationId": "CancelOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cancel user's order",
+				"summary": "Cancel my order",
+				"tags": [
+					"USER: Orders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"reason": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"reason"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/customer/notifications": {
+			"get": {
+				"operationId": "GetNotifications",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_PaginatedResponse_INotification__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Customer Notifications"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/location/start": {
+			"post": {
+				"operationId": "StartTracking",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ILiveLocation_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Start tracking session (REST API fallback)",
+				"tags": [
+					"Location Tracking"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IStartTrackingRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/location/update": {
+			"post": {
+				"operationId": "UpdateLocation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ILiveLocation_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update location (REST API fallback)",
+				"tags": [
+					"Location Tracking"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUpdateLocationRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/location/current/{userId}": {
+			"get": {
+				"operationId": "GetCurrentLocation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ILiveLocation-or-null_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get current location",
+				"tags": [
+					"Location Tracking"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/location/stop": {
+			"post": {
+				"operationId": "StopTracking",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/NullSuccessResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Stop tracking",
+				"tags": [
+					"Location Tracking"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"orderId": {
+										"type": "string"
+									},
+									"sessionId": {
+										"type": "string"
+									},
+									"userId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"sessionId",
+									"userId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/location/nearby": {
+			"get": {
+				"operationId": "FindNearbyDeliveryPartners",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ILiveLocation-Array_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Find nearby delivery partners",
+				"tags": [
+					"Location Tracking"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "latitude",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "longitude",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "maxDistance",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/location/history/{userId}": {
+			"get": {
+				"operationId": "GetLocationHistory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ILiveLocation-Array_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get location history",
+				"tags": [
+					"Location Tracking"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/location/eta/{deliveryPartnerId}": {
+			"get": {
+				"operationId": "GetETA",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__distance-number--eta-number__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get ETA",
+				"tags": [
+					"Location Tracking"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "deliveryPartnerId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "destinationLat",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "destinationLon",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/customer/categories": {
 			"get": {
 				"operationId": "GetCategories",
@@ -5772,6 +9110,79 @@
 				}
 			}
 		},
+		"/coupons/available": {
+			"get": {
+				"operationId": "GetAvailableCoupons",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_ICoupon-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Customer Coupons"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/coupons/apply": {
+			"post": {
+				"operationId": "ApplyCoupon",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Customer Coupons"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"orderTotal": {
+										"type": "number",
+										"format": "double"
+									},
+									"code": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"orderTotal",
+									"code"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/images": {
 			"post": {
 				"operationId": "UploadImage",
@@ -6016,12 +9427,12 @@
 			"post": {
 				"operationId": "CreateProduct",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"201": {
+						"description": "Created",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse____"
+									"$ref": "#/components/schemas/CustomSuccessResponse____"
 								},
 								"examples": {
 									"Example 1": {
@@ -6191,7 +9602,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IProduct__"
+									"$ref": "#/components/schemas/CustomSuccessResponse_PaginatedResponse_IProduct__"
 								}
 							}
 						}
@@ -8413,6 +11824,217 @@
 				]
 			}
 		},
+		"/admin/settings": {
+			"put": {
+				"operationId": "UpdateSettings",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponseTags_ISettings_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					}
+				},
+				"tags": [
+					"Admin Settings"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_ISettings_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/cms/notifications": {
+			"post": {
+				"operationId": "CreateNotification",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponseTags_INotification_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					}
+				},
+				"tags": [
+					"Admin Notifications"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"imageUrl": {
+										"type": "string"
+									},
+									"scheduledAt": {
+										"type": "string",
+										"format": "date-time"
+									},
+									"targetAudience": {
+										"type": "string",
+										"enum": [
+											"all",
+											"customers",
+											"vendors"
+										]
+									},
+									"message": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"targetAudience",
+									"message",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAllNotifications",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_PaginatedResponse_INotification__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Notifications"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/cms/notifications/{id}": {
+			"delete": {
+				"operationId": "DeleteNotification",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponseTags__message-string__"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Admin Notifications"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/dashbord/cms/kisan-community": {
 			"post": {
 				"operationId": "Create",
@@ -8717,6 +12339,214 @@
 					"Kisan Community"
 				],
 				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/coupons": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_ICoupon_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Coupons"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ICoupon"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAll",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"$ref": "#/components/schemas/IPaginated"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/ICoupon"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"pagination",
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Coupons"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/coupons/{id}": {
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_ICoupon_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Coupons"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_ICoupon_"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse__message-string__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Coupons"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
