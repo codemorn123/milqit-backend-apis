@@ -12562,7 +12562,10 @@
 	},
 	"servers": [
 		{
-			"url": "http://localhost:5001/v1"
+			"url": "https://[object Object]/"
+		},
+		{
+			"url": "https://[object Object]/"
 		}
 	]
 }

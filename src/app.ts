@@ -197,10 +197,32 @@ app.use((error: any, req: express.Request, res: express.Response, next: express.
 });
 
 
-app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
-  return res.send(swaggerUi.generateHTML(await import('../build/swagger.json')))
-})
+// app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
+//   return res.send(swaggerUi.generateHTML(await import('../build/swagger.json')))
+// })
 
+app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
+  const swaggerDocument = await import('../build/swagger.json');
+  
+  const isDevelopment =false
+  
+  const customSwagger = {
+    ...swaggerDocument,
+    servers: [
+      {
+        url: isDevelopment ? 'http://localhost:5001/v1' : 'https://api.milqit.com/v1',
+        description: isDevelopment ? 'Local Development Server' : 'Production Server'
+      },
+      // Include both servers for easy switching
+      {
+        url: isDevelopment ? 'https://api.milqit.com/v1' : 'http://localhost:5001/v1',
+        description: isDevelopment ? 'Production Server' : 'Local Development Server'
+      }
+    ]
+  };
+  
+  return res.send(swaggerUi.generateHTML(customSwagger));
+});
 
 
 export { app };

@@ -5,9 +5,16 @@
   "spec": {
     "outputDirectory": "build",
     "specVersion": 3,
-    "basePath": "/v1",
-    "host": "localhost:5001",
-    "schemes": ["http"],
+    "servers": [
+      {
+        "url": "http://localhost:5001/v1",
+        "description": "Local Development Server"
+      },
+      {
+        "url": "https://api.milqit.com/v1",
+        "description": "Production Server"
+      }
+    ],
     "info": {
       "title": "Milqit E-commerce API",
       "version": "1.0.0",
@@ -30,12 +37,14 @@
       "persistAuthorization": true
     }
   },
+  "swagger": {
+    "outputDirectory": "./build",
+    "host": "localhost:5001"
+  },
   "routes": {
     "middleware": "express",
     "authenticationModule": "./src/middleware/auth-helper.ts",
     "routesFileName": "routes.ts",
     "routesDir": "src/generated"
-
-  
   }
 }
