@@ -4,6 +4,9 @@
  * @author MarotiKathoke
  * @created 2025-09-13 16:44:44
  */
+  import { Types } from 'mongoose';
+  import { ICart, ICartItem, CartStatus, DeliveryType } from '../models/CartModel';
+  
 
 import { DeviceInfo } from "./common.types";
 import { Address } from "./location.types";
@@ -234,3 +237,88 @@ export interface CartItem {
       updatedAt: cartDoc.updatedAt?.toISOString() || new Date().toISOString()
     };
   }
+
+
+
+
+
+
+
+
+/**
+ * Cart Response Interface
+ */
+export interface ICartResponse {
+  id: string;
+  userId: string;
+  items: ICartItem[];
+  totalItems: number;
+  subtotal: number;
+  discount: number;
+  deliveryCharges: number;
+  taxes: number;
+  totalAmount: number;
+  savings: number;
+  status: CartStatus;
+  deliveryType: DeliveryType;
+  appliedCoupons: string[];
+  estimatedDelivery?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Cart Summary Interface
+ */
+export interface ICartSummary {
+  totalItems: number;
+  subtotal: number;
+  discount: number;
+  deliveryCharges: number;
+  taxes: number;
+  totalAmount: number;
+  savings: number;
+  estimatedDelivery?: Date;
+  appliedCoupons: string[];
+  deliveryType: DeliveryType;
+}
+
+/**
+ * Cart Validation Result
+ */
+export interface ICartValidation {
+  isValid: boolean;
+  errors: string[];
+  unavailableItems: string[];
+}
+
+/**
+ * Cart Filter Options
+ */
+export interface ICartFilterOptions {
+  userId?: string;
+  status?: CartStatus;
+  dateFrom?: Date;
+  dateTo?: Date;
+  minAmount?: number;
+  maxAmount?: number;
+  hasItems?: boolean;
+}
+
+/**
+ * Cart Statistics
+ */
+export interface ICartStatistics {
+  total: number;
+  totalValue: number;
+  totalItems: number;
+  byStatus: {
+    [key in CartStatus]?: {
+      count: number;
+      amount: number;
+      items: number;
+    };
+  };
+  averageCartValue: number;
+  averageItemCount: number;
+}

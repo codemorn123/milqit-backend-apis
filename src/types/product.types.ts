@@ -1,4 +1,6 @@
-import { ProductType, ValidUnit } from "./../models/product.model";
+import { Types } from "mongoose";
+import { ProductDetails, ProductType, ValidUnit } from "./../models/product.model";
+import { IcommonImage } from "./common.types";
 
 export interface CreateProductRequest {
   name: string;
@@ -91,4 +93,32 @@ export interface CreateProductPayload {
   sku?: string;
   isActive?: boolean;
   isFeatured?: boolean;
+}
+
+
+export interface IProductForCart {
+  _id: Types.ObjectId;
+  name: string;
+  slug: string;
+  description?: string;
+  mrp: number;
+  sellingPrice: number;
+  category: Types.ObjectId;
+  sku: string;
+  images?: IcommonImage[];
+  quantity: number;
+  isActive: boolean;
+  isFeatured: boolean;
+  inStock: boolean;
+  brand?: string;
+  unit: ValidUnit;
+  productType: ProductType;
+  productDetails: ProductDetails;
+  averageRating: number;
+  reviewCount: number;
+  
+  // Computed fields
+  discountPercentage?: number;
+  savings?: number;
+  hasDiscount?: boolean;
 }

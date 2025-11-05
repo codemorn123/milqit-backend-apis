@@ -1289,6 +1289,472 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ICartItem": {
+				"description": "Cart Item Interface",
+				"properties": {
+					"productId": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"compareAtPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"unit": {
+						"$ref": "#/components/schemas/ValidUnit"
+					},
+					"images": {
+						"items": {
+							"$ref": "#/components/schemas/IcommonImage"
+						},
+						"type": "array"
+					},
+					"brand": {
+						"type": "string"
+					},
+					"categoryId": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"sku": {
+						"type": "string"
+					},
+					"isAvailable": {
+						"type": "boolean"
+					},
+					"maxQuantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"subtotal": {
+						"type": "number",
+						"format": "double"
+					},
+					"discount": {
+						"type": "number",
+						"format": "double"
+					},
+					"finalPrice": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"productId",
+					"name",
+					"slug",
+					"price",
+					"quantity",
+					"unit",
+					"images",
+					"categoryId",
+					"sku",
+					"isAvailable",
+					"maxQuantity",
+					"subtotal",
+					"discount",
+					"finalPrice"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CartStatus": {
+				"type": "string",
+				"enum": [
+					"active",
+					"completed",
+					"expired",
+					"abandoned"
+				],
+				"description": "Cart Status Types"
+			},
+			"DeliveryType": {
+				"type": "string",
+				"enum": [
+					"standard",
+					"express",
+					"scheduled",
+					"pickup"
+				]
+			},
+			"IDeviceInfo": {
+				"description": "Device Information Interface",
+				"properties": {
+					"platform": {
+						"type": "string",
+						"enum": [
+							"ios",
+							"android"
+						]
+					},
+					"version": {
+						"type": "string"
+					},
+					"deviceId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"platform",
+					"version",
+					"deviceId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ILocation": {
+				"description": "Location Interface",
+				"properties": {
+					"latitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"longitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"address": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"latitude",
+					"longitude",
+					"address"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ICart": {
+				"description": "Base Cart Interface",
+				"properties": {
+					"userId": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"items": {
+						"items": {
+							"$ref": "#/components/schemas/ICartItem"
+						},
+						"type": "array"
+					},
+					"totalItems": {
+						"type": "number",
+						"format": "double"
+					},
+					"subtotal": {
+						"type": "number",
+						"format": "double"
+					},
+					"discount": {
+						"type": "number",
+						"format": "double"
+					},
+					"deliveryCharges": {
+						"type": "number",
+						"format": "double"
+					},
+					"taxes": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"savings": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"$ref": "#/components/schemas/CartStatus"
+					},
+					"deliveryType": {
+						"$ref": "#/components/schemas/DeliveryType"
+					},
+					"deliveryAddress": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"scheduledDelivery": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"estimatedDelivery": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"appliedCoupons": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"notes": {
+						"type": "string"
+					},
+					"deviceInfo": {
+						"$ref": "#/components/schemas/IDeviceInfo"
+					},
+					"location": {
+						"$ref": "#/components/schemas/ILocation"
+					},
+					"lastActivityAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"expiresAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"userId",
+					"items",
+					"totalItems",
+					"subtotal",
+					"discount",
+					"deliveryCharges",
+					"taxes",
+					"totalAmount",
+					"savings",
+					"status",
+					"deliveryType",
+					"appliedCoupons",
+					"lastActivityAt",
+					"expiresAt",
+					"isActive",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_ICart_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/ICart"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AddToCartRequest": {
+				"description": "Request/Response Interfaces",
+				"properties": {
+					"productId": {
+						"type": "string"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"notes": {
+						"type": "string"
+					},
+					"deviceInfo": {
+						"properties": {
+							"deviceId": {
+								"type": "string"
+							},
+							"version": {
+								"type": "string"
+							},
+							"platform": {
+								"type": "string",
+								"enum": [
+									"ios",
+									"android"
+								]
+							}
+						},
+						"required": [
+							"deviceId",
+							"version",
+							"platform"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"productId",
+					"quantity"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__totalItems-number--subtotal-number--totalAmount-number--items-ICart-at-items__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"items": {
+								"items": {
+									"$ref": "#/components/schemas/ICartItem"
+								},
+								"type": "array"
+							},
+							"totalAmount": {
+								"type": "number",
+								"format": "double"
+							},
+							"subtotal": {
+								"type": "number",
+								"format": "double"
+							},
+							"totalItems": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"items",
+							"totalAmount",
+							"subtotal",
+							"totalItems"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateCartItemRequest": {
+				"properties": {
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"notes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"quantity"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ClearCartRequest": {
+				"properties": {
+					"confirmClear": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"confirmClear"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApplyCouponRequest": {
+				"properties": {
+					"couponCode": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"couponCode"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SetDeliveryInfoRequest": {
+				"properties": {
+					"deliveryType": {
+						"type": "string",
+						"enum": [
+							"standard",
+							"express",
+							"scheduled",
+							"pickup"
+						]
+					},
+					"deliveryAddress": {
+						"type": "string"
+					},
+					"scheduledDelivery": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"location": {
+						"properties": {
+							"address": {
+								"type": "string"
+							},
+							"longitude": {
+								"type": "number",
+								"format": "double"
+							},
+							"latitude": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"address",
+							"longitude",
+							"latitude"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"deliveryType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ISubscription": {
 				"properties": {
 					"id": {
@@ -3154,264 +3620,6 @@
 					"success",
 					"message",
 					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ICartItem": {
-				"description": "Cart Item interface for individual products in cart",
-				"properties": {
-					"productId": {
-						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
-					},
-					"name": {
-						"type": "string"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"price": {
-						"type": "number",
-						"format": "double"
-					},
-					"compareAtPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"quantity": {
-						"type": "number",
-						"format": "double"
-					},
-					"unit": {
-						"$ref": "#/components/schemas/ValidUnit"
-					},
-					"images": {
-						"items": {
-							"$ref": "#/components/schemas/IcommonImage"
-						},
-						"type": "array"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"categoryId": {
-						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
-					},
-					"sku": {
-						"type": "string"
-					},
-					"isAvailable": {
-						"type": "boolean"
-					},
-					"maxQuantity": {
-						"type": "number",
-						"format": "double"
-					},
-					"subtotal": {
-						"type": "number",
-						"format": "double"
-					},
-					"discount": {
-						"type": "number",
-						"format": "double"
-					},
-					"finalPrice": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"productId",
-					"name",
-					"slug",
-					"price",
-					"quantity",
-					"unit",
-					"images",
-					"categoryId",
-					"sku",
-					"isAvailable",
-					"maxQuantity",
-					"subtotal",
-					"discount",
-					"finalPrice"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CartStatus": {
-				"type": "string",
-				"enum": [
-					"active",
-					"checkout",
-					"completed",
-					"abandoned"
-				]
-			},
-			"DeliveryType": {
-				"type": "string",
-				"enum": [
-					"standard",
-					"express",
-					"scheduled",
-					"pickup"
-				]
-			},
-			"IDeviceInfo": {
-				"description": "Device Info interface for mobile tracking",
-				"properties": {
-					"platform": {
-						"type": "string",
-						"enum": [
-							"ios",
-							"android"
-						]
-					},
-					"version": {
-						"type": "string"
-					},
-					"deviceId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"platform",
-					"version",
-					"deviceId"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ILocation": {
-				"properties": {
-					"latitude": {
-						"type": "number",
-						"format": "double"
-					},
-					"longitude": {
-						"type": "number",
-						"format": "double"
-					},
-					"address": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"latitude",
-					"longitude",
-					"address"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ICart": {
-				"description": "Base Cart interface without Document methods",
-				"properties": {
-					"userId": {
-						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
-					},
-					"sessionId": {
-						"type": "string"
-					},
-					"items": {
-						"items": {
-							"$ref": "#/components/schemas/ICartItem"
-						},
-						"type": "array"
-					},
-					"totalItems": {
-						"type": "number",
-						"format": "double"
-					},
-					"subtotal": {
-						"type": "number",
-						"format": "double"
-					},
-					"discount": {
-						"type": "number",
-						"format": "double"
-					},
-					"deliveryCharges": {
-						"type": "number",
-						"format": "double"
-					},
-					"taxes": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalAmount": {
-						"type": "number",
-						"format": "double"
-					},
-					"savings": {
-						"type": "number",
-						"format": "double"
-					},
-					"status": {
-						"$ref": "#/components/schemas/CartStatus"
-					},
-					"deliveryType": {
-						"$ref": "#/components/schemas/DeliveryType"
-					},
-					"deliveryAddress": {
-						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
-					},
-					"scheduledDelivery": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"estimatedDelivery": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"appliedCoupons": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"notes": {
-						"type": "string"
-					},
-					"deviceInfo": {
-						"$ref": "#/components/schemas/IDeviceInfo"
-					},
-					"location": {
-						"$ref": "#/components/schemas/ILocation"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"expiresAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"userId",
-					"items",
-					"totalItems",
-					"subtotal",
-					"discount",
-					"deliveryCharges",
-					"taxes",
-					"totalAmount",
-					"savings",
-					"status",
-					"deliveryType",
-					"appliedCoupons",
-					"isActive",
-					"expiresAt",
-					"createdAt",
-					"updatedAt"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -6075,6 +6283,294 @@
 						}
 					}
 				]
+			}
+		},
+		"/customer/cart": {
+			"post": {
+				"operationId": "AddToCart",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ICart_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Add item to cart",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddToCartRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetCart",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__totalItems-number--subtotal-number--totalAmount-number--items-ICart-at-items__"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get user's cart",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "includeUnavailable",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "ClearCart",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__totalItems-number--subtotal-number--totalAmount-number--items-ICart-at-items__"
+								}
+							}
+						}
+					}
+				},
+				"description": "Clear entire cart",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ClearCartRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/customer/cart/{productId}": {
+			"put": {
+				"operationId": "UpdateCartItem",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ICart_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update cart item quantity",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "productId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateCartItemRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "RemoveFromCart",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ICart_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Remove item from cart",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "productId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/customer/cart/coupon": {
+			"post": {
+				"operationId": "ApplyCoupon",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ICart_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Apply coupon to cart",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ApplyCouponRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/customer/cart/delivery": {
+			"post": {
+				"operationId": "SetDeliveryInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ICart_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Set delivery information",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetDeliveryInfoRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/customer/cart/summary": {
+			"get": {
+				"operationId": "GetCartSummary",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_ICart_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get cart summary for checkout",
+				"tags": [
+					"User Cart"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/mobile/subscriptions": {

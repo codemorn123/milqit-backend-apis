@@ -68,6 +68,8 @@ export interface IProduct {
   reviewCount: number;
   createdAt?: Date;
   updatedAt?: Date;
+
+  
 }
 
 export interface ProductDocument extends IBase {
