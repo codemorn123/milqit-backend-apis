@@ -1,60 +1,34 @@
-
 import { IKisanCommunity } from './../../../types/kisan-community.types';
-import KisanCommunityModel from  './../../../models/cms/kisan-community.model';
-import APIError  from './../../../error/api-error';
-import { IFilter, IPaginated }  from './../../../types/common.types';
+import KisanCommunityModel from './../../../models/cms/kisan-community.model';
+import APIError from './../../../error/api-error';
+import { BaseService } from '../../base.service';
 import fileService from './../../../services/custom-file.service';
 import { KISAN_COMMUNITY_IMAGES_PATH } from '../../../constants/file-paths';
 
-class KisanCommunityService {
+class KisanCommunityService extends BaseService<IKisanCommunity> {
+  constructor() {
+    super(KisanCommunityModel as any, ['farmerName', 'farmName', 'products']);
+  }
+
   public async create(data: Partial<IKisanCommunity>, file?: Express.Multer.File): Promise<IKisanCommunity> {
     const payload: Partial<IKisanCommunity> = { ...data };
     if (!file) {
-        throw new APIError('Profile image is required.', 400); 
-      }
-      const { url, key } = await fileService.saveFile(file, KISAN_COMMUNITY_IMAGES_PATH);
-      payload.profileImage = { url, key };
-    const newMember = await KisanCommunityModel.create(payload);
-    return newMember;
-  }
-
-  public async getAll(queryParams: IFilter): Promise<{ data: IKisanCommunity[]; pagination: IPaginated }> {
-    const page = Number(queryParams.page) || 1;
-    const limit = Number(queryParams.limit) || 10;
-    const search = queryParams.search;
-
-    const filter: any = {};
-    if (search) {
-      const searchRegex = new RegExp(search, 'i');
-      filter.$or = [{ farmerName: searchRegex }, { farmName: searchRegex }, { products: searchRegex }];
+      throw new APIError('Profile image is required.', 400);
     }
-
-    const totalRecords = await KisanCommunityModel.countDocuments(filter);
-    const totalPages = Math.ceil(totalRecords / limit);
-
-    const data = await KisanCommunityModel.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean<IKisanCommunity[]>()
-      .exec();
-
-    return { data, pagination: { page, limit, totalRecord: totalRecords, totalPage: totalPages } };
+    const { url, key } = await fileService.saveFile(file, KISAN_COMMUNITY_IMAGES_PATH);
+    payload.profileImage = { url, key };
+    return super.create(payload);
   }
 
-  public async getOne(id: string): Promise<IKisanCommunity> {
-    const member = await KisanCommunityModel.findById(id).lean<IKisanCommunity>();
-    if (!member) {
-      throw new APIError(`Kisan Community member not found.`, 404);
-    }
-    return member;
-  }
+  // getAll handled by BaseService
+
+  // getOne handled by BaseService
 
   public async update(
     id: string,
     updateData: Partial<IKisanCommunity>,
     file?: Express.Multer.File
-  ): Promise<IKisanCommunity> { // 2. CORRECTED: Return DTO
+  ): Promise<IKisanCommunity> {
     const member = await KisanCommunityModel.findById(id);
     if (!member) {
       throw new APIError(`Kisan Community member not found.`, 404);
@@ -64,39 +38,26 @@ class KisanCommunityService {
 
     if (file) {
       if (member.profileImage?.key) {
-        // 6. CORRECTED: Use the file service and constant path for deletion
         await fileService.deleteFile(member.profileImage.key, KISAN_COMMUNITY_IMAGES_PATH);
       }
-      payload.profileImage = {
-        url: `/${KISAN_COMMUNITY_IMAGES_PATH}/${file.filename}`,
-        key: file.filename,
-      };
+      const { url, key } = await fileService.saveFile(file, KISAN_COMMUNITY_IMAGES_PATH);
+      payload.profileImage = { url, key };
     }
 
-    const updatedMember = await KisanCommunityModel.findByIdAndUpdate(id, payload, { new: true }).lean<IKisanCommunity>(); // 4. CORRECTED: Use DTO type
-    if (!updatedMember) {
-      throw new APIError(`Failed to update Kisan Community member.`, 500);
-    }
-    return updatedMember;
+    return super.update(id, payload);
   }
 
-  /**
-   * Deletes a Kisan Community member and their associated profile image.
-   */
-  public async delete(id: string): Promise<{ message: string }> {
-    const member = await KisanCommunityModel.findByIdAndDelete(id);
+  public async delete(id: string): Promise<{ message: string; status: number }> {
+    const member = await KisanCommunityModel.findById(id);
     if (!member) {
       throw new APIError(`Kisan Community member not found.`, 404);
     }
 
     if (member.profileImage?.key) {
-      // 6. CORRECTED: Use the file service and constant path for deletion
       await fileService.deleteFile(member.profileImage.key, KISAN_COMMUNITY_IMAGES_PATH);
     }
-    return { message: `Member deleted successfully.` };
+    return super.delete(id);
   }
 }
-
-
 
 export default new KisanCommunityService();

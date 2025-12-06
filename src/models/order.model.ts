@@ -38,28 +38,28 @@ export interface IOrder {
   user: mongoose.Types.ObjectId;
   items: IOrderItem[];
   shippingAddress: IShippingAddress;
-  
+
   // Pricing
   subtotal: number;
   discount: number;
   deliveryCharge: number;
   totalAmount: number;
-  
+
   // Status
   orderStatus: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
-  
+
   // Tracking
   trackingNumber?: string;
   estimatedDelivery?: Date;
   deliveredAt?: Date;
-  
+
   // Metadata
   notes?: string;
   cancellationReason?: string;
   cancelledAt?: Date;
-  
+
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -69,24 +69,24 @@ export interface OrderDocument extends IBase {
   user: mongoose.Types.ObjectId;
   items: IOrderItem[];
   shippingAddress: IShippingAddress;
-  
+
   subtotal: number;
   discount: number;
   deliveryCharge: number;
   totalAmount: number;
-  
+
   orderStatus: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: PaymentMethod;
-  
+
   trackingNumber?: string;
   estimatedDelivery?: Date;
   deliveredAt?: Date;
-  
+
   notes?: string;
   cancellationReason?: string;
   cancelledAt?: Date;
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -113,89 +113,89 @@ export interface IUpdateOrderRequest {
 }
 
 const OrderItemSchema = new Schema({
-  product: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'Product', 
-    required: true 
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true
   },
-  productName: { 
-    type: String, 
-    required: true,
-    trim: true 
-  },
-  productImage: { 
+  productName: {
     type: String,
-    trim: true 
+    required: true,
+    trim: true
   },
-  quantity: { 
-    type: Number, 
-    required: true, 
-    min: 1 
+  productImage: {
+    type: String,
+    trim: true
   },
-  unit: { 
-    type: String, 
-    required: true 
+  quantity: {
+    type: Number,
+    required: true,
+    min: 1
   },
-  mrp: { 
-    type: Number, 
-    required: true, 
-    min: 0 
+  unit: {
+    type: String,
+    required: true
   },
-  sellingPrice: { 
-    type: Number, 
-    required: true, 
-    min: 0 
+  mrp: {
+    type: Number,
+    required: true,
+    min: 0
   },
-  totalPrice: { 
-    type: Number, 
-    required: true, 
-    min: 0 
+  sellingPrice: {
+    type: Number,
+    required: true,
+    min: 0
   },
-  discount: { 
-    type: Number, 
-    default: 0, 
-    min: 0 
+  totalPrice: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  discount: {
+    type: Number,
+    default: 0,
+    min: 0
   },
 }, { _id: false });
 
 const ShippingAddressSchema = new Schema({
-  fullName: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  fullName: {
+    type: String,
+    required: true,
+    trim: true
   },
-  phone: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  phone: {
+    type: String,
+    required: true,
+    trim: true
   },
-  addressLine1: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  addressLine1: {
+    type: String,
+    required: true,
+    trim: true
   },
-  addressLine2: { 
-    type: String, 
-    trim: true 
+  addressLine2: {
+    type: String,
+    trim: true
   },
-  city: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  city: {
+    type: String,
+    required: true,
+    trim: true
   },
-  state: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  state: {
+    type: String,
+    required: true,
+    trim: true
   },
-  pincode: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  pincode: {
+    type: String,
+    required: true,
+    trim: true
   },
-  landmark: { 
-    type: String, 
-    trim: true 
+  landmark: {
+    type: String,
+    trim: true
   },
 }, { _id: false });
 
@@ -218,7 +218,7 @@ const OrderSchema = new Schema<OrderDocument>(
       type: [OrderItemSchema],
       required: true,
       validate: {
-        validator: function(items: IOrderItem[]) {
+        validator: function (items: IOrderItem[]) {
           return items && items.length > 0;
         },
         message: 'Order must have at least one item'
@@ -228,7 +228,7 @@ const OrderSchema = new Schema<OrderDocument>(
       type: ShippingAddressSchema,
       required: true
     },
-    
+
     // Pricing
     subtotal: {
       type: Number,
@@ -250,7 +250,7 @@ const OrderSchema = new Schema<OrderDocument>(
       required: true,
       min: 0
     },
-    
+
     // Status
     orderStatus: {
       type: String,
@@ -271,7 +271,7 @@ const OrderSchema = new Schema<OrderDocument>(
       enum: ['card', 'upi', 'netbanking', 'wallet', 'cod'],
       required: true
     },
-    
+
     // Tracking
     trackingNumber: {
       type: String,
@@ -284,7 +284,7 @@ const OrderSchema = new Schema<OrderDocument>(
     deliveredAt: {
       type: Date
     },
-    
+
     // Metadata
     notes: {
       type: String,
@@ -312,29 +312,28 @@ const OrderSchema = new Schema<OrderDocument>(
 );
 
 // Indexes
-OrderSchema.index({ orderNumber: 1 }, { unique: true });
 OrderSchema.index({ user: 1, createdAt: -1 });
 OrderSchema.index({ orderStatus: 1, paymentStatus: 1 });
 OrderSchema.index({ createdAt: -1 });
 
 // Pre-save middleware to generate order number
-OrderSchema.pre('save', async function(next) {
+OrderSchema.pre('save', async function (next) {
   if (this.isNew && !this.orderNumber) {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
     this.orderNumber = `ORD${timestamp}${random}`;
   }
-  
+
   // Set deliveredAt when status changes to delivered
   if (this.isModified('orderStatus') && this.orderStatus === 'delivered' && !this.deliveredAt) {
     this.deliveredAt = new Date();
   }
-  
+
   // Set cancelledAt when status changes to cancelled
   if (this.isModified('orderStatus') && this.orderStatus === 'cancelled' && !this.cancelledAt) {
     this.cancelledAt = new Date();
   }
-  
+
   next();
 });
 
@@ -342,26 +341,26 @@ OrderSchema.pre('save', async function(next) {
 OrderSchema.plugin(mongoosePaginate);
 
 // Static methods for common queries
-OrderSchema.statics.findByUser = function(userId: string) {
+OrderSchema.statics.findByUser = function (userId: string) {
   return this.find({ user: userId })
     .sort({ createdAt: -1 })
     .populate('items.product', 'name slug images');
 };
 
-OrderSchema.statics.findByStatus = function(status: OrderStatus) {
+OrderSchema.statics.findByStatus = function (status: OrderStatus) {
   return this.find({ orderStatus: status })
     .sort({ createdAt: -1 })
     .populate('user', 'name email phone')
     .populate('items.product', 'name slug images');
 };
 
-OrderSchema.statics.findPendingOrders = function() {
-  return this.find({ 
+OrderSchema.statics.findPendingOrders = function () {
+  return this.find({
     orderStatus: { $in: ['pending', 'confirmed', 'processing'] },
     paymentStatus: 'paid'
   })
-  .sort({ createdAt: -1 })
-  .populate('user', 'name email phone');
+    .sort({ createdAt: -1 })
+    .populate('user', 'name email phone');
 };
 
 // Cast the model to the PaginateModel interface

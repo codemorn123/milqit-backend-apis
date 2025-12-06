@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface ICoupon  {
+export interface ICoupon {
   code: string;
   description: string;
   discountType: 'percentage' | 'fixed';
@@ -15,3 +15,5 @@ export interface ICoupon  {
   usedBy: string[]; // Array of user IDs
   isActive: boolean;
 }
+
+export type ICouponCreateRequest = Omit<ICoupon, 'timesUsed' | 'usedBy'>;

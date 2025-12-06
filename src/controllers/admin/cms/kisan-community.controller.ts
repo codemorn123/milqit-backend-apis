@@ -1,37 +1,37 @@
-import kisanCommunityUpload from  './../../../utils/kisan-community-upload';
+import kisanCommunityUpload from './../../../utils/kisan-community-upload';
 import APIError from './../../../error/api-error';
 import { validateSchemaMiddleware } from './../../../middleware/common-validate';
 import kisanCommunityService from './../../../services/admin/cms/kisan-community.service';
-import { IFilter, IPaginated } from './../../../types/common.types';
+import { IFilter, PaginatedResponse } from '../../../types/common.types';
 import { IKisanCommunity } from './../../../types/kisan-community.types';
-import { createKisanCommunitySchema, filterQuerySchema, idParamSchema, updateKisanCommunitySchema } from'./../../../validations/kisan-community.validator';
+import { createKisanCommunitySchema, filterQuerySchema, idParamSchema, updateKisanCommunitySchema } from './../../../validations/kisan-community.validator';
 import {
-    Route,
-    Tags,
-    Controller,
-    Post,
-    Middlewares,
-    Get,
-    Queries,
-    SuccessResponse,
-    Path,
-    Delete,
-    Put,
-    Consumes,
-    UploadedFile,
-    FormField,
-    Response,
-    Example,
-  } from 'tsoa';
+  Route,
+  Tags,
+  Controller,
+  Post,
+  Middlewares,
+  Get,
+  Queries,
+  SuccessResponse,
+  Path,
+  Delete,
+  Put,
+  Consumes,
+  UploadedFile,
+  FormField,
+  Response,
+  Example,
+} from 'tsoa';
 import { errorSuccess, success, SuccessResponse as SuccessDataResponse } from './../../../utils/SuccessResponse';
 
-  
- 
+
+
 @Route("dashbord/cms/kisan-community")
 @Tags("Kisan Community")
 export class KisanCommunityController extends Controller {
 
-//   @Middlewares(kisanCommunityUpload.single("profileImage"))
+  //   @Middlewares(kisanCommunityUpload.single("profileImage"))
   @Post("/")
   @Consumes("multipart/form-data")
   @SuccessResponse(201, "Created")
@@ -45,7 +45,7 @@ export class KisanCommunityController extends Controller {
     const { error, value } = createKisanCommunitySchema.validate(dataToValidate);
     if (error) {
       errorSuccess(error);
-        throw new APIError(error.details[0].message, 400);
+      throw new APIError(error.details[0].message, 400);
     }
     const result = await kisanCommunityService.create(value, profileImage);
     return success(result, 'Kisan Community created successfully');
@@ -60,8 +60,11 @@ export class KisanCommunityController extends Controller {
       limit: 10
     }
   })
-  public async getAll(@Queries() queryParams: IFilter): Promise<{ data: IKisanCommunity[]; pagination: IPaginated }> {
-    return kisanCommunityService.getAll(queryParams);
+  public async getAll(
+    @Queries() queryParams: IFilter
+  ): Promise<SuccessDataResponse<PaginatedResponse<IKisanCommunity>>> {
+    const result = await kisanCommunityService.getAll(queryParams);
+    return success(result, 'Kisan community members fetched successfully');
   }
 
   @Get("/{id}")
@@ -90,8 +93,8 @@ export class KisanCommunityController extends Controller {
 
     const { error, value } = updateKisanCommunitySchema.validate(dataToValidate);
     if (error) {
-        this.setStatus(400);
-        throw new APIError(error.details[0].message, 400);
+      this.setStatus(400);
+      throw new APIError(error.details[0].message, 400);
     }
     return kisanCommunityService.update(id, value, profileImage);
   }

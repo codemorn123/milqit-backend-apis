@@ -26,6 +26,7 @@ export const createCouponSchema = Joi.object({
 });
 
 export const updateCouponSchema = Joi.object({
+  code: Joi.string().trim().uppercase().min(4).max(20).optional(),
   description: Joi.string().min(10).optional(),
   discountType: Joi.string().valid('percentage', 'fixed').optional(),
   discountValue: Joi.number().positive().optional(),
@@ -44,8 +45,8 @@ export const applyCouponSchema = Joi.object({
 });
 
 export const filterQuerySchema = Joi.object({
-    page: Joi.number().integer().min(1).default(1),
-    limit: Joi.number().integer().min(1).default(10),
-    search: Joi.string().optional().allow(''),
-    isActive: Joi.boolean().optional(),
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).default(10),
+  search: Joi.string().optional().allow(''),
+  isActive: Joi.boolean().optional(),
 });

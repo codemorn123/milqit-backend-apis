@@ -99,9 +99,6 @@ const UserSchema = new Schema<IUserDocument>(
 
 
 
-UserSchema.index(
-  { phone: 1 },
-  { unique: true, partialFilterExpression: { phone: { $exists: true, $ne: null } } }
-);
+
 
 export const UserModel = mongoose.model<IUserDocument>('User', UserSchema);

@@ -1,30 +1,27 @@
 
-import NotificationModel, { INotification } from "./../../../models/cms/notification.model";
+import NotificationModel, { INotification, INotificationDocument } from "./../../../models/cms/notification.model";
 import APIError from "./../../../error/api-error";
-import { IFilter } from "./../../../types/common.types";
 import { logger } from "./../../../config/logger";
-import { PaginatedResponse } from '../../../types/common.types';
-import { SuccessResponse } from "@/utils/SuccessResponse";
+import { BaseService } from "../../base.service";
+import { IFilter, PaginatedResponse } from "../../../types/common.types";
 
-class NotificationService {
+class NotificationService extends BaseService<INotificationDocument> {
+  constructor() {
+    super(NotificationModel as any, ['title', 'message']);
+  }
+
   /**
    * Creates a new notification and schedules it for sending.
    */
-  public async create(data: Partial<INotification>): Promise<INotification> {
-    const newNotification = await NotificationModel.create(data);
+  public async create(data: Partial<INotification>): Promise<INotificationDocument> {
+    const newNotification = await super.create(data);
 
     if (newNotification.scheduledAt) {
       // ** SCHEDULING LOGIC **
-      // This is where you would integrate a job scheduler like BullMQ or Agenda.js
-      // For now, we'll log a message.
       logger.info(`Notification ${newNotification._id} scheduled for ${newNotification.scheduledAt}`);
-      // Example: await scheduleNotificationJob(newNotification._id, newNotification.scheduledAt);
     } else {
       // ** IMMEDIATE SEND LOGIC **
-      // This is where you would call the Firebase Cloud Messaging (FCM) service
       logger.info(`Sending immediate notification ${newNotification._id}`);
-      // Example: await sendFcmNotification(newNotification);
-      // For demo purposes, we'll mark it as 'sent' immediately.
       newNotification.status = 'sent';
       await newNotification.save();
     }
@@ -32,90 +29,50 @@ class NotificationService {
     return newNotification;
   }
 
-  /**
-   * Retrieves all notifications with pagination and filtering (For Admin).
-   */
-  public async getAll(queryParams: IFilter):  Promise<PaginatedResponse<INotification>> {
-    const page = Number(queryParams.page) || 1;
-    const limit = Number(queryParams.limit) || 10;
-    const search = queryParams.search;
-    const status = queryParams.isActive;
+  // getAll handled by BaseService
 
-    const filter: any = {};
-    if (search) {
-      const searchRegex = new RegExp(search, 'i');
-      filter.$or = [{ title: searchRegex }, { message: searchRegex }];
-    }
-    if (status) {
-      filter.status = status;
-    }
-
-    const totalRecords = await NotificationModel.countDocuments(filter);
-    const totalPages = Math.ceil(totalRecords / limit);
-
-    const data = await NotificationModel.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean<INotification[]>()
-      .exec();
-
-    return {
-        docs: data,
-        totalDocs: totalRecords,
-        limit,
-        page,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPrevPage: page > 1,
-        nextPage: page < totalPages ? page + 1 : null,
-        prevPage: page > 1 ? page - 1 : null,
-        
-    }
-  }
-  
   /**
    * Retrieves sent notifications for customers.
    */
-//   public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<>> {
-//     const page = Number(queryParams.page) || 1;
-//     const limit = Number(queryParams.limit) || 10;
+  //   public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<>> {
+  //     const page = Number(queryParams.page) || 1;
+  //     const limit = Number(queryParams.limit) || 10;
 
-//     const filter: any = { status: 'sent' }; // Customers only see sent notifications
+  //     const filter: any = { status: 'sent' }; // Customers only see sent notifications
 
-//     const totalRecords = await NotificationModel.countDocuments(filter);
-//     const totalPages = Math.ceil(totalRecords / limit);
+  //     const totalRecords = await NotificationModel.countDocuments(filter);
+  //     const totalPages = Math.ceil(totalRecords / limit);
 
-//     const data = await NotificationModel.find(filter)
-//       .sort({ createdAt: -1 })
-//       .skip((page - 1) * limit)
-//       .limit(limit)
-//       .lean<INotification[]>()
-//       .exec();
+  //     const data = await NotificationModel.find(filter)
+  //       .sort({ createdAt: -1 })
+  //       .skip((page - 1) * limit)
+  //       .limit(limit)
+  //       .lean<INotification[]>()
+  //       .exec();
 
-//     return { data, pagination: { page, limit, totalRecord: totalRecords, totalPage: totalPages } };
-//   }
+  //     return { data, pagination: { page, limit, totalRecord: totalRecords, totalPage: totalPages } };
+  //   }
 
 
-public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<INotification>> {
+  public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<INotification>> {
     const page = Number(queryParams.page) || 1;
     const limit = Number(queryParams.limit) || 10;
-  
+
     const filter: any = { status: 'sent' };
-  
+
     const totalDocs = await NotificationModel.countDocuments(filter);
     const totalPages = Math.ceil(totalDocs / limit);
-  
+
     const docs = await NotificationModel.find(filter)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .lean<INotification[]>()
       .exec();
-  
+
     const hasNextPage = page < totalPages;
     const hasPrevPage = page > 1;
-  
+
     return {
       docs,
       totalDocs,
@@ -131,7 +88,7 @@ public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<
   /**
    * Deletes a notification.
    */
-  public async delete(id: string): Promise<{ message: string }> {
+  public async delete(id: string): Promise<{ message: string; status: number }> {
     const notification = await NotificationModel.findById(id);
     if (!notification) {
       throw new APIError('Notification not found.', 404);
@@ -139,13 +96,10 @@ public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<
 
     if (notification.status === 'pending' && notification.scheduledAt) {
       // ** CANCEL SCHEDULED JOB LOGIC **
-      // If you have a scheduled job, you must cancel it here.
       logger.warn(`Cancelling scheduled job for notification ${id}`);
-      // Example: await cancelNotificationJob(id);
     }
 
-    await NotificationModel.findByIdAndDelete(id);
-    return { message: 'Notification deleted successfully.' };
+    return super.delete(id);
   }
 }
 

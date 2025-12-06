@@ -20,27 +20,38 @@ if (fs.existsSync(envFilePath)) {
 const configSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3000),
-  
+
   // Database
   MONGODB_URI: z.string().min(1, 'MongoDB URI is required'),
-  
+
   // JWT Auth
   JWT_SECRET: z.string().min(32, 'JWT secret must be at least 32 characters'),
   JWT_REFRESH_SECRET: z.string().min(32, 'JWT refresh secret must be at least 32 characters'),
   JWT_SESSION_SECRET: z.string().min(32, 'JWT session secret must be at least 32 characters'),
   JWT_ACCESS_EXPIRES: z.string().default('15m'),
   JWT_REFRESH_EXPIRES: z.string().default('7d'),
-  
+
   // SMS API Configuration
   SMS_API_KEY: z.string().default(''),
   SMS_API_ENDPOINT: z.string().default('https://api.sms-provider.com/v1/send'),
   SMS_SENDER_ID: z.string().default('BLINKIT'),
-  
+
+  // Razorpay (Added)
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+
+  // Firebase (Added)
+  FIREBASE_SERVICE_ACCOUNT_KEY: z.string().optional(), // Path to JSON file or JSON string
+
   // Logging
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
-  
+
   // CORS
-  CORS_ORIGIN: z.string().default('*')
+  CORS_ORIGIN: z.string().default('*'),
+
+  // Admin Bootstrap
+  ADMIN_BOOTSTRAP_KEY: z.string().optional()
 });
 
 // Validate and transform config
@@ -71,15 +82,21 @@ export interface SmsConfig {
   enabled: boolean;
 }
 
+export interface RazorpayConfig {
+  keyId: string;
+  keySecret: string;
+  webhookSecret: string;
+}
+
 // Export typed config
 export const config = {
   env: configResult.data.NODE_ENV,
   port: configResult.data.PORT,
-  
+
   mongodb: {
     uri: configResult.data.MONGODB_URI
   },
-  
+
   jwt: {
     secret: configResult.data.JWT_SECRET,
     refreshSecret: configResult.data.JWT_REFRESH_SECRET,
@@ -89,7 +106,7 @@ export const config = {
     algorithm: 'HS256' as JwtAlgorithm,
     issuer: 'blinkit-api'
   } as JwtConfig,
-  
+
   sms: {
     apiKey: configResult.data.SMS_API_KEY,
     apiEndpoint: configResult.data.SMS_API_ENDPOINT,
@@ -97,12 +114,24 @@ export const config = {
     // Enable SMS only if API key is provided or in development mode
     enabled: !!configResult.data.SMS_API_KEY || configResult.data.NODE_ENV === 'development'
   } as SmsConfig,
-  
+
+  razorpay: {
+    keyId: configResult.data.RAZORPAY_KEY_ID || '',
+    keySecret: configResult.data.RAZORPAY_KEY_SECRET || '',
+    webhookSecret: configResult.data.RAZORPAY_WEBHOOK_SECRET || ''
+  } as RazorpayConfig,
+
+  firebase: {
+    serviceAccountKey: configResult.data.FIREBASE_SERVICE_ACCOUNT_KEY
+  },
+
   logging: {
     level: configResult.data.LOG_LEVEL
   },
-  
+
   cors: {
     origin: configResult.data.CORS_ORIGIN
-  }
+  },
+
+  adminBootstrapKey: configResult.data.ADMIN_BOOTSTRAP_KEY
 };

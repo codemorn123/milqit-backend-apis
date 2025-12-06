@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 import { logger } from '../config/logger';
-import  {ProductModel, ProductDocument, IProduct } from '../models/product.model';
+import { ProductModel, ProductDocument, IProduct } from '../models/product.model';
 import APIError from '../error/api-error';
 import { createSlug } from '../utils/stringUtils';
 import { IcommonImage, IProductFilter } from './../types/common.types';
-import { CreateProductPayload, ProductFilterQueryParams } from  './../types/product.types';
+import { CreateProductPayload, ProductFilterQueryParams } from './../types/product.types';
 import customFileService from './custom-file.service';
-import { PRODUCT_MAIN_IMAGES_PATH } from  './../constants/file-paths';
+import { PRODUCT_MAIN_IMAGES_PATH } from './../constants/file-paths';
 import { PaginatedResponse } from '../types/common.types';
 import { CategoryModel } from '../models/category.model';
 import slugify from 'slugify';
@@ -52,7 +52,7 @@ class ProductService {
       .limit(limit)
       .lean<IProduct[]>()
       .exec();
-      
+
     return {
       docs: docs,
       totalDocs: totalDocs,
@@ -68,7 +68,7 @@ class ProductService {
 
 
   public async createProduct(
-    payload: CreateProductPayload, 
+    payload: CreateProductPayload,
     images?: Express.Multer.File[]
   ): Promise<IProduct> {
     try {
@@ -79,7 +79,7 @@ class ProductService {
 
       // Save multiple images with validation
       const savedImages = await customFileService.saveMultipleFilesWithValidation(
-        images, 
+        images,
         PRODUCT_MAIN_IMAGES_PATH,
         {
           maxFiles: 10,
@@ -103,17 +103,17 @@ class ProductService {
         ...payload,
         slug,
         images: productImages,
-        inStock: payload.stock 
+        inStock: payload.stock
       };
-  
+
       const product = new ProductModel(productData);
       await product.save();
-  
+
       console.log('✅ Product created successfully:', product.name);
-      
+
       // Convert Mongoose document to plain object and ensure images array exists
       const productObject = product.toObject();
-      
+
       // Type assertion with runtime safety check
       const result: IProduct = {
         ...productObject,
@@ -123,10 +123,10 @@ class ProductService {
         createdAt: productObject.createdAt,
         updatedAt: productObject.updatedAt
       };
-      
+
       return result;
-      
-      
+
+
     } catch (error: unknown) {
       console.error('❌ Error creating product:', error);
       throw new APIError(`Product creation failed: ${error}`, 500);
@@ -136,25 +136,90 @@ class ProductService {
   /**
    * Find products with pagination and filtering (Admin)
    */
-  public async find(filters: ProductFilterQueryParams): Promise<PaginatedResponse<IProduct>> {
+  /**
+   * Find products with pagination and filtering (Admin & User)
+   */
+  public async find(filters: IProductFilter): Promise<PaginatedResponse<IProduct>> {
     const page = Number(filters.page) || 1;
     const limit = Number(filters.limit) || 10;
     const search = filters.search;
 
-    const filter: mongoose.FilterQuery<IProduct> = {};
+    const query: mongoose.FilterQuery<IProduct> = {};
+
+    // Search
     if (search) {
       const searchRegex = new RegExp(search, 'i');
-      filter.$or = [{ name: searchRegex }, { slug: searchRegex }];
+      query.$or = [
+        { name: searchRegex },
+        { slug: searchRegex },
+        { brand: searchRegex },
+        { 'category.name': searchRegex } // Assuming population, but for simple query this might not work without aggregate. Keeping simple for now.
+      ];
     }
 
-    const totalDocs = await ProductModel.countDocuments(filter);
-    const docs = await ProductModel.find(filter)
-      .sort({ createdAt: -1 })
+    // Filters
+    if (filters.isActive !== undefined) {
+      query.isActive = filters.isActive;
+    }
+
+    if (filters.category) {
+      query.categoryId = filters.category;
+    }
+
+    if (filters.brand) {
+      query.brand = filters.brand;
+    }
+
+    if (filters.unit) {
+      query.unit = filters.unit;
+    }
+
+    // Price Range
+    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+      query.sellingPrice = {};
+      if (filters.minPrice !== undefined) query.sellingPrice.$gte = Number(filters.minPrice);
+      if (filters.maxPrice !== undefined) query.sellingPrice.$lte = Number(filters.maxPrice);
+    }
+
+    // Sorting
+    let sort: any = { createdAt: -1 }; // Default sort
+    if (filters.sortBy) {
+      const order = filters.sortOrder === 'asc' ? 1 : -1;
+      switch (filters.sortBy) {
+        case 'price':
+          sort = { sellingPrice: order };
+          break;
+        case 'name':
+          sort = { name: order };
+          break;
+        case 'rating':
+          sort = { averageRating: order };
+          break;
+        case 'newest':
+          sort = { createdAt: -1 };
+          break;
+        case 'discount':
+          // Note: Sorting by virtual fields (discount) requires aggregation, 
+          // but for simple find we can't easily sort by virtuals. 
+          // We'll stick to stored fields for now.
+          // If discount is needed, we might need to store it or use aggregate.
+          // For now, fallback to createdAt.
+          sort = { createdAt: -1 };
+          break;
+        default:
+          sort = { [filters.sortBy]: order };
+      }
+    }
+
+    const totalDocs = await ProductModel.countDocuments(query);
+    const docs = await ProductModel.find(query)
+      .sort(sort)
       .skip((page - 1) * limit)
       .limit(limit)
+      .populate('categoryId', 'name slug') // Populate category
       .lean<IProduct[]>()
       .exec();
-      
+
     return {
       docs: docs,
       totalDocs: totalDocs,
@@ -174,7 +239,7 @@ class ProductService {
   public async findForUsers(filters: ProductFilterQueryParams): Promise<PaginatedResponse<IProduct>> {
     try {
       console.log('👥 Fetching products for users with filters:', filters);
-      
+
       // Force user-specific filters
       const userFilters: ProductFilterQueryParams = {
         ...filters,
@@ -183,7 +248,7 @@ class ProductService {
       };
 
       return await this.find(userFilters);
-      
+
     } catch (error: any) {
       console.error('❌ Error fetching products for users:', error);
       throw error;
@@ -216,7 +281,7 @@ class ProductService {
   public async findById(id: string): Promise<ProductDocument> {
     try {
       console.log(`🔍 Fetching product with ID: ${id}`);
-      
+
       if (!mongoose.isValidObjectId(id)) {
         throw new APIError('Invalid product ID format', 400);
       }
@@ -225,7 +290,7 @@ class ProductService {
         .populate('categoryId', 'name slug')
         .lean()
         .exec();
-      
+
       if (!product) {
         console.log(`⚠️ Product with ID ${id} not found`);
         throw new APIError('Product not found', 404);
@@ -233,14 +298,14 @@ class ProductService {
 
       console.log(`✅ Found product: ${product.name}`);
       return product as ProductDocument;
-      
+
     } catch (error: any) {
       console.error(`❌ Error fetching product ${id}:`, error);
-      
+
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       throw new APIError(`Error fetching product: ${error.message}`, 500);
     }
   }
@@ -262,7 +327,7 @@ class ProductService {
         .populate('category', 'name slug')
         .lean()
         .exec();
-      
+
       if (product) {
         console.log(`✅ User found product: ${product.name}`);
       } else {
@@ -270,7 +335,7 @@ class ProductService {
       }
 
       return product as ProductDocument;
-  
+
     } catch (error: any) {
       console.error(`❌ Error fetching product ${id} for users:`, error);
       throw error;
@@ -281,13 +346,13 @@ class ProductService {
    * Update product by ID
    */
   public async update(
-    id: string, 
+    id: string,
     updateData: IProduct,
     files: Express.Multer.File[] = []
   ): Promise<ProductDocument> {
     try {
       console.log(`🔄 Updating product ${id}`);
-      
+
       if (!mongoose.isValidObjectId(id)) {
         throw new APIError('Invalid product ID format', 400);
       }
@@ -299,7 +364,7 @@ class ProductService {
       }
 
       // Process new images if provideds);
-      
+
       // Prepare update data
       const updateWithMetadata = {
         ...updateData,
@@ -308,12 +373,12 @@ class ProductService {
       };
 
       // Add new images to existing ones if provided
-     
+
 
       // Update slug if name changed
       if (updateData.name && updateData.name !== existingProduct.name) {
         updateWithMetadata.slug = await this.generateUniqueSlug(
-          updateData.name, 
+          updateData.name,
           updateData.sku || existingProduct.sku
         );
       }
@@ -339,12 +404,12 @@ class ProductService {
 
       logger.info({ productId: id }, `Product updated by ${this.USER_CONTEXT}`);
       console.log(`✅ Product ${id} updated successfully`);
-      
+
       return updatedProduct as ProductDocument;
-      
+
     } catch (error: any) {
       console.error(`❌ Error updating product ${id}:`, error);
-      
+
       if (error instanceof APIError) {
         throw error;
       }
@@ -373,21 +438,21 @@ class ProductService {
         throw new APIError('Invalid product ID format', 400);
       }
       const result = await ProductModel.findByIdAndDelete(id);
-      
+
       if (!result) {
         throw new APIError('Product not found for deletion', 404);
       }
 
       logger.info({ productId: id }, `Product deleted by ${this.USER_CONTEXT}`);
       console.log(`✅ Product ${id} deleted successfully`);
-      
+
     } catch (error: any) {
       console.error(`❌ Error deleting product ${id}:`, error);
-      
+
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       throw new APIError(`Product deletion failed: ${error.message}`, 500);
     }
   }
@@ -398,7 +463,7 @@ class ProductService {
   public async getFeaturedProducts(limit: number = 10): Promise<ProductDocument[]> {
     try {
       console.log(`⭐ Fetching ${limit} featured products`);
-      
+
       const products = await ProductModel.find({
         isActive: true,
         isPublic: true,
@@ -412,7 +477,7 @@ class ProductService {
 
       console.log(`✅ Retrieved ${products.length} featured products`);
       return products as ProductDocument[];
-      
+
     } catch (error: any) {
       console.error('❌ Error fetching featured products:', error);
       throw new APIError(`Error fetching featured products: ${error.message}`, 500);
@@ -425,9 +490,9 @@ class ProductService {
   public async getRelatedProducts(productId: string, limit: number = 5): Promise<ProductDocument[]> {
     try {
       console.log(`🔗 Fetching related products for: ${productId}`);
-      
+
       const product = await this.findById(productId);
-      
+
       const relatedProducts = await ProductModel.find({
         _id: { $ne: productId },
         isActive: true,
@@ -445,7 +510,7 @@ class ProductService {
 
       console.log(`✅ Found ${relatedProducts.length} related products`);
       return relatedProducts as ProductDocument[];
-      
+
     } catch (error: any) {
       console.error(`❌ Error fetching related products for ${productId}:`, error);
       throw new APIError(`Error fetching related products: ${error.message}`, 500);
@@ -470,7 +535,7 @@ class ProductService {
         return null;
       }
 
-      const isAvailable = product.quantity > 0 && product.isActive 
+      const isAvailable = product.quantity > 0 && product.isActive
       return {
         id: product.id.toString(),
         name: product.name,
@@ -479,7 +544,7 @@ class ProductService {
         unit: product.unit,
         // estimatedDelivery: product.estimatedDelivery
       };
-      
+
     } catch (error: any) {
       console.error(`❌ Error checking availability for ${productId}:`, error);
       throw new APIError(`Error checking product availability: ${error.message}`, 500);
@@ -499,7 +564,7 @@ class ProductService {
   }> {
     try {
       console.log('📊 Fetching product statistics');
-      
+
       const [
         totalProducts,
         activeProducts,
@@ -525,9 +590,9 @@ class ProductService {
         lowStockProducts
       };
       logger.info(stats, 'Product statistics fetched');
-      
+
       return stats;
-      
+
     } catch (error: any) {
       console.error('❌ Error fetching product statistics:', error);
       throw new APIError(`Error fetching product statistics: ${error.message}`, 500);
@@ -540,16 +605,16 @@ class ProductService {
       const page = Number(filters.page) || 1;
       const limit = Number(filters.limit) || 10;
       const search = filters.search;
-  
+
       const filter: mongoose.FilterQuery<IProduct> = {};
       if (search) {
         const searchRegex = new RegExp(search, 'i');
         filter.$or = [{ name: searchRegex }, { slug: searchRegex }];
       }
 
-      
+
       console.log(`🔍 Fetching products by category: ${categoryId}`);
-      
+
       const category = await CategoryModel.findById(categoryId);
       if (!category) {
         console.log(`⚠️ Category with ID ${categoryId} not found`);
@@ -559,7 +624,7 @@ class ProductService {
       const products = await ProductModel.find({
         categoryId,
         ...filters,
-        isActive: true,   
+        isActive: true,
         isPublic
       })
         .populate('categoryId', 'name slug')
@@ -580,14 +645,14 @@ class ProductService {
         docs: products,
         totalDocs: total,
         limit: limit,
-        page:page,
+        page: page,
         totalPages: Math.ceil(total / limit),
         hasNextPage: page < Math.ceil(total / limit),
-        hasPrevPage:page > 1,
+        hasPrevPage: page > 1,
         prevPage: page > 1 ? page - 1 : null,
         nextPage: page < Math.ceil(total / limit) ? page + 1 : null,
       };
-      
+
     } catch (error: any) {
       console.error(`❌ Error fetching products by category ${categoryId}:`, error);
       throw new APIError(`Error fetching products by category: ${error.message}`, 500);

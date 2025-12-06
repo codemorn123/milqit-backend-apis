@@ -20,12 +20,13 @@ import {
 
 
 import { IImage } from "./../../types/image.type";
-import { IFilter, IPaginated } from "./../../types/common.types";
+import { IFilter, PaginatedResponse } from "./../../types/common.types";
 import imageService from "./../../services/image.service";
 import { validateSchemaMiddleware } from "./../../middleware/common-validate";
 import { idParamSchema } from "./../../constants/common.validator";
 import upload from "./../../utils/upload";
 import express from 'express';
+import { success, SuccessResponse as SuccessDataResponse } from "./../../utils/SuccessResponse";
 
 
 
@@ -53,7 +54,7 @@ export class ImagesController extends Controller {
   }> {
     try {
       console.log("🚀 Starting image upload...");
-      
+
       // Debug: Log all request properties
       console.log("🔍 Request debug info:");
       console.log("- Content-Type:", request.get('Content-Type'));
@@ -77,8 +78,8 @@ export class ImagesController extends Controller {
           const possibleFields = ['file', 'image', 'upload'];
           for (const fieldName of possibleFields) {
             if (request.files[fieldName]) {
-              file = Array.isArray(request.files[fieldName]) 
-                ? request.files[fieldName][0] 
+              file = Array.isArray(request.files[fieldName])
+                ? request.files[fieldName][0]
                 : request.files[fieldName];
               console.log(`✅ Found file in request.files.${fieldName}`);
               break;
@@ -131,7 +132,7 @@ export class ImagesController extends Controller {
       });
 
       const result = await imageService.create(data);
-      
+
       this.setStatus(201);
       console.log("✅ Image uploaded successfully:", result.url);
 
@@ -152,19 +153,11 @@ export class ImagesController extends Controller {
 
   @Get("/")
   @SuccessResponse("200", "Successfully fetched all address")
-  public async getAll(@Queries() queryParams: IFilter): Promise<{
-    data: IImage[];
-    pagination: IPaginated;
-  }> {
-    try {
-      const response = await imageService.getAll(queryParams);
-      return {
-        data: response.data,
-        pagination: response.pagination,
-      };
-    } catch (error) {
-      throw error;
-    }
+  public async getAllImages(
+    @Queries() queryParams: IFilter
+  ): Promise<SuccessDataResponse<PaginatedResponse<IImage>>> {
+    const result = await imageService.getAll(queryParams);
+    return success(result, "Images fetched successfully");
   }
 
   @Get("/{id}")

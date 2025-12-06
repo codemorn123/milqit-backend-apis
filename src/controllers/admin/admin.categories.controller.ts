@@ -1,7 +1,9 @@
-import {   Consumes, Controller, Delete, FormField, Get, Middlewares, NoSecurity, Path, Post, Put, Queries, Response, Route, Security, SuccessResponse as SuccessResponseTags, Tags, UploadedFile, UploadedFiles } from 'tsoa';
+import {
+  Consumes, Controller, Delete, FormField, Get, Middlewares, Path, Post, Put, Queries, Response, Route, Security, SuccessResponse as SuccessResponseTags, Tags, UploadedFile
+} from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { categoryService } from '../../services/category.service';
-import {  success, SuccessResponse } from '../../utils/SuccessResponse';
+import { success, SuccessResponse } from '../../utils/SuccessResponse';
 import { IFilter, PaginatedResponse } from '../../types/common.types';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { createCategorySchema, updateCategorySchema } from '../../validations/category-validation-schema';
@@ -10,14 +12,11 @@ import { ICategory } from '../../models/category.model';
 import { ClientErrorInterface } from '../../error/clientErrorHelper';
 import { SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from '../../error/exampleErrors';
 import APIError from '../../error/api-error';
-
-
-// --- DTO Interfaces ---
-
+import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 
 @Route("admin/categories")
-@Tags("Admin - Categories")
-// @Security("jwt", ["admin"])
+@Tags("ADMIN: Categories")
+@Security("jwt")
 @Response<ClientErrorInterface>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response<ClientErrorInterface>(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response<ClientErrorInterface>(StatusCodes.NOT_FOUND, 'Not Found')
@@ -26,63 +25,69 @@ import APIError from '../../error/api-error';
 @Response<ClientErrorInterface>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error', SERVER_ERROR_EXAMPLE)
 export class AdminCategoryController extends Controller {
 
-
+  /**
+   * Create a new category with image upload
+   */
   @Post("/")
   @Consumes("multipart/form-data")
-  // @SuccessResponse(201, "Created")
-  @Response(400, "Validation Failed")
-  // @Middlewares([validateSchemaMiddleware(createCategorySchema, "body")])
+  @SuccessResponseTags(StatusCodes.CREATED, "Created")
+  @Middlewares([jwtAuthMiddleware])
   public async create(
     @FormField() name: string,
-    @FormField() description: string,
-    @FormField() parentId?: string,         // Optional fields are fine
+    @FormField() description?: string,
+    @FormField() parentId?: string,
     @FormField() backgroundColor?: string,
     @FormField() textColor?: string,
     @FormField() deepLink?: string,
     @FormField() slug?: string,
     @UploadedFile("categoryImage") categoryImage?: Express.Multer.File
-  ): Promise<SuccessResponse<{}>> {
-    const dataToValidate = { name, backgroundColor,parentId, textColor, description, deepLink ,slug };
+  ): Promise<SuccessResponse<ICategory>> {
+    // Manual validation for multipart/form-data fields since middleware can't easily validate them before TSOA parses them
+    // However, we can construct an object and validate it using Joi
+    const dataToValidate = { name, description, parentId, backgroundColor, textColor, deepLink, slug };
+
+    // Remove undefined keys
+    Object.keys(dataToValidate).forEach(key => (dataToValidate as any)[key] === undefined && delete (dataToValidate as any)[key]);
+
     const { error, value } = createCategorySchema.validate(dataToValidate);
     if (error) {
-      console.warn(error);
-      throw new APIError(error.details[0].message, 400);
+      throw new APIError(error.details[0].message, StatusCodes.BAD_REQUEST);
     }
-    const result = await categoryService.createCategory(value, categoryImage);
-    // const result = await kisanCommunityService.create(value, profileImage);
+
+    const result = await categoryService.create(value, categoryImage);
+    this.setStatus(StatusCodes.CREATED);
     return success(result, 'Category created successfully');
   }
 
-
-
-
-
-  // @Get()
+  /**
+   * List all categories with pagination and filtering
+   */
   @Get("/")
-  @NoSecurity()
-  public async listCategories(@Queries() fillter: IFilter): Promise<SuccessResponse<PaginatedResponse<ICategory>>> {
-    const result = await categoryService.listCategories(fillter);
+  @Middlewares([jwtAuthMiddleware])
+  @SuccessResponseTags(StatusCodes.OK, "Success")
+  public async listCategories(@Queries() filter: IFilter): Promise<SuccessResponse<PaginatedResponse<ICategory>>> {
+    const result = await categoryService.getAll(filter);
     return success(result, "Categories fetched successfully");
   }
 
-
-
-
-
-
-
+  /**
+   * Get a category by ID
+   */
   @Get("{id}")
-  @Middlewares(validateSchemaMiddleware(idParamSchema, "params"))
+  @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
+  @SuccessResponseTags(StatusCodes.OK, "Success")
   public async getCategoryById(@Path() id: string): Promise<SuccessResponse<ICategory>> {
-    const category = await categoryService.getCategoryById(id);
+    const category = await categoryService.getOne(id);
     return success(category);
   }
 
+  /**
+   * Update a category by ID
+   */
   @Put("/{id}")
   @Consumes("multipart/form-data")
+  @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
   @SuccessResponseTags(StatusCodes.OK, "Success")
-  @Response(StatusCodes.NOT_FOUND, "Not Found")
-  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   public async update(
     @Path() id: string,
     @FormField() name?: string,
@@ -95,38 +100,38 @@ export class AdminCategoryController extends Controller {
     @UploadedFile("categoryImage") categoryImage?: Express.Multer.File
   ): Promise<SuccessResponse<ICategory>> {
     const dataToValidate = { name, description, parentId, backgroundColor, textColor, deepLink, slug };
-    // Remove undefined keys so Joi doesn't validate empty fields
-    Object.keys(dataToValidate).forEach(key => dataToValidate[key] === undefined && delete dataToValidate[key]);
+
+    // Remove undefined keys
+    Object.keys(dataToValidate).forEach(key => (dataToValidate as any)[key] === undefined && delete (dataToValidate as any)[key]);
 
     const { error, value } = updateCategorySchema.validate(dataToValidate);
     if (error) {
-        this.setStatus(StatusCodes.BAD_REQUEST);
-        throw new APIError(error.details[0].message, StatusCodes.BAD_REQUEST);
+      throw new APIError(error.details[0].message, StatusCodes.BAD_REQUEST);
     }
-    
-    const updatedCategory = await categoryService.updateCategory(id, value, categoryImage);
+
+    const updatedCategory = await categoryService.update(id, value, categoryImage);
     return success(updatedCategory, "Category updated successfully");
   }
 
+  /**
+   * Delete a category by ID
+   */
   @Delete("{id}")
-  @Middlewares(validateSchemaMiddleware(idParamSchema, "params"))
+  @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
   @SuccessResponseTags(StatusCodes.OK, "Success")
-  @Response(StatusCodes.NOT_FOUND, "Not Found")
   public async delete(@Path() id: string): Promise<SuccessResponse<{ message: string }>> {
-    const result = await categoryService.deleteCategory(id);
-    return success(result);
+    const result = await categoryService.delete(id);
+    return success(result as any);
   }
 
-
-  @Post("deleteAll/") // Using DELETE on the root path for bulk operations
+  /**
+   * Bulk delete all categories (Use with caution)
+   */
+  @Delete("/bulk/delete-all")
+  @Middlewares([jwtAuthMiddleware])
   @SuccessResponseTags(StatusCodes.OK, "Success")
-  @Response(StatusCodes.NOT_FOUND, "Not Found")
-  // @Middlewares(validateSchemaMiddleware(bulkDeleteSchema, "body"))
-  public async deleteMultiple(
-  ): Promise<SuccessResponse<{ message: string }>> {
+  public async deleteMultiple(): Promise<SuccessResponse<{ message: string }>> {
     const result = await categoryService.deleteMultipleCategories();
     return success(result);
   }
-
-
 }

@@ -315,6 +315,74 @@ const UserService = {
     },
     async findOne(id: string): Promise<Partial<IUser> | null> {
         return UserModel.findOne({ _id: id }).lean().exec();
+    },
+
+    /**
+     * Update user profile
+     */
+    async updateUserProfile(userId: string, data: Partial<IUser>): Promise<IUser | null> {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
+        }
+
+        try {
+            // Prevent updating sensitive fields directly
+            delete data.passwordHash;
+            delete data.roles;
+            delete data.isPhoneVerified;
+            delete data.phone; // Phone update usually requires OTP verification
+
+            const updatedUser = await UserModel.findByIdAndUpdate(
+                userId,
+                {
+                    ...data,
+                    updatedAt: new Date()
+                },
+                { new: true }
+            );
+
+            if (!updatedUser) {
+                throw new PresentableError('NOT_FOUND', 'User not found');
+            }
+
+            return updatedUser;
+        } catch (error: any) {
+            if (error instanceof PresentableError) {
+                throw error;
+            }
+            logger.error(`Failed to update user profile: ${error.message}`);
+            throw new PresentableError('SERVER_ERROR', 'Failed to update user profile');
+        }
+    },
+
+    /**
+     * Deactivate user account (Soft delete)
+     */
+    async deactivateUser(userId: string): Promise<void> {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
+        }
+
+        try {
+            const user = await UserModel.findByIdAndUpdate(
+                userId,
+                {
+                    isActive: false,
+                    updatedAt: new Date()
+                },
+                { new: true }
+            );
+
+            if (!user) {
+                throw new PresentableError('NOT_FOUND', 'User not found');
+            }
+        } catch (error: any) {
+            if (error instanceof PresentableError) {
+                throw error;
+            }
+            logger.error(`Failed to deactivate user: ${error.message}`);
+            throw new PresentableError('SERVER_ERROR', 'Failed to deactivate user account');
+        }
     }
 };
 

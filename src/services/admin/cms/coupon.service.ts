@@ -7,58 +7,47 @@
 import APIError from "./../../../error/api-error";
 import CouponModel from "./../../../models/cms/coupon.model";
 import logger from "./../../../services/logger";
-import { IFilter, IPaginated } from "./../../../types/common.types";
 import { ICoupon } from "./../../../types/coupon.types";
+import { BaseService } from "../../base.service";
 
-class CouponService {
+class CouponService extends BaseService<ICoupon> {
+  constructor() {
+    super(CouponModel as any, ['code']);
+  }
+
   // ADMIN METHODS
   public async create(data: Partial<ICoupon>): Promise<ICoupon> {
     const existingCoupon = await CouponModel.findOne({ code: data.code });
     if (existingCoupon) {
       throw new APIError(`Coupon code '${data.code}' already exists.`, 409);
     }
-    return CouponModel.create(data);
+    return super.create(data);
   }
 
-  public async getAll(queryParams: IFilter): Promise<{ data: ICoupon[]; pagination: IPaginated }> {
-    const page = Number(queryParams.page) || 1;
-    const limit = Number(queryParams.limit) || 10;
-    const filter: any = {};
-    if (queryParams.search) {
-      filter.code = new RegExp(queryParams.search, 'i');
-    }
-    if (typeof queryParams.isActive === 'boolean') {
-        filter.isActive = queryParams.isActive;
-    }
-    const totalRecords = await CouponModel.countDocuments(filter);
-    const totalPages = Math.ceil(totalRecords / limit);
-    const data = await CouponModel.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit).lean<ICoupon[]>();
-    return { data, pagination: { page, limit, totalRecord: totalRecords, totalPage: totalPages } };
-  }
+  // getAll handled by BaseService
 
-  public async update(id: string, data: Partial<ICoupon>): Promise<ICoupon> {
-    const updatedCoupon = await CouponModel.findByIdAndUpdate(id, { $set: data }, { new: true }).lean<ICoupon>();
-    if (!updatedCoupon) throw new APIError('Coupon not found.', 404);
-    return updatedCoupon;
-  }
+  // update handled by BaseService
 
-  public async delete(id: string): Promise<{ message: string }> {
-    const result = await CouponModel.findByIdAndDelete(id);
-    if (!result) throw new APIError('Coupon not found.', 404);
-    return { message: 'Coupon deleted successfully.' };
-  }
+  // delete handled by BaseService
 
   // CUSTOMER METHODS
-  public async getAvailableCoupons(): Promise<ICoupon[]> {
+  public async getAvailableCoupons(userId?: string): Promise<ICoupon[]> {
     const now = new Date();
-    return CouponModel.find({
-        isActive: true,
-        validFrom: { $lte: now },
-        validUntil: { $gte: now },
+    const coupons = await CouponModel.find({
+      isActive: true,
+      validFrom: { $lte: now },
+      validUntil: { $gte: now },
     }).lean<ICoupon[]>();
+
+    if (!userId) {
+      return coupons;
+    }
+
+    // Filter out coupons where the user has reached their usage limit
+    return coupons.filter(coupon => {
+      const userUseCount = coupon.usedBy ? coupon.usedBy.filter(id => id.toString() === userId).length : 0;
+      return userUseCount < coupon.usageLimitPerUser;
+    });
   }
 
   public async applyCoupon(code: string, orderTotal: number, userId: string) {
@@ -76,18 +65,18 @@ class CouponService {
     // Check usage per user
     const userUseCount = coupon.usedBy.filter(id => id.toString() === userId).length;
     if (userUseCount >= coupon.usageLimitPerUser) {
-        throw new APIError('You have already used this coupon the maximum number of times.', 400);
+      throw new APIError('You have already used this coupon the maximum number of times.', 400);
     }
 
     // --- Calculate Discount ---
     let discountAmount = 0;
     if (coupon.discountType === 'fixed') {
-        discountAmount = coupon.discountValue;
+      discountAmount = coupon.discountValue;
     } else if (coupon.discountType === 'percentage') {
-        discountAmount = (orderTotal * coupon.discountValue) / 100;
-        if (coupon.maxDiscountAmount && discountAmount > coupon.maxDiscountAmount) {
-            discountAmount = coupon.maxDiscountAmount;
-        }
+      discountAmount = (orderTotal * coupon.discountValue) / 100;
+      if (coupon.maxDiscountAmount && discountAmount > coupon.maxDiscountAmount) {
+        discountAmount = coupon.maxDiscountAmount;
+      }
     }
 
     discountAmount = Math.min(discountAmount, orderTotal); // Discount cannot be more than the order total
@@ -98,11 +87,11 @@ class CouponService {
     logger.info(`User ${userId} successfully validated coupon ${code}`);
 
     return {
-        message: 'Coupon applied successfully!',
-        code: coupon.code,
-        originalTotal: orderTotal,
-        discountAmount: parseFloat(discountAmount.toFixed(2)),
-        finalTotal: parseFloat((orderTotal - discountAmount).toFixed(2)),
+      message: 'Coupon applied successfully!',
+      code: coupon.code,
+      originalTotal: orderTotal,
+      discountAmount: parseFloat(discountAmount.toFixed(2)),
+      finalTotal: parseFloat((orderTotal - discountAmount).toFixed(2)),
     };
   }
 }

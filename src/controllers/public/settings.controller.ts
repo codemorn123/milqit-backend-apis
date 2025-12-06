@@ -1,21 +1,23 @@
 import {
-    Route,
-    Tags,
-    Controller,
-    Get,
-    SuccessResponse
-  } from 'tsoa';
-  import { ISettings } from '../../types/settings.types';
+  Route,
+  Tags,
+  Controller,
+  Get,
+  SuccessResponse
+} from 'tsoa';
+import { ISettings } from '../../types/settings.types';
 import settingsService from '../../services/admin/setting/settings.service';
-;
-  
-  @Route("settings")
-  @Tags("Public Settings")
-  export class PublicSettingsController extends Controller {
-  
-    @Get("/")
-    @SuccessResponse(200, "Success")
-    public async getSettings(): Promise<Partial<ISettings>> {
-      return settingsService.getSettings();
-    }
+import { success, SuccessResponse as SuccessDataResponse } from '../../utils/SuccessResponse';
+import { StatusCodes } from 'http-status-codes';
+
+@Route("settings")
+@Tags("Public Settings")
+export class PublicSettingsController extends Controller {
+
+  @Get("/")
+  @SuccessResponse(StatusCodes.OK, "Success")
+  public async getSettings(): Promise<SuccessDataResponse<Partial<ISettings>>> {
+    const result = await settingsService.getSettings();
+    return success(result, "Settings fetched successfully");
   }
+}

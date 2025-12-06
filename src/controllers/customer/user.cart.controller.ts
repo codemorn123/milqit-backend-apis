@@ -1,14 +1,17 @@
 import { Controller, Route, Tags, Post, Get, Put, Delete, Body, Path, Query, Request, Security } from 'tsoa';
-import { 
-  addToCartSchema, 
-  updateCartItemSchema, 
-  applyCouponSchema, 
+import {
+  addToCartSchema,
+  updateCartItemSchema,
+  applyCouponSchema,
   setDeliveryInfoSchema,
-  clearCartSchema 
+  clearCartSchema
 } from '../../schemas/cart.schema';
 import cartService from '../../services/cart/cart.service';
 import { success, SuccessResponse } from '../../utils/SuccessResponse';
-import { ICart } from '../../models/CartModel';
+import { ICart, ILocation } from '../../models/CartModel';
+import APIError from '../../error/api-error';
+import { logger } from '../../config/logger';
+import Joi from 'joi';
 
 /**
  * Request/Response Interfaces
@@ -17,11 +20,6 @@ interface AddToCartRequest {
   productId: string;
   quantity: number;
   notes?: string;
-  deviceInfo?: {
-    platform: 'ios' | 'android';
-    version: string;
-    deviceId: string;
-  };
 }
 
 interface UpdateCartItemRequest {
@@ -37,11 +35,7 @@ interface SetDeliveryInfoRequest {
   deliveryType: 'standard' | 'express' | 'scheduled' | 'pickup';
   deliveryAddress?: string;
   scheduledDelivery?: Date;
-  location?: {
-    latitude: number;
-    longitude: number;
-    address: string;
-  };
+  location?: ILocation;
 }
 
 interface ClearCartRequest {
@@ -56,11 +50,52 @@ interface AuthRequest {
 
 /**
  * User Cart Controller - Clean, optimized and type-safe
+ * @author MarotiKathoke
+ * @created 2025-12-05
  */
 @Route('customer/cart')
 @Tags('User Cart')
 export class UserCartController extends Controller {
-  
+
+  /**
+   * Validate user authentication
+   */
+  private validateUser(req: AuthRequest): string {
+    if (!req.user?.id) {
+      throw new APIError('Unauthorized - User not authenticated', 401);
+    }
+    return req.user.id;
+  }
+
+  /**
+   * Validate request body with Joi schema
+   */
+  private validateRequest<T>(schema: Joi.ObjectSchema, data: T, context: string): T {
+    const { error, value } = schema.validate(data);
+    if (error) {
+      throw new APIError(
+        error.details.map(d => d.message).join(', '),
+        400
+      );
+    }
+    return value;
+  }
+
+  /**
+   * Handle controller errors consistently
+   */
+  private handleError(error: any, context: string, userId?: string): never {
+    logger.error({ userId, context, error: error.message }, `Error in ${context}`);
+
+    if (error instanceof APIError) {
+      this.setStatus(error.getStatusCode());
+      throw error;
+    }
+
+    this.setStatus(500);
+    throw new APIError(`Internal server error in ${context}`, 500);
+  }
+
   /**
    * Add item to cart
    */
@@ -70,21 +105,22 @@ export class UserCartController extends Controller {
     @Body() request: AddToCartRequest,
     @Request() req: AuthRequest
   ): Promise<SuccessResponse<ICart>> {
-    const { error } = addToCartSchema.validate({ body: request });
-    if (error) {
-      this.setStatus(400);
-      throw new Error(error.details.map(d => d.message).join(', '));
+    try {
+      const userId = this.validateUser(req);
+      this.validateRequest(addToCartSchema, { body: request }, 'addToCart');
+
+      const cart = await cartService.addToCart(
+        userId,
+        request.productId,
+        request.quantity,
+        request.notes
+      );
+
+      this.setStatus(200);
+      return success(cart, 'Item added to cart successfully');
+    } catch (error) {
+      return this.handleError(error, 'addToCart', req.user?.id);
     }
-
-    const cart = await cartService.addToCart(
-      req.user.id,
-      request.productId,
-      request.quantity,
-      request.deviceInfo,
-      request.notes
-    );
-
-    return success(cart, 'Item added to cart successfully');
   }
 
   /**
@@ -95,22 +131,24 @@ export class UserCartController extends Controller {
   public async getCart(
     @Query() includeUnavailable: boolean = false,
     @Request() req: AuthRequest
-  ): Promise<SuccessResponse<{
-    totalItems: number;
-    subtotal: number;
-    totalAmount: number;
-    items: ICart['items'];
-  }>> {
-    const cart = await cartService.getCart(req.user.id, includeUnavailable);
+  ): Promise<SuccessResponse<any>> {
+    try {
+      const userId = this.validateUser(req);
+      const cart = await cartService.getCart(userId, includeUnavailable);
 
-    if (!cart) {
-      return success(
-        { totalItems: 0, subtotal: 0, totalAmount: 0, items: [] },
-        'Cart is empty'
-      );
+      if (!cart) {
+        this.setStatus(200);
+        return success(
+          { totalItems: 0, subtotal: 0, totalAmount: 0, items: [] },
+          'Cart is empty'
+        );
+      }
+
+      this.setStatus(200);
+      return success(cart, 'Cart fetched successfully');
+    } catch (error) {
+      return this.handleError(error, 'getCart', req.user?.id);
     }
-
-    return success(cart, 'Cart fetched successfully');
   }
 
   /**
@@ -123,26 +161,22 @@ export class UserCartController extends Controller {
     @Body() request: UpdateCartItemRequest,
     @Request() req: AuthRequest
   ): Promise<SuccessResponse<ICart>> {
-    const { error } = updateCartItemSchema.validate({ 
-      params: { productId }, 
-      body: request 
-    });
-    if (error) {
-      this.setStatus(400);
-      throw new Error(error.details.map(d => d.message).join(', '));
+    try {
+      const userId = this.validateUser(req);
+      this.validateRequest(
+        updateCartItemSchema,
+        { params: { productId }, body: request },
+        'updateCartItem'
+      );
+
+      const cart = await cartService.updateCartItem(userId, productId, request.quantity);
+      const message = request.quantity === 0 ? 'Item removed from cart' : 'Cart updated successfully';
+
+      this.setStatus(200);
+      return success(cart, message);
+    } catch (error) {
+      return this.handleError(error, 'updateCartItem', req.user?.id);
     }
-
-    const cart = await cartService.updateCartItem(
-      req.user.id,
-      productId,
-      request.quantity
-    );
-
-    const message = request.quantity === 0 
-      ? 'Item removed from cart' 
-      : 'Cart updated successfully';
-
-    return success(cart, message);
   }
 
   /**
@@ -154,8 +188,20 @@ export class UserCartController extends Controller {
     @Path() productId: string,
     @Request() req: AuthRequest
   ): Promise<SuccessResponse<ICart>> {
-    const cart = await cartService.removeFromCart(req.user.id, productId);
-    return success(cart, 'Item removed from cart');
+    try {
+      const userId = this.validateUser(req);
+
+      if (!productId?.trim()) {
+        throw new APIError('Product ID is required', 400);
+      }
+
+      const cart = await cartService.removeFromCart(userId, productId);
+
+      this.setStatus(200);
+      return success(cart, 'Item removed from cart successfully');
+    } catch (error) {
+      return this.handleError(error, 'removeFromCart', req.user?.id);
+    }
   }
 
   /**
@@ -166,24 +212,21 @@ export class UserCartController extends Controller {
   public async clearCart(
     @Body() request: ClearCartRequest,
     @Request() req: AuthRequest
-  ): Promise<SuccessResponse<{
-    totalItems: number;
-    subtotal: number;
-    totalAmount: number;
-    items: ICart['items'];
-  }>> {
-    const { error } = clearCartSchema.validate({ body: request });
-    if (error) {
-      this.setStatus(400);
-      throw new Error(error.details.map(d => d.message).join(', '));
+  ): Promise<SuccessResponse<any>> {
+    try {
+      const userId = this.validateUser(req);
+      this.validateRequest(clearCartSchema, { body: request }, 'clearCart');
+
+      await cartService.clearCart(userId);
+
+      this.setStatus(200);
+      return success(
+        { totalItems: 0, subtotal: 0, totalAmount: 0, items: [] },
+        'Cart cleared successfully'
+      );
+    } catch (error) {
+      return this.handleError(error, 'clearCart', req.user?.id);
     }
-
-    await cartService.clearCart(req.user.id);
-
-    return success(
-      { totalItems: 0, subtotal: 0, totalAmount: 0, items: [] },
-      'Cart cleared successfully'
-    );
   }
 
   /**
@@ -195,14 +238,17 @@ export class UserCartController extends Controller {
     @Body() request: ApplyCouponRequest,
     @Request() req: AuthRequest
   ): Promise<SuccessResponse<ICart>> {
-    const { error } = applyCouponSchema.validate({ body: request });
-    if (error) {
-      this.setStatus(400);
-      throw new Error(error.details.map(d => d.message).join(', '));
-    }
+    try {
+      const userId = this.validateUser(req);
+      this.validateRequest(applyCouponSchema, { body: request }, 'applyCoupon');
 
-    const cart = await cartService.applyCoupon(req.user.id, request.couponCode);
-    return success(cart, 'Coupon applied successfully');
+      const cart = await cartService.applyCoupon(userId, request.couponCode);
+
+      this.setStatus(200);
+      return success(cart, 'Coupon applied successfully');
+    } catch (error) {
+      return this.handleError(error, 'applyCoupon', req.user?.id);
+    }
   }
 
   /**
@@ -214,21 +260,23 @@ export class UserCartController extends Controller {
     @Body() request: SetDeliveryInfoRequest,
     @Request() req: AuthRequest
   ): Promise<SuccessResponse<ICart>> {
-    const { error } = setDeliveryInfoSchema.validate({ body: request });
-    if (error) {
-      this.setStatus(400);
-      throw new Error(error.details.map(d => d.message).join(', '));
+    try {
+      const userId = this.validateUser(req);
+      this.validateRequest(setDeliveryInfoSchema, { body: request }, 'setDeliveryInfo');
+
+      const cart = await cartService.setDeliveryInfo(
+        userId,
+        request.deliveryType,
+        request.deliveryAddress,
+        request.scheduledDelivery,
+        request.location
+      );
+
+      this.setStatus(200);
+      return success(cart, 'Delivery information set successfully');
+    } catch (error) {
+      return this.handleError(error, 'setDeliveryInfo', req.user?.id);
     }
-
-    const cart = await cartService.setDeliveryInfo(
-      req.user.id,
-      request.deliveryType,
-      request.deliveryAddress,
-      request.scheduledDelivery,
-      request.location
-    );
-
-    return success(cart, 'Delivery information set successfully');
   }
 
   /**
@@ -238,8 +286,15 @@ export class UserCartController extends Controller {
   @Security('jwt')
   public async getCartSummary(
     @Request() req: AuthRequest
-  ): Promise<SuccessResponse<ICart>> {
-    const summary = await cartService.getCartSummary(req.user.id);
-    return success(summary, 'Cart summary retrieved successfully');
+  ): Promise<SuccessResponse<any>> {
+    try {
+      const userId = this.validateUser(req);
+      const summary = await cartService.getCartSummary(userId);
+
+      this.setStatus(200);
+      return success(summary, 'Cart summary retrieved successfully');
+    } catch (error) {
+      return this.handleError(error, 'getCartSummary', req.user?.id);
+    }
   }
 }

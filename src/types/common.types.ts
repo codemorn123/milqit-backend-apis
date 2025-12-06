@@ -19,10 +19,10 @@ export interface PaginatedResponse<T> {
 export type ErrorDetail =
   | string
   | {
-      code?: string;
-      message: string;
-      details?: unknown;
-    };
+    code?: string;
+    message: string;
+    details?: unknown;
+  };
 
 
 export interface ErrorResponse {
@@ -51,6 +51,12 @@ export interface IFilter {
   sortOrder?: 'asc' | 'desc';
 }
 
+export interface IRefundFilter extends IFilter {
+  status?: 'pending' | 'processing' | 'completed' | 'rejected' | 'failed';
+  orderId?: string;
+  userId?: string;
+}
+
 
 
 export interface IProductFilter {
@@ -70,7 +76,7 @@ export interface IProductFilter {
 
 
 export interface DeviceInfo {
-  platform: 'ios' | 'android';
+  platform: 'ios' | 'android' | 'web' | 'other';
   version: string;
   deviceId: string;
   appVersion?: string;

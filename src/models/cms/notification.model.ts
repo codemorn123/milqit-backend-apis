@@ -13,9 +13,9 @@ export interface INotification {
   updatedAt: Date;
 }
 
-type INotificationDocument = INotification & Document;
+export type INotificationDocument = INotification & Document;
 
-  
+
 
 const notificationSchema: Schema = new Schema<INotificationDocument>({
   title: {

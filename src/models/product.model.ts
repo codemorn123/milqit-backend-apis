@@ -40,10 +40,10 @@ export interface IGeneralProductDetails {
 }
 
 // Union type for all product details
-export type ProductDetails = 
-  | IFoodProductDetails 
-  | IElectronicsProductDetails 
-  | IApparelProductDetails 
+export type ProductDetails =
+  | IFoodProductDetails
+  | IElectronicsProductDetails
+  | IApparelProductDetails
   | IGeneralProductDetails;
 
 export interface IProduct {
@@ -69,7 +69,7 @@ export interface IProduct {
   createdAt?: Date;
   updatedAt?: Date;
 
-  
+
 }
 
 export interface ProductDocument extends IBase {
@@ -92,12 +92,12 @@ export interface ProductDocument extends IBase {
   productDetails: ProductDetails; // Now properly typed
   averageRating: number;
   reviewCount: number;
-  
+
   // Virtual fields
   discountPercentage: number;
   savings: number;
   hasDiscount: boolean;
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -145,16 +145,16 @@ const ApparelProductDetailsSchema = new Schema({
 const ProductSchema = new Schema<ProductDocument>(
   {
     name: { type: String, required: true, trim: true, index: true },
-    slug: { 
-      type: String, 
-      required: true, 
+    slug: {
+      type: String,
+      required: true,
       unique: true,
       trim: true,
       lowercase: true,
       index: true
     },
     description: { type: String, trim: true },
-    
+
     // --- Pricing (Blinkit Style) ---
     mrp: {
       type: Number,
@@ -168,13 +168,13 @@ const ProductSchema = new Schema<ProductDocument>(
       min: 0,
       index: true,
       validate: {
-        validator: function(this: ProductDocument, value: number) {
+        validator: function (this: ProductDocument, value: number) {
           return value <= this.mrp;
         },
         message: 'Selling price cannot be greater than MRP'
       }
     },
-    
+
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true, index: true },
     sku: { type: String, required: false },
     quantity: { type: Number, required: true, default: 0, min: 0 },
@@ -219,16 +219,16 @@ const ProductSchema = new Schema<ProductDocument>(
       type: Schema.Types.Mixed,
       required: true,
     },
-    
-    unit: { 
-      type: String, 
-      required: true, 
-      enum: ['piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen'] 
+
+    unit: {
+      type: String,
+      required: true,
+      enum: ['piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen']
     },
   },
   {
-    timestamps: true, 
-    versionKey: false, 
+    timestamps: true,
+    versionKey: false,
     toJSON: {
       virtuals: true,
       transform: (_, ret: any) => {
@@ -240,23 +240,23 @@ const ProductSchema = new Schema<ProductDocument>(
 );
 
 // Virtual fields for discount calculations (Blinkit style)
-ProductSchema.virtual('discountPercentage').get(function(this: ProductDocument) {
+ProductSchema.virtual('discountPercentage').get(function (this: ProductDocument) {
   if (this.mrp <= 0) return 0;
   return Math.round(((this.mrp - this.sellingPrice) / this.mrp) * 100);
 });
 
-ProductSchema.virtual('savings').get(function(this: ProductDocument) {
+ProductSchema.virtual('savings').get(function (this: ProductDocument) {
   return this.mrp - this.sellingPrice;
 });
 
-ProductSchema.virtual('hasDiscount').get(function(this: ProductDocument) {
+ProductSchema.virtual('hasDiscount').get(function (this: ProductDocument) {
   return this.sellingPrice < this.mrp;
 });
 
 // Pre-save middleware
-ProductSchema.pre('save', function(next) {
+ProductSchema.pre('save', function (next) {
   this.inStock = this.quantity > 0;
-  
+
   if (this.isModified('name') || this.isNew) {
     this.slug = slugify(this.name, {
       lower: true,
@@ -264,7 +264,7 @@ ProductSchema.pre('save', function(next) {
       trim: true
     });
   }
-  
+
   next();
 });
 
@@ -274,8 +274,7 @@ ProductSchema.index(
   { weights: { name: 10, brand: 8, description: 2 } }
 );
 ProductSchema.index({ sku: 1 }, { unique: true, sparse: true });
-ProductSchema.index({ sellingPrice: 1 });
-ProductSchema.index({ mrp: 1 });
+
 
 // Apply the pagination plugin
 ProductSchema.plugin(mongoosePaginate);
@@ -289,7 +288,7 @@ ProductModel.discriminator('Electronics', new Schema({ productDetails: Electroni
 ProductModel.discriminator('Apparel', new Schema({ productDetails: ApparelProductDetailsSchema }));
 
 // Static methods for common queries (Blinkit style)
-ProductSchema.statics.findDiscountedProducts = function(minDiscount: number = 10) {
+ProductSchema.statics.findDiscountedProducts = function (minDiscount: number = 10) {
   return this.aggregate([
     {
       $addFields: {
@@ -311,7 +310,7 @@ ProductSchema.statics.findDiscountedProducts = function(minDiscount: number = 10
   ]);
 };
 
-ProductSchema.statics.findByPriceRange = function(minPrice: number, maxPrice: number) {
+ProductSchema.statics.findByPriceRange = function (minPrice: number, maxPrice: number) {
   return this.find({
     sellingPrice: { $gte: minPrice, $lte: maxPrice },
     isActive: true,

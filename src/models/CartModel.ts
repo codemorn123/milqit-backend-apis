@@ -1281,7 +1281,7 @@ export type DeliveryType = 'standard' | 'express' | 'scheduled' | 'pickup';
  * Device Information Interface
  */
 export interface IDeviceInfo {
-  platform: 'ios' | 'android';
+  platform: 'ios' | 'android' | 'web' | 'other';
   version: string;
   deviceId: string;
 }

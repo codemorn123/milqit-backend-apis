@@ -5,6 +5,7 @@ import { logger } from './config/logger';
 import http from 'http';
 import chalk from 'chalk';
 import { errorHandler } from './utils/errorHandler';
+import { initMarketingCron } from './cron/marketing.cron';
 
 
 async function connectToDatabase(): Promise<void> {
@@ -62,6 +63,9 @@ async function startServer(): Promise<void> {
     // Global error handler - must be last
     app.use(errorHandler);
 
+    // Initialize Crons
+    initMarketingCron();
+
     // Start the server with proper typing
     const server: http.Server = app.listen(config.port, () => {
       logger.info({
@@ -73,7 +77,7 @@ async function startServer(): Promise<void> {
       console.log(chalk.bold.green(`Server is running on port ${config.port}`));
       // Log available endpoints
       const baseUrl = `http://localhost:${config.port}/v1`;
-      console.log( chalk.bold.green(`Check postman docs:  http://localhost:${config.port}/docs`));
+      console.log(chalk.bold.green(`Check postman docs:  http://localhost:${config.port}/docs`));
 
       logger.info(`Mobile API: ${baseUrl}/mobile`);
       logger.info(`Admin API: ${baseUrl}/admin`);

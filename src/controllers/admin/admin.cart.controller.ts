@@ -24,7 +24,7 @@ export class AdminCartController extends Controller {
   public async getCarts(
     @Query() page: number = 1,
     @Query() limit: number = 20,
-    @Query() status?: 'active' | 'checkout' | 'completed' | 'abandoned',
+    @Query() status?: 'active' | 'checkout' | 'completed' | 'abandoned' | '',
     @Query() userId?: string,
     @Query() startDate?: string,
     @Query() endDate?: string,
@@ -39,7 +39,7 @@ export class AdminCartController extends Controller {
       // Apply filters
       if (status) query.status = status;
       if (userId) query.userId = userId;
-      
+
       if (startDate || endDate) {
         query.createdAt = {};
         if (startDate) query.createdAt.$gte = new Date(startDate);
@@ -59,15 +59,15 @@ export class AdminCartController extends Controller {
         lean: true
       };
 
-    //   const result = await CartModelClass.paginate(query, options);
+      //   const result = await CartModelClass.paginate(query, options);
       const [docs, totalDocs] = await Promise.all([
         CartModelClass.find(query)
-        //   .sort(sort)
-        //   .skip(skip)
+          //   .sort(sort)
+          //   .skip(skip)
           .limit(limit)
           .lean()
           .exec(),
-          CartModelClass.countDocuments(query).exec()
+        CartModelClass.countDocuments(query).exec()
       ]);
 
       // Calculate pagination metadata
@@ -77,9 +77,10 @@ export class AdminCartController extends Controller {
       const nextPage = hasNextPage ? page + 1 : null;
       const prevPage = hasPrevPage ? page - 1 : null;
 
-    //   console.log(`✅ Retrieved ${carts.length} carts for admin dashboard`);
+      //   console.log(`✅ Retrieved ${carts.length} carts for admin dashboard`);
 
-      return success ({docs,
+      return success({
+        docs,
         totalDocs,
         limit,
         page,
@@ -87,7 +88,8 @@ export class AdminCartController extends Controller {
         hasNextPage,
         hasPrevPage,
         nextPage,
-        prevPage}, 'Carts fetched successfully');
+        prevPage
+      }, 'Carts fetched successfully');
 
     } catch (error: any) {
       console.error('❌ Error in admin getCarts:', error);
@@ -132,7 +134,7 @@ export class AdminCartController extends Controller {
     } catch (error: any) {
       console.error('❌ Error in getCartById:', error);
       this.setStatus(error.statusCode || 500);
-      
+
       if (error instanceof APIError) {
         throw error;
       }
@@ -166,11 +168,13 @@ export class AdminCartController extends Controller {
         ]),
         CartModelClass.aggregate([
           { $unwind: '$items' },
-          { $group: { 
-            _id: '$items.productId', 
-            totalQuantity: { $sum: '$items.quantity' },
-            name: { $first: '$items.name' }
-          }},
+          {
+            $group: {
+              _id: '$items.productId',
+              totalQuantity: { $sum: '$items.quantity' },
+              name: { $first: '$items.name' }
+            }
+          },
           { $sort: { totalQuantity: -1 } },
           { $limit: 10 }
         ])
@@ -277,13 +281,13 @@ export class AdminCartController extends Controller {
       }, {} as any);
 
       const totalCarts = funnel.reduce((sum, stage) => sum + (stage.count || 0), 0);
-      
+
       const conversionRates = {
-        activeToCheckout: funnelData.checkout ? 
+        activeToCheckout: funnelData.checkout ?
           ((funnelData.checkout.count / (funnelData.active?.count || 1)) * 100).toFixed(2) : '0',
-        checkoutToCompleted: funnelData.completed ? 
+        checkoutToCompleted: funnelData.completed ?
           ((funnelData.completed.count / (funnelData.checkout?.count || 1)) * 100).toFixed(2) : '0',
-        overallConversion: funnelData.completed ? 
+        overallConversion: funnelData.completed ?
           ((funnelData.completed.count / totalCarts) * 100).toFixed(2) : '0'
       };
 

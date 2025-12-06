@@ -1,4 +1,3 @@
-import express from 'express';
 import {
   Body,
   Controller,
@@ -9,48 +8,33 @@ import {
   Route,
   Tags,
   Security,
-
+  Middlewares,
   Response,
   Path,
   Example,
+  SuccessResponse as TsoaSuccessResponse
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { ClientErrorInterface, PresentableError } from '../../error/clientErrorHelper';
-
-import { UserProfile } from'../../types/auth.types';
-
+import { UserProfile } from '../../types/auth.types';
 import UserService from '../../services/user.service';
 import { success, SuccessResponse } from '../../utils/SuccessResponse';
 import { IUser } from '../../models/UserModel';
+import { validateSchemaMiddleware } from '../../middleware/common-validate';
+import { idParamSchema } from '../../constants/common.validator';
+import {
+  updateProfileSchema,
+  addAddressSchema,
+  addressIdSchema
+} from '../../validations/user.validation';
 
+// Define input interface for profile update
+interface IUpdateProfileRequest {
+  name?: string;
+  email?: string;
+}
 
-// Example mock data
-const exampleAddresses = [
-  {
-    id: 'addr-1',
-    label: 'Home',
-    address: '123 Main Street, Mumbai, India',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-    zip: '400001',
-    country: 'India',
-    isPrimary: true,
-  },
-  {
-    id: 'addr-2',
-    label: 'Work',
-    address: '201 Corporate Park, Pune, India',
-    city: 'Pune',
-    state: 'Maharashtra',
-    zip: '411001',
-    country: 'India',
-    isPrimary: false,
-  },
-];
-
-
-
-@Route('mobile/user')
+@Route('customer/user')
 @Tags('Mobile User')
 @Response<ClientErrorInterface>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response<ClientErrorInterface>(StatusCodes.FORBIDDEN, 'Forbidden')
@@ -62,14 +46,14 @@ export class MobileUserController extends Controller {
    */
   @Get('{userId}/profile')
   @Security('jwt')
-//   @SuccessResponse(StatusCodes.OK, 'User Profile Retrieved')
+  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
   @Example<SuccessResponse<any>>(
     success({}, 'User profile retrieved successfully')
   )
   public async getUserProfile(
     @Path() userId: string
   ): Promise<SuccessResponse<IUser>> {
-    const user = await UserService.getActiveUserById(userId); // return IUserDocument | null
+    const user = await UserService.getActiveUserById(userId);
     if (!user) {
       throw new PresentableError('NOT_FOUND', 'User not found');
     }
@@ -81,14 +65,34 @@ export class MobileUserController extends Controller {
    */
   @Put('{userId}/profile')
   @Security('jwt')
-//   @SuccessResponse(StatusCodes.OK, 'Profile Updated')
+  @Middlewares([
+    validateSchemaMiddleware(idParamSchema, "params"),
+    validateSchemaMiddleware(updateProfileSchema)
+  ])
   @Example<SuccessResponse<{}>>(success({}, 'Profile updated successfully'))
   public async updateProfile(
     @Path() userId: string,
-    @Body() body: Partial<UserProfile>
-  ): Promise<SuccessResponse<{}>> {
-    // Example: await UserService.updateUserProfile(userId, body);
-    return success({}, 'Profile updated successfully');
+    @Body() body: IUpdateProfileRequest
+  ): Promise<SuccessResponse<IUser>> {
+    const updatedUser = await UserService.updateUserProfile(userId, body);
+    if (!updatedUser) {
+      throw new PresentableError('NOT_FOUND', 'User not found');
+    }
+    return success(updatedUser, 'Profile updated successfully');
+  }
+
+  /**
+   * Delete user profile (Deactivate account)
+   */
+  @Delete('{userId}/profile')
+  @Security('jwt')
+  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
+  @TsoaSuccessResponse(StatusCodes.OK, "Profile Deleted")
+  public async deleteProfile(
+    @Path() userId: string
+  ): Promise<SuccessResponse<{ success: boolean }>> {
+    await UserService.deactivateUser(userId);
+    return success({ success: true }, 'Profile deleted successfully');
   }
 
   /**
@@ -96,9 +100,9 @@ export class MobileUserController extends Controller {
    */
   @Get('{userId}/addresses')
   @Security('jwt')
-//   @SuccessResponse(StatusCodes.OK, 'Addresses Retrieved')
+  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
   @Example<SuccessResponse<any[]>>(
-    success(exampleAddresses, 'Addresses retrieved successfully')
+    success([], 'Addresses retrieved successfully')
   )
   public async getAddresses(
     @Path() userId: string
@@ -107,7 +111,7 @@ export class MobileUserController extends Controller {
     if (!user) {
       throw new PresentableError('NOT_FOUND', 'User not found');
     }
-    return success(user || [], 'Addresses retrieved successfully');
+    return success(user.addresses || [], 'Addresses retrieved successfully');
   }
 
   /**
@@ -115,10 +119,11 @@ export class MobileUserController extends Controller {
    */
   @Post('{userId}/addresses')
   @Security('jwt')
-//   @SuccessResponse(StatusCodes.CREATED, 'Address Added')
-  @Example<SuccessResponse<any>>(
-    success(exampleAddresses[0], 'Address added successfully')
-  )
+  @Middlewares([
+    validateSchemaMiddleware(idParamSchema, "params"),
+    validateSchemaMiddleware(addAddressSchema)
+  ])
+  @TsoaSuccessResponse(StatusCodes.CREATED, "Address Added")
   public async addAddress(
     @Path() userId: string,
     @Body() address: any
@@ -134,7 +139,10 @@ export class MobileUserController extends Controller {
    */
   @Put('{userId}/addresses/primary')
   @Security('jwt')
-//   @SuccessResponse(StatusCodes.OK, 'Primary Address Set')
+  @Middlewares([
+    validateSchemaMiddleware(idParamSchema, "params"),
+    validateSchemaMiddleware(addressIdSchema)
+  ])
   @Example<SuccessResponse<{ success: boolean }>>(
     success({ success: true }, 'Primary address set successfully')
   )
@@ -151,7 +159,10 @@ export class MobileUserController extends Controller {
    */
   @Delete('{userId}/addresses')
   @Security('jwt')
-//   @SuccessResponse(StatusCodes.OK, 'Address Removed')
+  @Middlewares([
+    validateSchemaMiddleware(idParamSchema, "params"),
+    validateSchemaMiddleware(addressIdSchema)
+  ])
   @Example<SuccessResponse<{ success: boolean }>>(
     success({ success: true }, 'Address removed successfully')
   )
