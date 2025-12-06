@@ -23,6 +23,14 @@ class CategoryService extends BaseService<ICategory> {
     const { url, key } = await customFileService.saveFile(file, CATEGORY_IMAGES_PATH);
     data.categoryImage = { url, key };
 
+    // Sanitize empty strings: convert to null/undefined so MongoDB doesn't try to cast them
+    if (data.parentId === '') {
+      delete data.parentId; // Let it use the default (null)
+    }
+    if (data.slug === '' || !data.slug) {
+      delete data.slug; // Let the pre-save hook generate it from name
+    }
+
     return super.create(data);
   }
 
@@ -51,6 +59,14 @@ class CategoryService extends BaseService<ICategory> {
       // Save the new file
       const { url, key } = await customFileService.saveFile(file, CATEGORY_IMAGES_PATH);
       payload.categoryImage = { url, key };
+    }
+
+    // Sanitize empty strings
+    if (payload.parentId === '') {
+      payload.parentId = null;
+    }
+    if (payload.slug === '' || !payload.slug) {
+      delete payload.slug; // Let the pre-save hook regenerate it if name changed
     }
 
     return super.update(id, payload);
