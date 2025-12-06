@@ -10,8 +10,8 @@ export const createCategorySchema = Joi.object({
     'any.required': 'Category name is a required field.',
   }),
   description: Joi.string().optional().allow(''),
- 
-  parentId: Joi.string().optional().allow(null).messages({
+
+  parentId: Joi.string().optional().allow(null, '').messages({
     'string.pattern.name': 'Parent ID must be a valid MongoDB ObjectId.',
   }),
   // icon: Joi.string().uri().optional().allow(null, '').messages({
