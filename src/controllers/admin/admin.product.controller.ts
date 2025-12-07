@@ -120,16 +120,44 @@ export class AdminProductController extends Controller {
     return success(product, 'Product created successfully.');
   }
 
-  // @Put('{id}')
-  // @Middlewares(validateSchemaMiddleware(updateProductSchema,'body'))
-  // @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-  // public async updateProduct(
-  //   @Path() id: string,
-  //   @Body() data: IProduct
-  // ): Promise<SuccessResponse<{}>> {
-  //   const product = await productService.update(id, data);
-  //   return success({}, 'Product updated successfully.');
-  // }
+  @Put('{id}')
+  @Consumes("multipart/form-data")
+  @SuccessResponse(StatusCodes.OK, "Updated")
+  public async updateProduct(
+    @Path() id: string,
+    @FormField() name?: string,
+    @FormField() description?: string,
+    @FormField() mrp?: number,
+    @FormField() sellingPrice?: number,
+    @FormField() unit?: ValidUnit,
+    @FormField() category?: string,
+    @FormField() quantity?: number,
+    @FormField() productType?: ProductType,
+    @FormField() brand?: string,
+    @FormField() sku?: string,
+    @FormField() isActive?: boolean,
+    @FormField() isFeatured?: boolean,
+    @FormField() productDetails?: string,
+    @UploadedFiles("images") images?: Express.Multer.File[]
+  ): Promise<CustomSuccessResponse<{}>> {
+    const dataToUpdate: any = {
+      name, description, mrp, sellingPrice, unit, category, quantity, productType, brand, sku, isActive, isFeatured
+    };
+
+    if (productDetails) {
+      try {
+        dataToUpdate.productDetails = JSON.parse(productDetails);
+      } catch (e) {
+        throw new APIError('Invalid productDetails JSON', 400);
+      }
+    }
+
+    // Filter out undefined values
+    Object.keys(dataToUpdate).forEach(key => dataToUpdate[key] === undefined && delete dataToUpdate[key]);
+
+    const product = await productService.update(id, dataToUpdate, images);
+    return success(product, 'Product updated successfully.');
+  }
 
 
   @Get('/')
@@ -144,12 +172,25 @@ export class AdminProductController extends Controller {
    * Get a single product by its ID.
    * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
    */
-  // @Get('{id}')
-  // @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-  // public async getProductById(@Path() id: string): Promise<SuccessResponse<IProduct>> {
-  //   const product = await productService.findById(id);
-  //   return success(product, 'Product fetched successfully.');
-  // }
+  /**
+   * Get a single product by its ID.
+   * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
+   */
+  @Get('{id}')
+  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
+  public async getProductById(@Path() id: string): Promise<CustomSuccessResponse<IProduct>> {
+    const product = await productService.findById(id);
+    return success(product, 'Product fetched successfully.');
+  }
+
+  /**
+   * Get a single product by its Slug.
+   */
+  @Get('slug/{slug}')
+  public async getProductBySlug(@Path() slug: string): Promise<CustomSuccessResponse<IProduct | null>> {
+    const product = await productService.getProductBySlug(slug, false); // false = don't enforce public/active check for admin
+    return success(product, 'Product fetched successfully.');
+  }
 
   /**
    * Delete a product by its ID.

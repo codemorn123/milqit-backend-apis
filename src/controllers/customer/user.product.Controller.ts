@@ -38,6 +38,19 @@ interface ProductFilters extends Omit<ProductFilterQueryParams, 'isActive' | 'cr
   // Customer-specific filters only
 }
 
+interface SearchProductFilters extends ProductFilters {
+  q: string;
+}
+
+interface SaleProductFilters extends ProductFilters {
+  minDiscount?: number;
+}
+
+interface PriceRangeFilters extends ProductFilters {
+  minPrice: number;
+  maxPrice: number;
+}
+
 @Tags('CUSTOMER: Products')
 @Route('customer/products')
 @Response<ErrorResponse>(400, "Bad Request")
@@ -128,78 +141,78 @@ export class CustomerProductController extends Controller {
    * Get a product by slug for customers
    * @summary Get Product by Slug
    */
-  // @Get('slug/{slug}')
-  // public async getProductBySlug(
-  //   @Path() slug: string
-  // ): Promise<SuccessResponse<CustomerProductResponse | null>> {
-  //   try {
-  //     const product = await productService.gestProductBySlug(slug, true);
+  @Get('slug/{slug}')
+  public async getProductBySlug(
+    @Path() slug: string
+  ): Promise<SuccessResponse<CustomerProductResponse | null>> {
+    try {
+      const product = await productService.getProductBySlug(slug, true);
 
-  //     if (!product) {
-  //       return success(null, 'Product not found or unavailable.');
-  //     }
+      if (!product) {
+        return success(null, 'Product not found or unavailable.');
+      }
 
-  //     const discountPercentage = product.mrp > 0 
-  //       ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100) 
-  //       : 0;
+      const discountPercentage = product.mrp > 0
+        ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
+        : 0;
 
-  //     const customerProduct: CustomerProductResponse = {
-  //       ...product,
-  //       discountPercentage,
-  //       savings: product.mrp - product.sellingPrice,
-  //       hasDiscount: product.sellingPrice < product.mrp
-  //     };
+      const customerProduct: CustomerProductResponse = {
+        ...product,
+        discountPercentage,
+        savings: product.mrp - product.sellingPrice,
+        hasDiscount: product.sellingPrice < product.mrp
+      } as CustomerProductResponse;
 
-  //     return success(customerProduct, 'Product details fetched successfully.');
-  //   } catch (error: any) {
-  //     throw new APIError(`Error fetching product: ${error.message}`, 500);
-  //   }
-  // }
+      return success(customerProduct, 'Product details fetched successfully.');
+    } catch (error: any) {
+      throw new APIError(`Error fetching product: ${error.message}`, 500);
+    }
+  }
 
   /**
    * Search products for customers
    * @summary Search Products
    */
-  // @Get('search')
-  // public async searchProducts(
-  //   @Queries() params: ProductFilters & { q: string }
-  // ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
-  //   try {
-  //     const { q: searchQuery, ...filters } = params;
+  @Get('search')
+  public async searchProducts(
+    @Queries() params: SearchProductFilters
+  ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
+    try {
+      const { q: searchQuery, ...filters } = params;
 
-  //     if (!searchQuery || searchQuery.trim().length === 0) {
-  //       throw new APIError('Search query is required', 400);
-  //     }
+      if (!searchQuery || searchQuery.trim().length === 0) {
+        throw new APIError('Search query is required', 400);
+      }
 
-  //     const results = await productService.searchProducts(searchQuery, filters, true);
+      const results = await productService.searchForUsers({ ...filters, search: searchQuery });
 
-  //     // Transform response to include discount calculations
-  //     const transformedDocs = results.docs.map(product => {
-  //       const discountPercentage = product.mrp > 0 
-  //         ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100) 
-  //         : 0;
+      // Transform response to include discount calculations
+      const transformedDocs = results.docs.map(product => {
+        const discountPercentage = product.mrp > 0
+          ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
+          : 0;
 
-  //       return {
-  //         ...product,
-  //         discountPercentage,
-  //         savings: product.mrp - product.sellingPrice,
-  //         hasDiscount: product.sellingPrice < product.mrp
-  //       } as CustomerProductResponse;
-  //     });
+        return {
+          ...product,
+          discountPercentage,
+          savings: product.mrp - product.sellingPrice,
+          hasDiscount: product.sellingPrice < product.mrp
+        } as CustomerProductResponse;
+      });
 
-  //     const result = {
-  //       ...results,
-  //       docs: transformedDocs
-  //     };
+      const result = {
+        ...results,
+        docs: transformedDocs
+      };
 
-  //     return success(result, 'Product search completed successfully.');
-  //   } catch (error: any) {
-  //     if (error instanceof APIError) {
-  //       throw error;
-  //     }
-  //     throw new APIError(`Error searching products: ${error.message}`, 500);
-  //   }
-  // }
+      return success(result, 'Product search completed successfully.');
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw new APIError(`Error searching products: ${error.message}`, 500);
+    }
+  }
 
   /**
    * Get featured products for customers
@@ -371,53 +384,57 @@ export class CustomerProductController extends Controller {
    * Get products with discounts (sale items)
    * @summary Get Sale Products
    */
-  // @Get('sale')
-  // public async getSaleProducts(
-  //   @Queries() filters: ProductFilters & { minDiscount?: number }
-  // ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
-  //   try {
-  //     const minDiscount = filters.minDiscount || 5; // At least 5% discount
-  //     const { minDiscount: _, ...otherFilters } = filters;
+  /**
+   * Get products with discounts (sale items)
+   * @summary Get Sale Products
+   */
+  @Get('sale')
+  public async getSaleProducts(
+    @Queries() filters: SaleProductFilters
+  ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
+    try {
+      const minDiscount = filters.minDiscount || 5; // At least 5% discount
+      const { minDiscount: _, ...otherFilters } = filters;
 
-  //     // Get products and filter by discount on the frontend
-  //     // You could also add this logic to your service layer
-  //     const results = await productService.findForUsers({
-  //       ...otherFilters,
-  //       sortBy: 'createdAt',
-  //       sortOrder: 'desc'
-  //     });
+      // Get products and filter by discount on the frontend
+      // You could also add this logic to your service layer
+      const results = await productService.findForUsers({
+        ...otherFilters,
+        sortBy: 'createdAt',
+        sortOrder: 'desc'
+      });
 
-  //     const saleProducts = results.docs.filter(product => {
-  //       const discountPercentage = product.mrp > 0 
-  //         ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100) 
-  //         : 0;
-  //       return discountPercentage >= minDiscount;
-  //     });
+      const saleProducts = results.docs.filter(product => {
+        const discountPercentage = product.mrp > 0
+          ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
+          : 0;
+        return discountPercentage >= minDiscount;
+      });
 
-  //     const transformedDocs = saleProducts.map(product => {
-  //       const discountPercentage = product.mrp > 0 
-  //         ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100) 
-  //         : 0;
+      const transformedDocs = saleProducts.map(product => {
+        const discountPercentage = product.mrp > 0
+          ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
+          : 0;
 
-  //       return {
-  //         ...product,
-  //         discountPercentage,
-  //         savings: product.mrp - product.sellingPrice,
-  //         hasDiscount: product.sellingPrice < product.mrp
-  //       } as CustomerProductResponse;
-  //     });
+        return {
+          ...product,
+          discountPercentage,
+          savings: product.mrp - product.sellingPrice,
+          hasDiscount: product.sellingPrice < product.mrp
+        } as CustomerProductResponse;
+      });
 
-  //     const result = {
-  //       ...results,
-  //       docs: transformedDocs,
-  //       totalDocs: transformedDocs.length
-  //     };
+      const result = {
+        ...results,
+        docs: transformedDocs,
+        totalDocs: transformedDocs.length
+      };
 
-  //     return success(result, 'Sale products fetched successfully.');
-  //   } catch (error: any) {
-  //     throw new APIError(`Error fetching sale products: ${error.message}`, 500);
-  //   }
-  // }
+      return success(result, 'Sale products fetched successfully.');
+    } catch (error: any) {
+      throw new APIError(`Error fetching sale products: ${error.message}`, 500);
+    }
+  }
 
   /**
    * Get new arrivals (recently added products)
@@ -469,57 +486,57 @@ export class CustomerProductController extends Controller {
    * Get products by price range
    * @summary Get Products by Price Range
    */
-  // @Get('price-range')
-  // public async getProductsByPriceRange(
-  //   @Queries() params: ProductFilters & { minPrice: number; maxPrice: number }
-  // ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
-  //   try {
-  //     if (!params.minPrice || !params.maxPrice) {
-  //       throw new APIError('Both minPrice and maxPrice are required', 400);
-  //     }
+  @Get('price-range')
+  public async getProductsByPriceRange(
+    @Queries() params: PriceRangeFilters
+  ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
+    try {
+      if (!params.minPrice || !params.maxPrice) {
+        throw new APIError('Both minPrice and maxPrice are required', 400);
+      }
 
-  //     if (params.minPrice < 0 || params.maxPrice < 0) {
-  //       throw new APIError('Price values cannot be negative', 400);
-  //     }
+      if (params.minPrice < 0 || params.maxPrice < 0) {
+        throw new APIError('Price values cannot be negative', 400);
+      }
 
-  //     if (params.minPrice > params.maxPrice) {
-  //       throw new APIError('Minimum price cannot be greater than maximum price', 400);
-  //     }
+      if (params.minPrice > params.maxPrice) {
+        throw new APIError('Minimum price cannot be greater than maximum price', 400);
+      }
 
-  //     const { minPrice, maxPrice, ...filters } = params;
+      const { minPrice, maxPrice, ...filters } = params;
 
-  //     const results = await productService.findForUsers({
-  //       ...filters,
-  //       minPrice,
-  //       maxPrice,
-  //       sortBy: 'createdAt',
-  //       sortOrder: 'asc'
-  //     });
+      const results = await productService.findForUsers({
+        ...filters,
+        minPrice,
+        maxPrice,
+        sortBy: 'createdAt',
+        sortOrder: 'asc'
+      });
 
-  //     const transformedDocs = results.docs.map(product => {
-  //       const discountPercentage = product.mrp > 0 
-  //         ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100) 
-  //         : 0;
+      const transformedDocs = results.docs.map(product => {
+        const discountPercentage = product.mrp > 0
+          ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
+          : 0;
 
-  //       return {
-  //         ...product,
-  //         discountPercentage,
-  //         savings: product.mrp - product.sellingPrice,
-  //         hasDiscount: product.sellingPrice < product.mrp
-  //       } as CustomerProductResponse;
-  //     });
+        return {
+          ...product,
+          discountPercentage,
+          savings: product.mrp - product.sellingPrice,
+          hasDiscount: product.sellingPrice < product.mrp
+        } as CustomerProductResponse;
+      });
 
-  //     const result = {
-  //       ...results,
-  //       docs: transformedDocs
-  //     };
+      const result = {
+        ...results,
+        docs: transformedDocs
+      };
 
-  //     return success(result, 'Products fetched by price range successfully.');
-  //   } catch (error: any) {
-  //     if (error instanceof APIError) {
-  //       throw error;
-  //     }
-  //     throw new APIError(`Error fetching products by price range: ${error.message}`, 500);
-  //   }
-  // }
+      return success(result, 'Products fetched by price range successfully.');
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw new APIError(`Error fetching products by price range: ${error.message}`, 500);
+    }
+  }
 }

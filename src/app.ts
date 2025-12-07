@@ -17,6 +17,7 @@ import upload from './utils/upload';
 import { createServer } from 'http';
 // import { initializeSocketServer } from './config/socket.server';
 // import { locationService } from './services/location.service';
+import { apiRateLimiter } from './middleware/rate-limiter';
 const app = express();
 
 const httpServer = createServer(app);
@@ -143,7 +144,7 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 RegisterRoutes(v1Router);
 // app.use('/v1', v1Router); 
 
-app.use('/v1', v1Router, (req, res, next) => {
+app.use('/v1', apiRateLimiter, v1Router, (req, res, next) => {
   if (req.is('multipart/form-data')) {
     console.log('⏭️ Skipping JSON parsing for multipart request');
     return next();

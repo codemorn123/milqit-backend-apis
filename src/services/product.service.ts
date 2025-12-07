@@ -343,6 +343,36 @@ class ProductService {
   }
 
   /**
+   * Find product by slug for users
+   */
+  public async getProductBySlug(slug: string, isPublic: boolean = true): Promise<ProductDocument | null> {
+    try {
+      console.log(`👥 User fetching product with slug: ${slug}`);
+      const query: any = { slug };
+      if (isPublic) {
+        query.isActive = true;
+        // query.isPublic = true;
+      }
+
+      const product = await ProductModel.findOne(query)
+        .populate('categoryId', 'name slug')
+        .lean()
+        .exec();
+
+      if (product) {
+        console.log(`✅ User found product: ${product.name}`);
+      } else {
+        console.log(`⚠️ Product with slug ${slug} not found`);
+      }
+
+      return product as ProductDocument;
+    } catch (error: any) {
+      console.error(`❌ Error fetching product by slug ${slug}:`, error);
+      throw error;
+    }
+  }
+
+  /**
    * Update product by ID
    */
   public async update(
