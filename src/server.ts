@@ -6,6 +6,7 @@ import http from 'http';
 import chalk from 'chalk';
 import { errorHandler } from './utils/errorHandler';
 import { initMarketingCron } from './cron/marketing.cron';
+import { initLocationCron } from './cron/location.cron';
 
 
 async function connectToDatabase(): Promise<void> {
@@ -65,6 +66,7 @@ async function startServer(): Promise<void> {
 
     // Initialize Crons
     initMarketingCron();
+    initLocationCron();
 
     // Start the server with proper typing
     const server: http.Server = app.listen(config.port, () => {

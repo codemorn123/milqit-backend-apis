@@ -11,11 +11,11 @@ import {
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { productService } from '../../services/product.service';
-import  {  createProductSchema } from '../../schemas/product.schema';
+import { createProductSchema } from '../../schemas/product.schema';
 import { success, SuccessResponse as CustomSuccessResponse, NullSuccessResponse } from '../../utils/SuccessResponse';
 import { ErrorResponse, IProductFilter, PaginatedResponse } from '../../types/common.types';
 import { IProduct, ProductType, ValidUnit } from '../../models/product.model';
-import {  CreateProductRequest, ProductFilterQueryParams } from '../../types/product.types';
+import { CreateProductRequest, ProductFilterQueryParams } from '../../types/product.types';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { idParamSchema } from '../../constants/common.validator';
 import APIError from '../../error/api-error';
@@ -82,7 +82,7 @@ export class AdminProductController extends Controller {
     @UploadedFiles("images") images?: Express.Multer.File[]
 
   ): Promise<CustomSuccessResponse<{}>> {
-   
+
     const dataToValidate = {
       name,
       description,
@@ -98,12 +98,20 @@ export class AdminProductController extends Controller {
       isFeatured: isFeatured ?? false,
       productDetails: productDetails ? JSON.parse(productDetails) : {},
     };
- 
+
 
     const { error, value } = createProductSchema.validate(dataToValidate);
     if (error) {
       console.warn('Validation error:', error);
       throw new APIError(error.details[0].message, 400);
+    }
+
+    // Additional validation: ensure category is a valid MongoDB ObjectId
+    if (!value.category || !value.category.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new APIError(
+        'Invalid category ID format. Category must be a valid MongoDB ObjectId, not a category name. Please provide the category ID (e.g., "507f1f77bcf86cd799439011")',
+        400
+      );
     }
 
     const product = await productService.createProduct(value, images);

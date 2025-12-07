@@ -1,4 +1,4 @@
-import express, { Request, Response  ,urlencoded, json} from 'express';
+import express, { Request, Response, urlencoded, json } from 'express';
 import cron from 'node-cron';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -16,7 +16,7 @@ import path from 'path';
 import upload from './utils/upload';
 import { createServer } from 'http';
 // import { initializeSocketServer } from './config/socket.server';
-import { locationService } from './services/location.service';
+// import { locationService } from './services/location.service';
 const app = express();
 
 const httpServer = createServer(app);
@@ -49,17 +49,17 @@ app.use(compression());
 app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
 
 const stream = {
-	write: (message: string) => logger.info(message.trim() + '\n')
+  write: (message: string) => logger.info(message.trim() + '\n')
 };
 app.use(morgan('combined', { stream }));
 
 // enable cors
 app.use(
-	cors({
-		origin: '*',
-		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-		credentials: true
-	})
+  cors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true
+  })
 );
 
 
@@ -80,14 +80,7 @@ app.get('/health', (_req, res) => {
 
 
 
-cron.schedule('*/10 * * * *', async () => {
-  try {
-    const cleaned = await locationService.cleanupStaleLocations();
-    console.log(`🧹 Cleaned up ${cleaned} stale location records`);
-  } catch (error) {
-    console.error('Cleanup error:', error);
-  }
-});
+// Cron jobs are now initialized in server.ts
 
 
 
@@ -101,10 +94,10 @@ cron.schedule('*/10 * * * *', async () => {
 //     console.log('- Content-Length:', req.get('Content-Length'));
 //     if (req.method === 'POST' && req.url.includes('/images')) {
 //       console.log('📁 Applying multer to image upload request');
-      
+
 //       // Use multer single file upload
 //       const multerSingle = upload.single('file');
-      
+
 //       multerSingle(req, res, (err) => {
 //         if (err) {
 //           console.error('❌ Multer error:', err);
@@ -113,11 +106,11 @@ cron.schedule('*/10 * * * *', async () => {
 //             message: `File upload error: ${err.message}`
 //           });
 //         }
-        
+
 //         console.log('✅ Multer processed successfully');
 //         console.log('- File:', (req as any).file ? 'Present' : 'Missing');
 //         console.log('- Body:', req.body);
-        
+
 //         // Log file details if present
 //         if ((req as any).file) {
 //           console.log('📄 File details:', {
@@ -128,7 +121,7 @@ cron.schedule('*/10 * * * *', async () => {
 //             mimetype: (req as any).file.mimetype
 //           });
 //         }
-        
+
 //         next();
 //       });
 //     } else {
@@ -150,7 +143,7 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 RegisterRoutes(v1Router);
 // app.use('/v1', v1Router); 
 
-app.use('/v1',v1Router,(req, res, next) => {
+app.use('/v1', v1Router, (req, res, next) => {
   if (req.is('multipart/form-data')) {
     console.log('⏭️ Skipping JSON parsing for multipart request');
     return next();
@@ -185,13 +178,13 @@ app.use((error: any, req: express.Request, res: express.Response, next: express.
   }
 
   const statusCode = error.statusCode || error.status || 500;
-  
+
   res.status(statusCode).json({
     success: false,
     message: error.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { 
+    ...(process.env.NODE_ENV === 'development' && {
       stack: error.stack,
-      details: error 
+      details: error
     })
   });
 });
@@ -203,9 +196,9 @@ app.use((error: any, req: express.Request, res: express.Response, next: express.
 
 app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
   const swaggerDocument = await import('../build/swagger.json');
-  
-  const isDevelopment =false
-  
+
+  const isDevelopment = false
+
   const customSwagger = {
     ...swaggerDocument,
     servers: [
@@ -220,7 +213,7 @@ app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
       }
     ]
   };
-  
+
   return res.send(swaggerUi.generateHTML(customSwagger));
 });
 

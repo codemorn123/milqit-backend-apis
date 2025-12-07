@@ -3565,6 +3565,169 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IKisanCommunity": {
+				"properties": {
+					"farmerName": {
+						"type": "string"
+					},
+					"farmName": {
+						"type": "string"
+					},
+					"farmLocation": {
+						"type": "string"
+					},
+					"mobile": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"products": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"profileImage": {
+						"properties": {
+							"key": {
+								"type": "string"
+							},
+							"url": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"key",
+							"url"
+						],
+						"type": "object"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"farmerName",
+					"farmName",
+					"farmLocation",
+					"mobile",
+					"products",
+					"description",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedResponse_IKisanCommunity_": {
+				"properties": {
+					"docs": {
+						"items": {
+							"$ref": "#/components/schemas/IKisanCommunity"
+						},
+						"type": "array"
+					},
+					"totalDocs": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"hasNextPage": {
+						"type": "boolean"
+					},
+					"hasPrevPage": {
+						"type": "boolean"
+					},
+					"nextPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"prevPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					}
+				},
+				"required": [
+					"docs",
+					"totalDocs",
+					"limit",
+					"page",
+					"totalPages",
+					"hasNextPage",
+					"hasPrevPage",
+					"nextPage",
+					"prevPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessDataResponse_PaginatedResponse_IKisanCommunity__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/PaginatedResponse_IKisanCommunity_"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessDataResponse_IKisanCommunity_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IKisanCommunity"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ICategory": {
 				"properties": {
 					"name": {
@@ -4046,6 +4209,162 @@
 							"message"
 						],
 						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"BannerPlacement": {
+				"enum": [
+					"HOME_TOP",
+					"HOME_HERO_CAROUSEL",
+					"HOME_CATEGORY_STRIP",
+					"HOME_STATIC_TILE",
+					"CATEGORY_HEADER",
+					"PRODUCT_LIST_INLINE",
+					"SEARCH_PAGE_BANNER",
+					"CHECKOUT_PAGE_OFFER"
+				],
+				"type": "string"
+			},
+			"BannerPlatform": {
+				"description": "Defines the target platform for the banner.",
+				"enum": [
+					"WEB",
+					"MOBILE"
+				],
+				"type": "string"
+			},
+			"BannerPurpose": {
+				"enum": [
+					"PROMOTION",
+					"GENERAL_PROMOTION",
+					"NEW_LAUNCH",
+					"SALE_EVENT",
+					"BANK_OFFER",
+					"PAYMENT_WALLET_OFFER",
+					"APP_FEATURE_AWARENESS",
+					"BRAND_AWARENESS"
+				],
+				"type": "string"
+			},
+			"IBanner": {
+				"description": "Represents the structure of a banner document in MongoDB.",
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"placement": {
+						"$ref": "#/components/schemas/BannerPlacement"
+					},
+					"platform": {
+						"$ref": "#/components/schemas/BannerPlatform"
+					},
+					"purpose": {
+						"$ref": "#/components/schemas/BannerPurpose"
+					},
+					"imageUrl": {
+						"type": "string"
+					},
+					"redirectLink": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"startDate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"endDate": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"title",
+					"placement",
+					"platform",
+					"imageUrl",
+					"isActive"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedResponse_IBanner_": {
+				"properties": {
+					"docs": {
+						"items": {
+							"$ref": "#/components/schemas/IBanner"
+						},
+						"type": "array"
+					},
+					"totalDocs": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"hasNextPage": {
+						"type": "boolean"
+					},
+					"hasPrevPage": {
+						"type": "boolean"
+					},
+					"nextPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"prevPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					}
+				},
+				"required": [
+					"docs",
+					"totalDocs",
+					"limit",
+					"page",
+					"totalPages",
+					"hasNextPage",
+					"hasPrevPage",
+					"nextPage",
+					"prevPage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessDataResponse_PaginatedResponse_IBanner__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/PaginatedResponse_IBanner_"
 					}
 				},
 				"required": [
@@ -5549,136 +5868,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"BannerPlacement": {
-				"enum": [
-					"HOME_HERO_CAROUSEL",
-					"HOME_CATEGORY_STRIP",
-					"HOME_STATIC_TILE",
-					"CATEGORY_HEADER",
-					"PRODUCT_LIST_INLINE",
-					"SEARCH_PAGE_BANNER",
-					"CHECKOUT_PAGE_OFFER"
-				],
-				"type": "string"
-			},
-			"BannerPlatform": {
-				"description": "Defines the target platform for the banner.",
-				"enum": [
-					"WEB",
-					"MOBILE"
-				],
-				"type": "string"
-			},
-			"BannerPurpose": {
-				"enum": [
-					"GENERAL_PROMOTION",
-					"NEW_LAUNCH",
-					"SALE_EVENT",
-					"BANK_OFFER",
-					"PAYMENT_WALLET_OFFER",
-					"APP_FEATURE_AWARENESS",
-					"BRAND_AWARENESS"
-				],
-				"type": "string"
-			},
-			"IBanner": {
-				"description": "Represents the structure of a banner document in MongoDB.",
-				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"placement": {
-						"$ref": "#/components/schemas/BannerPlacement"
-					},
-					"platform": {
-						"$ref": "#/components/schemas/BannerPlatform"
-					},
-					"purpose": {
-						"$ref": "#/components/schemas/BannerPurpose"
-					},
-					"imageUrl": {
-						"type": "string"
-					},
-					"redirectLink": {
-						"type": "string"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"startDate": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"endDate": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"title",
-					"placement",
-					"platform",
-					"imageUrl",
-					"isActive"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PaginatedResponse_IBanner_": {
-				"properties": {
-					"docs": {
-						"items": {
-							"$ref": "#/components/schemas/IBanner"
-						},
-						"type": "array"
-					},
-					"totalDocs": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit": {
-						"type": "number",
-						"format": "double"
-					},
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					},
-					"hasNextPage": {
-						"type": "boolean"
-					},
-					"hasPrevPage": {
-						"type": "boolean"
-					},
-					"nextPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"prevPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					}
-				},
-				"required": [
-					"docs",
-					"totalDocs",
-					"limit",
-					"page",
-					"totalPages",
-					"hasNextPage",
-					"hasPrevPage",
-					"nextPage",
-					"prevPage"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"UserProfile": {
 				"description": "The shape of the user profile data that is safe to return to clients.\nPassword and sensitive data are omitted.",
 				"properties": {
@@ -6152,169 +6341,6 @@
 							"message"
 						],
 						"type": "object"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IKisanCommunity": {
-				"properties": {
-					"farmerName": {
-						"type": "string"
-					},
-					"farmName": {
-						"type": "string"
-					},
-					"farmLocation": {
-						"type": "string"
-					},
-					"mobile": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"products": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"profileImage": {
-						"properties": {
-							"key": {
-								"type": "string"
-							},
-							"url": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"key",
-							"url"
-						],
-						"type": "object"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"farmerName",
-					"farmName",
-					"farmLocation",
-					"mobile",
-					"products",
-					"description",
-					"createdAt",
-					"updatedAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessDataResponse_IKisanCommunity_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/IKisanCommunity"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PaginatedResponse_IKisanCommunity_": {
-				"properties": {
-					"docs": {
-						"items": {
-							"$ref": "#/components/schemas/IKisanCommunity"
-						},
-						"type": "array"
-					},
-					"totalDocs": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit": {
-						"type": "number",
-						"format": "double"
-					},
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					},
-					"hasNextPage": {
-						"type": "boolean"
-					},
-					"hasPrevPage": {
-						"type": "boolean"
-					},
-					"nextPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"prevPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					}
-				},
-				"required": [
-					"docs",
-					"totalDocs",
-					"limit",
-					"page",
-					"totalPages",
-					"hasNextPage",
-					"hasPrevPage",
-					"nextPage",
-					"prevPage"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessDataResponse_PaginatedResponse_IKisanCommunity__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/PaginatedResponse_IKisanCommunity_"
 					}
 				},
 				"required": [
@@ -8698,6 +8724,29 @@
 						}
 					}
 				]
+			}
+		},
+		"/customer/settings": {
+			"get": {
+				"operationId": "GetSettings",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_Partial_ISettings__"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieve application settings (splash screen, maintenance mode, etc.)",
+				"tags": [
+					"Customer Settings"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/customer/refunds": {
@@ -11390,6 +11439,130 @@
 				]
 			}
 		},
+		"/customer/kisan-community": {
+			"get": {
+				"operationId": "GetAll",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_PaginatedResponse_IKisanCommunity__"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"queryParams": {
+												"page": 1,
+												"limit": 10
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieve a paginated list of Kisan Community members.",
+				"tags": [
+					"Customer Kisan Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/customer/kisan-community/{id}": {
+			"get": {
+				"operationId": "GetById",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_IKisanCommunity_"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"description": "Retrieve details of a specific Kisan Community member by ID.",
+				"tags": [
+					"Customer Kisan Community"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "The unique ID of the member",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/customer/categories": {
 			"get": {
 				"operationId": "GetCategories",
@@ -12075,6 +12248,94 @@
 						}
 					}
 				}
+			}
+		},
+		"/customer/banners": {
+			"get": {
+				"operationId": "GetAll",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_PaginatedResponse_IBanner__"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"queryParams": {
+												"placement": "HOME_HERO_CAROUSEL",
+												"isActive": "true"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieve a list of active banners.",
+				"tags": [
+					"Customer Banners"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
 			}
 		},
 		"/admin/refunds": {

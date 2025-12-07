@@ -59,46 +59,54 @@ const arrayString = z.union([
   z.string().transform(val => val.split(',').map(item => item.trim()).filter(Boolean))
 ]);
 
+// Helper to transform empty strings to undefined
+const emptyStringToUndefined = z.string().transform(val => val === '' ? undefined : val).optional();
+
 // Product schemas
 export const createProductSchema = z.object({
   name: z.string()
     .min(2, 'Product name must be at least 2 characters')
     .max(200, 'Product name cannot exceed 200 characters')
     .trim(),
-  
+
   description: z.string()
     .max(5000, 'Description cannot exceed 5000 characters')
     .trim()
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   price: numericString
     .refine(val => val > 0, 'Price must be greater than zero'),
-  
+
   compareAtPrice: numericString
     .refine(val => val >= 0, 'Compare at price must be non-negative')
     .optional(),
-  
+
   categoryId: z.string()
     .refine(isValidObjectId, 'Invalid category ID format'),
-  
+
   sku: z.string()
     .min(3, 'SKU must be at least 3 characters')
     .max(100, 'SKU cannot exceed 100 characters')
-    .trim(),
-  
+    .trim()
+    .optional()
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   barcode: z.string()
     .max(50, 'Barcode cannot exceed 50 characters')
     .trim()
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   quantity: integerString
     .refine(val => val >= 0, 'Quantity must be non-negative'),
-  
+
   isActive: booleanString.optional().default(true),
   isFeatured: booleanString.optional().default(false),
-  
+
   attributes: z.record(z.string(), z.string())
     .optional()
     .or(z.string().transform((val, ctx) => {
@@ -112,42 +120,45 @@ export const createProductSchema = z.object({
         return z.NEVER;
       }
     })),
-  
+
   tags: arrayString.optional().default([]),
-  
+
   unit: z.enum(VALID_UNITS),
-  
+
   unitValue: numericString
     .refine(val => val > 0, 'Unit value must be greater than zero'),
-  
+
   deliveryTime: z.string()
     .max(100, 'Delivery time cannot exceed 100 characters')
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   isVeg: booleanString.optional().default(true),
-  
+
   packagedWeight: z.string()
     .max(50, 'Packaged weight cannot exceed 50 characters')
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   tax: numericString
     .refine(val => val >= 0 && val <= 100, 'Tax must be between 0 and 100')
     .optional()
     .default(0),
-  
+
   discount: numericString
     .refine(val => val >= 0 && val <= 100, 'Discount must be between 0 and 100')
     .optional()
     .default(0),
-  
+
   brand: z.string()
     .max(100, 'Brand name cannot exceed 100 characters')
     .trim()
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   expiryDate: z.union([
     z.date(),
     z.string().transform((val, ctx) => {
@@ -170,44 +181,49 @@ export const createProductSchema = z.object({
       return date;
     })
   ]).optional(),
-  
+
   manufacturerInfo: z.string()
     .max(1000, 'Manufacturer info cannot exceed 1000 characters')
     .trim()
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   nutritionalInfo: z.string()
     .max(1000, 'Nutritional info cannot exceed 1000 characters')
     .trim()
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   storageInstructions: z.string()
     .max(1000, 'Storage instructions cannot exceed 1000 characters')
     .trim()
     .optional()
-    .or(z.literal('')),
-  
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   countryOfOrigin: z.string()
     .max(100, 'Country of origin cannot exceed 100 characters')
     .trim()
     .optional()
-    .default('India'),
-  
+    .default('India')
+    .or(z.literal(''))
+    .transform(val => val === '' ? undefined : val),
+
   inStock: booleanString.optional(),
-  
+
   minOrderQuantity: integerString
     .refine(val => val >= 1, 'Minimum order quantity must be at least 1')
     .optional()
     .default(1),
-  
+
   maxOrderQuantity: integerString
     .refine(val => val >= 1, 'Maximum order quantity must be at least 1')
     .optional(),
-  
+
   badges: arrayString.optional().default([]),
-  
+
   relatedProducts: arrayString
     .transform(val => val.filter(id => isValidObjectId(id)))
     .optional()
