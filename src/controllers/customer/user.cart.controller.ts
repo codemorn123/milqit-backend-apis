@@ -1,4 +1,4 @@
-import { Controller, Route, Tags, Post, Get, Put, Delete, Body, Path, Query, Request, Security } from 'tsoa';
+import { Controller, Route, Tags, Post, Get, Put, Delete, Body, Path, Query, Request, Security, Response, SuccessResponse as TsoaSuccessResponse } from 'tsoa';
 import {
   addToCartSchema,
   updateCartItemSchema,
@@ -12,6 +12,7 @@ import { ICart, ILocation } from '../../models/CartModel';
 import APIError from '../../error/api-error';
 import { logger } from '../../config/logger';
 import Joi from 'joi';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * Request/Response Interfaces
@@ -55,6 +56,9 @@ interface AuthRequest {
  */
 @Route('customer/cart')
 @Tags('User Cart')
+@Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
+@Response(StatusCodes.FORBIDDEN, 'Forbidden')
+@Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
 export class UserCartController extends Controller {
 
   /**
@@ -101,6 +105,8 @@ export class UserCartController extends Controller {
    */
   @Post('/')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   public async addToCart(
     @Body() request: AddToCartRequest,
     @Request() req: AuthRequest
@@ -128,6 +134,7 @@ export class UserCartController extends Controller {
    */
   @Get('/')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
   public async getCart(
     @Query() includeUnavailable: boolean = false,
     @Request() req: AuthRequest
@@ -156,6 +163,9 @@ export class UserCartController extends Controller {
    */
   @Put('/{productId}')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
+  @Response(StatusCodes.NOT_FOUND, "Product Not Found")
   public async updateCartItem(
     @Path() productId: string,
     @Body() request: UpdateCartItemRequest,
@@ -184,6 +194,9 @@ export class UserCartController extends Controller {
    */
   @Delete('/{productId}')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
+  @Response(StatusCodes.NOT_FOUND, "Product Not Found")
   public async removeFromCart(
     @Path() productId: string,
     @Request() req: AuthRequest
@@ -209,6 +222,8 @@ export class UserCartController extends Controller {
    */
   @Delete('/')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   public async clearCart(
     @Body() request: ClearCartRequest,
     @Request() req: AuthRequest
@@ -234,6 +249,9 @@ export class UserCartController extends Controller {
    */
   @Post('/coupon')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
+  @Response(StatusCodes.NOT_FOUND, "Coupon Not Found")
   public async applyCoupon(
     @Body() request: ApplyCouponRequest,
     @Request() req: AuthRequest
@@ -256,6 +274,8 @@ export class UserCartController extends Controller {
    */
   @Post('/delivery')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   public async setDeliveryInfo(
     @Body() request: SetDeliveryInfoRequest,
     @Request() req: AuthRequest
@@ -284,6 +304,7 @@ export class UserCartController extends Controller {
    */
   @Get('/summary')
   @Security('jwt')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
   public async getCartSummary(
     @Request() req: AuthRequest
   ): Promise<SuccessResponse<any>> {

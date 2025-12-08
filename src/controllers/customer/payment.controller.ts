@@ -25,6 +25,9 @@ interface VerifyPaymentRequest {
 
 @Tags('Payment')
 @Route('payment')
+@Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
+@Response(StatusCodes.FORBIDDEN, 'Forbidden')
+@Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
 export class PaymentController extends Controller {
 
     /**
@@ -32,6 +35,7 @@ export class PaymentController extends Controller {
      */
     @Post('create-order')
     @TsoaSuccessResponse(StatusCodes.CREATED, "Created")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
     public async createOrder(
         @Body() body: CreateOrderRequest
     ): Promise<SuccessResponse<any>> {
@@ -50,6 +54,7 @@ export class PaymentController extends Controller {
      * Verify payment signature
      */
     @Post('verify')
+    @Response(StatusCodes.BAD_REQUEST, "Verification Failed")
     public async verifyPayment(
         @Body() body: VerifyPaymentRequest
     ): Promise<SuccessResponse<{ verified: boolean }>> {
@@ -70,6 +75,7 @@ export class PaymentController extends Controller {
      * Get payment history
      */
     @Get('history/{userId}')
+    @Response(StatusCodes.NOT_FOUND, "Not Found")
     public async getPaymentHistory(
         userId: string,
         @Queries() query: { page?: number; limit?: number }

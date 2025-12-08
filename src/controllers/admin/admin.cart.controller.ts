@@ -1,9 +1,12 @@
-import { Controller, Route, Tags, Get, Delete, Query, Path, Security } from 'tsoa';
+import { Controller, Route, Tags, Get, Delete, Query, Path, Security, Response, Middlewares } from 'tsoa';
 import APIError from './../../error/api-error';
 import { CartModelClass, ICart } from './../../models/CartModel';
 import { CartAnalyticsResponse, CartCleanupResponse, CartDetailResponse, CartFunnelResponse, CartListResponse, toCartDTO } from './../../types/cart.types';
 import { success, SuccessResponse } from './../../utils/SuccessResponse';
 import { PaginatedResponse } from './../../types/common.types';
+import { validateSchemaMiddleware } from '../../middleware/common-validate';
+import { idParamSchema } from '../../constants/common.validator';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * Admin Cart Controller - Clean and Simple
@@ -13,6 +16,10 @@ import { PaginatedResponse } from './../../types/common.types';
  */
 @Route('admin/carts')
 @Tags('Admin Cart Management')
+@Security('jwt', ['admin'])
+@Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
+@Response(StatusCodes.FORBIDDEN, 'Forbidden')
+@Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
 export class AdminCartController extends Controller {
 
   /**
@@ -20,7 +27,7 @@ export class AdminCartController extends Controller {
    * @summary Retrieve carts with filtering and pagination
    */
   @Get('/')
-  @Security('jwt', ['admin'])
+  @Response(StatusCodes.BAD_REQUEST, 'Bad Request')
   public async getCarts(
     @Query() page: number = 1,
     @Query() limit: number = 20,
@@ -103,7 +110,9 @@ export class AdminCartController extends Controller {
    * @summary Retrieve detailed cart information
    */
   @Get('/{cartId}')
-  @Security('jwt', ['admin'])
+  @Response(StatusCodes.NOT_FOUND, 'Cart Not Found')
+  @Response(StatusCodes.BAD_REQUEST, 'Invalid ID')
+  @Middlewares(validateSchemaMiddleware(idParamSchema, 'params'))
   public async getCartById(@Path() cartId: string): Promise<CartDetailResponse> {
     try {
       console.log(`🔍 Admin fetching cart: ${cartId} by MarotiKathoke`);
@@ -147,7 +156,6 @@ export class AdminCartController extends Controller {
    * @summary Retrieve cart analytics and statistics
    */
   @Get('/analytics/stats')
-  @Security('jwt', ['admin'])
   public async getCartAnalytics(): Promise<CartAnalyticsResponse> {
     try {
       console.log(`📊 Admin fetching cart analytics by MarotiKathoke`);
@@ -216,7 +224,6 @@ export class AdminCartController extends Controller {
    * @summary Clean up abandoned carts
    */
   @Delete('/cleanup/abandoned')
-  @Security('jwt', ['admin'])
   public async cleanupAbandonedCarts(@Query() days: number = 7): Promise<CartCleanupResponse> {
     try {
       console.log(`🧹 Admin cleaning abandoned carts (${days} days) by MarotiKathoke`);
@@ -256,7 +263,6 @@ export class AdminCartController extends Controller {
    * @summary Get conversion statistics
    */
   @Get('/analytics/funnel')
-  @Security('jwt', ['admin'])
   public async getCartFunnel(): Promise<CartFunnelResponse> {
     try {
       console.log(`📈 Admin fetching conversion funnel by MarotiKathoke`);

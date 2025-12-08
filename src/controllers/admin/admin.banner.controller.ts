@@ -90,7 +90,7 @@ export class BannerController extends Controller {
    * @param page Page number for pagination.
    */
   @Get('/')
-  public async getAllBanners(@Queries() filter: IFilter): Promise<PaginatedResponse<IBanner>> {
+  public async getAllBanners(@Queries() filter: IBannerFilter): Promise<PaginatedResponse<IBanner>> {
     return bannerService.getAll(filter);
   }
 

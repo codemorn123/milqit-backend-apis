@@ -20,12 +20,7 @@ import {
   Response,
 } from 'tsoa';
 import { success, SuccessResponse as SuccessDataResponse } from './../../../utils/SuccessResponse';
-//   import { validateSchemaMiddleware } from './../../middleware/common-validate';
-//   import { success, SuccessResponse as SuccessDataResponse } from './../../utils/SuccessResponse';
-//   import { INotification } from './../../types/notification.types';
-//   import { IFilter, IPaginated } from './../../types/common.types';
-//   import notificationService from './../../services/admin/notification.service';
-//   import { createNotificationSchema, filterQuerySchema, idParamSchema } from './../../validations/notification.validator';
+
 
 
 @Route("admin/cms/notifications")

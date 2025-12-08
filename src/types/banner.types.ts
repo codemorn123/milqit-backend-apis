@@ -60,7 +60,7 @@ export enum BannerPlatform {
 /**
  * Represents the structure of a banner document in MongoDB.
  */
-export interface IBanner  {
+export interface IBanner {
   title: string;
   placement: BannerPlacement;
   platform: BannerPlatform;
@@ -88,11 +88,14 @@ export interface IBannerCreatePayload {
 /**
  * Defines the available query parameters for filtering banners.
  */
-export interface IBannerFilter {
-  page?: number;
-  limit?: number;
+import { IFilter } from './common.types';
+
+/**
+ * Defines the available query parameters for filtering banners.
+ */
+export interface IBannerFilter extends IFilter {
   placement?: BannerPlacement;
   purpose?: BannerPurpose;
   platform?: BannerPlatform;
-  isActive?: 'true' | 'false';
+  isActive?: boolean; // Override to match IFilter
 }

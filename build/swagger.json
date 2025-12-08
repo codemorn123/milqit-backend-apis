@@ -1084,132 +1084,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IProduct": {
-				"properties": {
-					"_id": {
-						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
-					},
-					"name": {
-						"type": "string"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"mrp": {
-						"type": "number",
-						"format": "double"
-					},
-					"sellingPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"category": {
-						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
-					},
-					"sku": {
-						"type": "string"
-					},
-					"images": {
-						"items": {
-							"$ref": "#/components/schemas/IcommonImage"
-						},
-						"type": "array"
-					},
-					"quantity": {
-						"type": "number",
-						"format": "double"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"isFeatured": {
-						"type": "boolean"
-					},
-					"inStock": {
-						"type": "boolean"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"unit": {
-						"$ref": "#/components/schemas/ValidUnit"
-					},
-					"productType": {
-						"$ref": "#/components/schemas/ProductType"
-					},
-					"productDetails": {
-						"$ref": "#/components/schemas/ProductDetails"
-					},
-					"averageRating": {
-						"type": "number",
-						"format": "double"
-					},
-					"reviewCount": {
-						"type": "number",
-						"format": "double"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"_id",
-					"name",
-					"slug",
-					"mrp",
-					"sellingPrice",
-					"category",
-					"sku",
-					"quantity",
-					"isActive",
-					"isFeatured",
-					"inStock",
-					"unit",
-					"productType",
-					"productDetails",
-					"averageRating",
-					"reviewCount"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_IProduct-or-null_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/IProduct"
-							}
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"SuccessResponse_CustomerProductResponse-or-null_": {
 				"properties": {
 					"success": {
@@ -1322,6 +1196,103 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IProduct": {
+				"properties": {
+					"_id": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"mrp": {
+						"type": "number",
+						"format": "double"
+					},
+					"sellingPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"category": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"sku": {
+						"type": "string"
+					},
+					"images": {
+						"items": {
+							"$ref": "#/components/schemas/IcommonImage"
+						},
+						"type": "array"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"isFeatured": {
+						"type": "boolean"
+					},
+					"inStock": {
+						"type": "boolean"
+					},
+					"brand": {
+						"type": "string"
+					},
+					"unit": {
+						"$ref": "#/components/schemas/ValidUnit"
+					},
+					"productType": {
+						"$ref": "#/components/schemas/ProductType"
+					},
+					"productDetails": {
+						"$ref": "#/components/schemas/ProductDetails"
+					},
+					"averageRating": {
+						"type": "number",
+						"format": "double"
+					},
+					"reviewCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"_id",
+					"name",
+					"slug",
+					"mrp",
+					"sellingPrice",
+					"category",
+					"sku",
+					"quantity",
+					"isActive",
+					"isFeatured",
+					"inStock",
+					"unit",
+					"productType",
+					"productDetails",
+					"averageRating",
+					"reviewCount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"SuccessResponse_IProduct-Array_": {
 				"properties": {
 					"success": {
@@ -1337,33 +1308,6 @@
 					"result": {
 						"items": {
 							"$ref": "#/components/schemas/IProduct"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_CustomerProductResponse-Array_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"items": {
-							"$ref": "#/components/schemas/CustomerProductResponse"
 						},
 						"type": "array"
 					}
@@ -1460,6 +1404,33 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SuccessResponse_CustomerProductResponse-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/CustomerProductResponse"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PriceRangeFilters": {
 				"properties": {
 					"inStock": {
@@ -1540,6 +1511,35 @@
 				"required": [
 					"minPrice",
 					"maxPrice"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IProduct-or-null_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/IProduct"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -4655,6 +4655,46 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"IBannerFilter": {
+				"description": "Defines the available query parameters for filtering banners.",
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"search": {
+						"type": "string"
+					},
+					"sortBy": {
+						"type": "string"
+					},
+					"sortOrder": {
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						]
+					},
+					"placement": {
+						"$ref": "#/components/schemas/BannerPlacement"
+					},
+					"purpose": {
+						"$ref": "#/components/schemas/BannerPurpose"
+					},
+					"platform": {
+						"$ref": "#/components/schemas/BannerPlatform"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PaginatedResponse_IRefund_": {
 				"properties": {
 					"docs": {
@@ -6967,7 +7007,7 @@
 		"contact": {}
 	},
 	"paths": {
-		"/settings": {
+		"/public/settings": {
 			"get": {
 				"operationId": "GetSettings",
 				"responses": {
@@ -6980,8 +7020,12 @@
 								}
 							}
 						}
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
+				"description": "Retrieve application settings (splash screen, maintenance mode, etc.)",
 				"tags": [
 					"Public Settings"
 				],
@@ -7774,69 +7818,6 @@
 				]
 			}
 		},
-		"/customer/products/{id}": {
-			"get": {
-				"operationId": "GetProductById",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IProduct-or-null_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get a single product by ID for customers",
-				"summary": "Get Product Details",
-				"tags": [
-					"CUSTOMER: Products"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/customer/products/slug/{slug}": {
 			"get": {
 				"operationId": "GetProductBySlug",
@@ -8364,78 +8345,6 @@
 				]
 			}
 		},
-		"/customer/products/{id}/related": {
-			"get": {
-				"operationId": "GetRelatedProducts",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_CustomerProductResponse-Array_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get products by brand for customers",
-				"summary": "Get Products by Brand",
-				"tags": [
-					"CUSTOMER: Products"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
 		"/customer/products/sale": {
 			"get": {
 				"operationId": "GetSaleProducts",
@@ -8481,8 +8390,8 @@
 						}
 					}
 				},
-				"description": "Check product availability for customers",
-				"summary": "Check Product Availability",
+				"description": "Get products with discounts (sale items)",
+				"summary": "Get Sale Products",
 				"tags": [
 					"CUSTOMER: Products"
 				],
@@ -8920,6 +8829,141 @@
 				]
 			}
 		},
+		"/customer/products/{id}/related": {
+			"get": {
+				"operationId": "GetRelatedProducts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_CustomerProductResponse-Array_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get related products for a specific product",
+				"summary": "Get Related Products",
+				"tags": [
+					"CUSTOMER: Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/customer/products/{id}": {
+			"get": {
+				"operationId": "GetProductById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IProduct-or-null_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a single product by ID for customers",
+				"summary": "Get Product Details",
+				"tags": [
+					"CUSTOMER: Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/customer/cart": {
 			"post": {
 				"operationId": "AddToCart",
@@ -8933,6 +8977,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Add item to cart",
@@ -8968,6 +9024,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get user's cart",
@@ -9003,6 +9068,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Clear entire cart",
@@ -9040,6 +9117,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Product Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Update cart item quantity",
@@ -9084,6 +9176,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Product Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Remove item from cart",
@@ -9120,6 +9227,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Coupon Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Apply coupon to cart",
@@ -9157,6 +9279,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Set delivery information",
@@ -9194,6 +9328,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get cart summary for checkout",
@@ -9242,25 +9385,8 @@
 							}
 						}
 					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
 					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Create a new subscription (e.g., Milk, Vegetables).",
@@ -9283,6 +9409,12 @@
 							}
 						}
 					},
+					"201": {
+						"description": "Created"
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
 					"401": {
 						"description": "Unauthorized",
 						"content": {
@@ -9303,25 +9435,8 @@
 							}
 						}
 					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
-					},
 					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Internal Server Error"
 					}
 				},
 				"tags": [
@@ -9380,24 +9495,10 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "User Not Found"
 					},
 					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get all subscriptions for a user.",
@@ -9456,24 +9557,10 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Subscription Not Found"
 					},
 					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get a single subscription by ID.",
@@ -9532,24 +9619,10 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Subscription Not Found"
 					},
 					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Update a subscription.",
@@ -9616,24 +9689,10 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Subscription Not Found"
 					},
 					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Delete a subscription (hard delete).",
@@ -9692,24 +9751,10 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Subscription Not Found"
 					},
 					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Cancel a subscription (soft deactivate).",
@@ -9746,6 +9791,9 @@
 								}
 							}
 						}
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Retrieve application settings (splash screen, maintenance mode, etc.)",
@@ -9987,6 +10035,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get all reels (Instagram-like feed)",
@@ -10065,6 +10125,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get all reels (Protected - returns isLiked status)",
@@ -10147,6 +10219,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Reel Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Toggle like on a reel",
@@ -10183,6 +10270,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Reel Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Add a comment to a reel",
@@ -10235,6 +10337,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Reel Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get comments for a reel",
@@ -10321,6 +10438,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Create a Razorpay order",
@@ -10354,6 +10483,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Verification Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Verify payment signature",
@@ -10387,6 +10528,18 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get payment history",
@@ -10437,6 +10590,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Razorpay Webhook",
@@ -11721,7 +11883,7 @@
 				"operationId": "GetNotifications",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Success",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -11729,6 +11891,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"tags": [
@@ -11802,7 +11976,7 @@
 				"operationId": "RegisterDevice",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Success",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -11810,6 +11984,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Register a device for push notifications",
@@ -11839,7 +12025,7 @@
 				"operationId": "RemoveDevice",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Success",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -11847,6 +12033,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Remove a device token (logout)",
@@ -12469,6 +12667,12 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Retrieve a paginated list of Kisan Community members.",
@@ -12547,6 +12751,9 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Invalid ID"
 					},
 					"404": {
 						"description": "Not Found"
@@ -13280,6 +13487,12 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Retrieve a list of active banners.",
@@ -13340,6 +13553,38 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "placement",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPlacement"
+						}
+					},
+					{
+						"in": "query",
+						"name": "purpose",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPurpose"
+						}
+					},
+					{
+						"in": "query",
+						"name": "platform",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPlatform"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -13887,6 +14132,223 @@
 				]
 			}
 		},
+		"/admin/users": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IUser"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"active",
+								"inactive"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/users/{userId}": {
+			"delete": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse____"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "User Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Deactivates a user account (Soft Delete).\nThis action requires admin privileges.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The identifier of the user to be deactivated.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "GetUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IUser"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "User Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Retrieves a single user by their ID.\nThis action requires admin privileges.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The identifier of the user.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/users/{userId}/force": {
+			"delete": {
+				"operationId": "HardDeleteUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"message",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "User Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Permanently deletes a user from the database (Hard Delete).\nThis is a destructive and irreversible action.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The identifier of the user to be permanently deleted.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/admin/reels": {
 			"post": {
 				"operationId": "Create",
@@ -13900,6 +14362,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Upload a new reel",
@@ -13953,6 +14427,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get all reels with pagination and filtering",
@@ -14035,6 +14518,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Reel Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get a reel by ID",
@@ -14069,6 +14567,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Reel Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Update a reel by ID",
@@ -14128,6 +14641,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Reel Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Delete a reel by ID",
@@ -15039,6 +15567,9 @@
 							}
 						}
 					},
+					"400": {
+						"description": "Validation Failed"
+					},
 					"401": {
 						"description": "Unauthorized",
 						"content": {
@@ -15367,14 +15898,7 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Category Not Found"
 					},
 					"409": {
 						"description": "Conflict",
@@ -15460,6 +15984,9 @@
 							}
 						}
 					},
+					"400": {
+						"description": "Validation Failed"
+					},
 					"401": {
 						"description": "Unauthorized",
 						"content": {
@@ -15481,14 +16008,7 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Category Not Found"
 					},
 					"409": {
 						"description": "Conflict",
@@ -15632,14 +16152,7 @@
 						}
 					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								}
-							}
-						}
+						"description": "Category Not Found"
 					},
 					"409": {
 						"description": "Conflict",
@@ -15833,6 +16346,18 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get all carts with filters",
@@ -15950,6 +16475,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "Cart Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get specific cart by ID",
@@ -15989,6 +16529,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get cart analytics",
@@ -16019,6 +16568,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Delete abandoned carts",
@@ -16060,6 +16618,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get cart conversion funnel",
@@ -16191,6 +16758,38 @@
 								"desc"
 							]
 						}
+					},
+					{
+						"in": "query",
+						"name": "placement",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPlacement"
+						}
+					},
+					{
+						"in": "query",
+						"name": "purpose",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPurpose"
+						}
+					},
+					{
+						"in": "query",
+						"name": "platform",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/BannerPlatform"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
 					}
 				]
 			}
@@ -16298,14 +16897,7 @@
 						}
 					},
 					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
+						"description": "Validation Failed"
 					},
 					"401": {
 						"description": "Unauthorized",
@@ -16421,24 +17013,10 @@
 						}
 					},
 					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
+						"description": "Validation Failed"
 					},
 					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
+						"description": "Invalid Credentials"
 					},
 					"404": {
 						"description": "Not Found",
@@ -16534,14 +17112,7 @@
 						}
 					},
 					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
+						"description": "Invalid Query Params"
 					},
 					"401": {
 						"description": "Unauthorized",
@@ -16786,162 +17357,6 @@
 					}
 				],
 				"parameters": []
-			}
-		},
-		"/admin/users": {
-			"get": {
-				"operationId": "GetUsers",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/IUser"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Admin - Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "status",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"active",
-								"inactive"
-							]
-						}
-					}
-				]
-			}
-		},
-		"/admin/users/{userId}": {
-			"delete": {
-				"operationId": "DeleteUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse____"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "User Not Found"
-					}
-				},
-				"description": "Deactivates a user account (Soft Delete).\nThis action requires admin privileges.",
-				"tags": [
-					"Admin - Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"description": "The identifier of the user to be deactivated.",
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"get": {
-				"operationId": "GetUserById",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IUser"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "User Not Found"
-					}
-				},
-				"description": "Retrieves a single user by their ID.\nThis action requires admin privileges.",
-				"tags": [
-					"Admin - Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"description": "The identifier of the user.",
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/admin/users/{userId}/force": {
-			"delete": {
-				"operationId": "HardDeleteUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										},
-										"success": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"message",
-										"success"
-									],
-									"type": "object"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "User Not Found"
-					}
-				},
-				"description": "Permanently deletes a user from the database (Hard Delete).\nThis is a destructive and irreversible action.",
-				"tags": [
-					"Admin - Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"description": "The identifier of the user to be permanently deleted.",
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
 			}
 		},
 		"/admin/settings": {

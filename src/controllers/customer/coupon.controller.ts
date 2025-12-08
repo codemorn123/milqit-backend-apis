@@ -39,7 +39,7 @@ export class CustomerCouponController extends Controller {
    */
   @Post("/apply")
   @Security("jwt")
-  @Middlewares([validateSchemaMiddleware(applyCouponSchema), jwtAuthMiddleware])
+  @Middlewares([validateSchemaMiddleware(applyCouponSchema, "body"), jwtAuthMiddleware])
   @SuccessResponse(200, "Success")
   @Response(400, "Validation Failed")
   @Response(404, "Coupon Not Found")

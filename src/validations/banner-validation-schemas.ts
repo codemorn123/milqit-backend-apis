@@ -51,5 +51,5 @@ export const bannerFilterSchema = Joi.object({
   purpose: Joi.string().valid(...Object.values(BannerPurpose)).optional(),
   platform: Joi.string().valid(...Object.values(BannerPlatform)).optional(),
 
-  isActive: Joi.string().valid("true", "false").optional(),
+  isActive: Joi.alternatives().try(Joi.string().valid("true", "false"), Joi.boolean()).optional(),
 });

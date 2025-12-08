@@ -1,5 +1,5 @@
 import {
-    Consumes, Controller, Delete, FormField, Get, Middlewares, Path, Post, Put, Queries, Route, Security, SuccessResponse as SuccessResponseTags, Tags, UploadedFile
+    Consumes, Controller, Delete, FormField, Get, Middlewares, Path, Post, Put, Queries, Route, Security, SuccessResponse as SuccessResponseTags, Tags, UploadedFile, Response
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { reelService } from '../../services/reel.service';
@@ -16,6 +16,9 @@ import { IFilter, PaginatedResponse } from '../../types/common.types';
 @Route("admin/reels")
 @Tags("ADMIN: Reels")
 @Security("jwt")
+@Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
+@Response(StatusCodes.FORBIDDEN, 'Forbidden')
+@Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
 export class AdminReelController extends Controller {
 
     /**
@@ -24,6 +27,7 @@ export class AdminReelController extends Controller {
     @Post("/")
     @Consumes("multipart/form-data")
     @SuccessResponseTags(StatusCodes.CREATED, "Created")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
     @Middlewares([jwtAuthMiddleware])
     public async create(
         @FormField() title: string,
@@ -67,6 +71,8 @@ export class AdminReelController extends Controller {
     @Get("{id}")
     @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
     @SuccessResponseTags(StatusCodes.OK, "Success")
+    @Response(StatusCodes.NOT_FOUND, "Reel Not Found")
+    @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
     public async getById(@Path() id: string): Promise<SuccessResponse<IReel>> {
         const result = await reelService.getOne(id);
         return success(result);
@@ -79,6 +85,8 @@ export class AdminReelController extends Controller {
     @Consumes("multipart/form-data")
     @Middlewares([jwtAuthMiddleware])
     @SuccessResponseTags(StatusCodes.OK, "Success")
+    @Response(StatusCodes.NOT_FOUND, "Reel Not Found")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
     public async update(
         @Path() id: string,
         @FormField() title?: string,
@@ -104,6 +112,8 @@ export class AdminReelController extends Controller {
     @Delete("{id}")
     @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
     @SuccessResponseTags(StatusCodes.OK, "Success")
+    @Response(StatusCodes.NOT_FOUND, "Reel Not Found")
+    @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
     public async delete(@Path() id: string): Promise<SuccessResponse<{ message: string }>> {
         const result = await reelService.delete(id);
         return success(result);

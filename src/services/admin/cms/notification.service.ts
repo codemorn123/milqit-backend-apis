@@ -34,24 +34,7 @@ class NotificationService extends BaseService<INotificationDocument> {
   /**
    * Retrieves sent notifications for customers.
    */
-  //   public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<>> {
-  //     const page = Number(queryParams.page) || 1;
-  //     const limit = Number(queryParams.limit) || 10;
 
-  //     const filter: any = { status: 'sent' }; // Customers only see sent notifications
-
-  //     const totalRecords = await NotificationModel.countDocuments(filter);
-  //     const totalPages = Math.ceil(totalRecords / limit);
-
-  //     const data = await NotificationModel.find(filter)
-  //       .sort({ createdAt: -1 })
-  //       .skip((page - 1) * limit)
-  //       .limit(limit)
-  //       .lean<INotification[]>()
-  //       .exec();
-
-  //     return { data, pagination: { page, limit, totalRecord: totalRecords, totalPage: totalPages } };
-  //   }
 
 
   public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<INotification>> {

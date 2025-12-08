@@ -1,0 +1,67 @@
+  console.log
+    [dotenv@17.2.1] injecting env (15) from .env.test -- tip: ⚙️  enable debug logging with { debug: true }
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+  console.log
+    ✅ CartModel initialized successfully by MarotiKathoke at 2025-12-07T15:14:32.805Z
+
+      at Object.<anonymous> (src/models/CartModel.ts:1841:9)
+
+{"level":"warn","time":"2025-12-07T15:14:33.742Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","msg":"Firebase Service Account Key not provided. FCM will not work."}
+  console.log
+    ✅ Write permissions verified for: /Users/maruti/Desktop/milkit/milqit-backend-apis/uploads/images
+
+      at createUploadDirs (src/utils/upload.ts:30:13)
+
+{"level":"info","time":"2025-12-07T15:14:35.633Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","req":{"id":1,"method":"POST","url":"/v1/admin/coupons","query":{},"params":{},"headers":{"host":"127.0.0.1:64454","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTlkYjRhZWFkODJhOWQ5NzVlYTgiLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NjUxMjA0NzUsImV4cCI6MTc2NTEyMTM3NSwiaXNzIjoiYmxpbmtpdC1hcGkifQ.lSPbFtD_k2Q7UZ5kBRKw3TxP0o-DVNPgsco7AD7Q_e4","content-type":"application/json","content-length":"280","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":64455},"res":{"statusCode":201,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"99","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"491","etag":"W/\"1eb-3EqI5EOOXMc03eiV0nUZXPujtCc\"","vary":"Accept-Encoding"}},"responseTime":233,"msg":"request completed"}
+{"level":"info","time":"2025-12-07T15:14:35.634Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","msg":"::ffff:127.0.0.1 - - [07/Dec/2025:15:14:35 +0000] \"POST /v1/admin/coupons HTTP/1.1\" 201 491 \"-\" \"-\"\n"}
+{"level":"info","time":"2025-12-07T15:14:35.634Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","req":{"id":1,"method":"POST","url":"/v1/admin/coupons","query":{},"params":{},"headers":{"host":"127.0.0.1:64454","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTlkYjRhZWFkODJhOWQ5NzVlYTgiLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NjUxMjA0NzUsImV4cCI6MTc2NTEyMTM3NSwiaXNzIjoiYmxpbmtpdC1hcGkifQ.lSPbFtD_k2Q7UZ5kBRKw3TxP0o-DVNPgsco7AD7Q_e4","content-type":"application/json","content-length":"280","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":64455},"res":{"statusCode":201,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"99","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"491","etag":"W/\"1eb-3EqI5EOOXMc03eiV0nUZXPujtCc\"","vary":"Accept-Encoding"}},"responseTime":234,"msg":"request completed"}
+{"level":"info","time":"2025-12-07T15:14:35.658Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","req":{"id":2,"method":"GET","url":"/v1/customer/coupons/available","query":{},"params":{},"headers":{"host":"127.0.0.1:64460","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTlkYjRhZWFkODJhOWQ5NzVlOWMiLCJyb2xlcyI6WyJjdXN0b21lciJdLCJpYXQiOjE3NjUxMjA0NzUsImV4cCI6MTc2NTEyMTM3NSwiaXNzIjoiYmxpbmtpdC1hcGkifQ.i3Ms-zvDpcBiKbZrLNTNRWqzcdm7-O1bxd5v76PF928","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":64461},"res":{"statusCode":200,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"98","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"504","etag":"W/\"1f8-NhnrjoGf3Yz9jzjww9osP7rmfsk\"","vary":"Accept-Encoding"}},"responseTime":14,"msg":"request completed"}
+{"level":"info","time":"2025-12-07T15:14:35.659Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","msg":"::ffff:127.0.0.1 - - [07/Dec/2025:15:14:35 +0000] \"GET /v1/customer/coupons/available HTTP/1.1\" 200 504 \"-\" \"-\"\n"}
+{"level":"info","time":"2025-12-07T15:14:35.659Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","req":{"id":2,"method":"GET","url":"/v1/customer/coupons/available","query":{},"params":{},"headers":{"host":"127.0.0.1:64460","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTlkYjRhZWFkODJhOWQ5NzVlOWMiLCJyb2xlcyI6WyJjdXN0b21lciJdLCJpYXQiOjE3NjUxMjA0NzUsImV4cCI6MTc2NTEyMTM3NSwiaXNzIjoiYmxpbmtpdC1hcGkifQ.i3Ms-zvDpcBiKbZrLNTNRWqzcdm7-O1bxd5v76PF928","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":64461},"res":{"statusCode":200,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"98","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"504","etag":"W/\"1f8-NhnrjoGf3Yz9jzjww9osP7rmfsk\"","vary":"Accept-Encoding"}},"responseTime":15,"msg":"request completed"}
+{"level":"info","time":"2025-12-07T15:14:35.663Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","req":{"id":3,"method":"POST","url":"/v1/customer/coupons/apply","query":{},"params":{},"headers":{"host":"127.0.0.1:64462","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTlkYjRhZWFkODJhOWQ5NzVlOWMiLCJyb2xlcyI6WyJjdXN0b21lciJdLCJpYXQiOjE3NjUxMjA0NzUsImV4cCI6MTc2NTEyMTM3NSwiaXNzIjoiYmxpbmtpdC1hcGkifQ.i3Ms-zvDpcBiKbZrLNTNRWqzcdm7-O1bxd5v76PF928","content-type":"application/json","content-length":"37","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":64463},"res":{"statusCode":400,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"97","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"108","etag":"W/\"6c-ai2i7i88xrdLIH3MTq9clDEhDIc\"","vary":"Accept-Encoding"}},"responseTime":2,"msg":"request completed"}
+{"level":"info","time":"2025-12-07T15:14:35.665Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","msg":"::ffff:127.0.0.1 - - [07/Dec/2025:15:14:35 +0000] \"POST /v1/customer/coupons/apply HTTP/1.1\" 400 108 \"-\" \"-\"\n"}
+{"level":"info","time":"2025-12-07T15:14:35.668Z","pid":23444,"hostname":"Marutis-MacBook-Air.local","req":{"id":3,"method":"POST","url":"/v1/customer/coupons/apply","query":{},"params":{},"headers":{"host":"127.0.0.1:64462","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTlkYjRhZWFkODJhOWQ5NzVlOWMiLCJyb2xlcyI6WyJjdXN0b21lciJdLCJpYXQiOjE3NjUxMjA0NzUsImV4cCI6MTc2NTEyMTM3NSwiaXNzIjoiYmxpbmtpdC1hcGkifQ.i3Ms-zvDpcBiKbZrLNTNRWqzcdm7-O1bxd5v76PF928","content-type":"application/json","content-length":"37","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":64463},"res":{"statusCode":400,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"97","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"108","etag":"W/\"6c-ai2i7i88xrdLIH3MTq9clDEhDIc\"","vary":"Accept-Encoding"}},"responseTime":7,"msg":"request completed"}
+  console.log
+    Apply Coupon Failed Response: {
+      "success": false,
+      "message": "Validation Failed",
+      "errors": [
+        {
+          "field": "code",
+          "message": "\"code\" is required"
+        }
+      ]
+    }
+
+      at Object.<anonymous> (src/tests/coupon.test.ts:95:21)
+
+FAIL src/tests/coupon.test.ts (8 s)
+  Coupon API Tests
+    ✓ should create coupon (Admin) (242 ms)
+    ✓ should get available coupons (Customer) (21 ms)
+    ✕ should apply coupon (Customer) (16 ms)
+
+  ● Coupon API Tests › should apply coupon (Customer)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+       95 |             console.log('Apply Coupon Failed Response:', JSON.stringify(res.body, null, 2));
+       96 |         }
+    >  97 |         expect(res.status).toBe(200);
+          |                            ^
+       98 |         expect(res.body.success).toBe(true);
+       99 |         expect(res.body.result.code).toBe(couponCode);
+      100 |         expect(res.body.result.discountAmount).toBe(100); // 50% of 500 is 250, but max is 100
+
+      at Object.<anonymous> (src/tests/coupon.test.ts:97:28)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 2 passed, 3 total
+Snapshots:   0 total
+Time:        8.148 s
+Ran all test suites matching src/tests/coupon.test.ts.

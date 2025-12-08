@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Middlewares, Path, Post, Queries, Route, Security, SuccessResponse as SuccessResponseTags, Tags, Request
+    Controller, Get, Middlewares, Path, Post, Queries, Route, Security, SuccessResponse as SuccessResponseTags, Tags, Request, Response
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { reelService } from '../../services/reel.service';
@@ -17,6 +17,9 @@ import APIError from '../../error/api-error';
 
 @Route("customer/reels")
 @Tags("CUSTOMER: Reels")
+@Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
+@Response(StatusCodes.FORBIDDEN, 'Forbidden')
+@Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
 export class CustomerReelController extends Controller {
 
     /**
@@ -25,6 +28,7 @@ export class CustomerReelController extends Controller {
     @Get("/")
     @Middlewares([validateSchemaMiddleware(reelQuerySchema, "query")])
     @SuccessResponseTags(StatusCodes.OK, "Success")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
     public async getReels(
         @Request() req: IRequest,
         @Queries() query: IFilter
@@ -57,6 +61,7 @@ export class CustomerReelController extends Controller {
     @Security("jwt")
     @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(reelQuerySchema, "query")])
     @SuccessResponseTags(StatusCodes.OK, "Success")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
     public async getReelsFeed(
         @Request() req: IRequest,
         @Queries() query: IFilter
@@ -73,6 +78,8 @@ export class CustomerReelController extends Controller {
     @Security("jwt")
     @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
     @SuccessResponseTags(StatusCodes.OK, "Success")
+    @Response(StatusCodes.NOT_FOUND, "Reel Not Found")
+    @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
     public async toggleLike(
         @Path() id: string,
         @Request() req: IRequest
@@ -93,9 +100,11 @@ export class CustomerReelController extends Controller {
     @Middlewares([
         jwtAuthMiddleware,
         validateSchemaMiddleware(idParamSchema, "params"),
-        validateSchemaMiddleware(addCommentSchema) // Assuming you exported this
+        validateSchemaMiddleware(addCommentSchema, "body") // Assuming you exported this
     ])
     @SuccessResponseTags(StatusCodes.CREATED, "Created")
+    @Response(StatusCodes.NOT_FOUND, "Reel Not Found")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
     public async addComment(
         @Path() id: string,
         @Request() req: IRequest,
@@ -119,6 +128,8 @@ export class CustomerReelController extends Controller {
         validateSchemaMiddleware(commentQuerySchema, "query") // Assuming you exported this
     ])
     @SuccessResponseTags(StatusCodes.OK, "Success")
+    @Response(StatusCodes.NOT_FOUND, "Reel Not Found")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
     public async getComments(
         @Path() id: string,
         @Queries() query: IFilter

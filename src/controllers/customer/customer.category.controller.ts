@@ -1,7 +1,7 @@
 import { ClientErrorInterface } from "./../../error/clientErrorHelper";
 import { Controller, Get, Middlewares, NoSecurity, Path, Queries, Response, Route, Tags } from "tsoa";
 import { StatusCodes } from 'http-status-codes';
-import { SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from "./../../error/exampleErrors";
+import { SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from "../../error/exampleErrors";
 import { ICategory } from "./../../models/category.model";
 import { success, SuccessResponse } from "./../../utils/SuccessResponse";
 import { categoryService } from "./../../services/category.service";

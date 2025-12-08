@@ -9,29 +9,59 @@ import { ICategoryCreateParams } from '../types/catergory.types';
 import customFileService from './custom-file.service';
 import { CATEGORY_IMAGES_PATH } from '../constants/file-paths';
 import { BaseService } from './base.service';
+import slugify from 'slugify';
 
 class CategoryService extends BaseService<ICategory> {
   constructor() {
     super(CategoryModel as any, ['name', 'slug']);
   }
 
-  public async create(payload: Partial<ICategory>, file?: Express.Multer.File): Promise<ICategory> {
-    const data: any = { ...payload };
-    if (!file) {
+  public async create(
+    categoryData: ICategory,
+    image?: Express.Multer.File
+  ): Promise<ICategory> {
+    console.log('CategoryService.create called');
+
+    // Sanitize empty strings
+    if ((categoryData.parentId as any) === "") {
+      categoryData.parentId = null;
+    }
+
+    if (!categoryData.slug || categoryData.slug === "") {
+      // Auto-generate slug if missing or empty
+      categoryData.slug = slugify(categoryData.name, {
+        lower: true,
+        strict: true,
+        trim: true
+      });
+    }
+
+    // Check if slug exists
+    const existingCategory = await CategoryModel.findOne({
+      slug: categoryData.slug,
+    });
+    if (existingCategory) {
+      throw new APIError('Category with this slug already exists', 409);
+    }
+
+    if (!image) {
+      console.error('No file provided');
       throw new APIError('Category image is required.', 400);
     }
-    const { url, key } = await customFileService.saveFile(file, CATEGORY_IMAGES_PATH);
-    data.categoryImage = { url, key };
 
-    // Sanitize empty strings: convert to null/undefined so MongoDB doesn't try to cast them
-    if (data.parentId === '') {
-      delete data.parentId; // Let it use the default (null)
-    }
-    if (data.slug === '' || !data.slug) {
-      delete data.slug; // Let the pre-save hook generate it from name
-    }
+    try {
+      console.log('Saving file...');
+      const { url, key } = await customFileService.saveFile(image, CATEGORY_IMAGES_PATH);
+      console.log('File saved:', { url, key });
 
-    return super.create(data);
+      categoryData.categoryImage = { url, key };
+
+      console.log('Creating category in DB...', categoryData);
+      return super.create(categoryData);
+    } catch (error) {
+      console.error('Error in CategoryService.create:', error);
+      throw error;
+    }
   }
 
   // listCategories (getAll) handled by BaseService. 

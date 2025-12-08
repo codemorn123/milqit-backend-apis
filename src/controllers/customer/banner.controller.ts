@@ -6,14 +6,16 @@ import {
     Queries,
     SuccessResponse,
     Middlewares,
-    Example
+    Example,
+    Response
 } from 'tsoa';
 import bannerService from './../../services/banner/banner.service';
 import { IFilter, PaginatedResponse } from '../../types/common.types';
-import { IBanner } from './../../types/banner.types';
+import { IBanner, IBannerFilter } from './../../types/banner.types';
 import { success, SuccessResponse as SuccessDataResponse } from './../../utils/SuccessResponse';
 import { validateSchemaMiddleware } from './../../middleware/common-validate';
 import { bannerFilterSchema } from './../../validations/banner-validation-schemas';
+import { StatusCodes } from 'http-status-codes';
 
 @Route("customer/banners")
 @Tags("Customer Banners")
@@ -25,6 +27,8 @@ export class CustomerBannerController extends Controller {
      */
     @Get("/")
     @SuccessResponse(200, "Success")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
+    @Response(StatusCodes.INTERNAL_SERVER_ERROR, "Internal Server Error")
     @Middlewares(validateSchemaMiddleware(bannerFilterSchema, "query"))
     @Example({
         queryParams: {
@@ -33,7 +37,7 @@ export class CustomerBannerController extends Controller {
         }
     })
     public async getAll(
-        @Queries() queryParams: IFilter
+        @Queries() queryParams: IBannerFilter
     ): Promise<SuccessDataResponse<PaginatedResponse<IBanner>>> {
         // Force isActive=true for customers unless explicitly requested (though usually customers only see active)
         // But the service handles filtering based on queryParams.

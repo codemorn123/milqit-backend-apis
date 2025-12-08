@@ -8,7 +8,7 @@ export function jwtAuthMiddleware(req: IRequest, res: Response, next: NextFuncti
   const token = authHeader.replace('Bearer ', '');
   try {
     const payload = tokenService.verifyAccessToken(token);
-    (req as any).user = { id: payload.userId, roles: payload.roles };
+    (req as any).user = { userId: payload.userId, roles: payload.roles };
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Invalid token' });

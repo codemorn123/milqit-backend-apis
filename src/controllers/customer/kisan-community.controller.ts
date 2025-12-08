@@ -16,6 +16,7 @@ import { IKisanCommunity } from './../../types/kisan-community.types';
 import { success, SuccessResponse as SuccessDataResponse } from './../../utils/SuccessResponse';
 import { validateSchemaMiddleware } from './../../middleware/common-validate';
 import { filterQuerySchema, idParamSchema } from './../../validations/kisan-community.validator';
+import { StatusCodes } from 'http-status-codes';
 
 @Route("customer/kisan-community")
 @Tags("Customer Kisan Community")
@@ -27,6 +28,8 @@ export class CustomerKisanCommunityController extends Controller {
      */
     @Get("/")
     @SuccessResponse(200, "Success")
+    @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
+    @Response(StatusCodes.INTERNAL_SERVER_ERROR, "Internal Server Error")
     @Middlewares(validateSchemaMiddleware(filterQuerySchema, "query"))
     @Example({
         queryParams: {
@@ -47,7 +50,8 @@ export class CustomerKisanCommunityController extends Controller {
      */
     @Get("/{id}")
     @SuccessResponse(200, "Success")
-    @Response(404, "Not Found")
+    @Response(StatusCodes.NOT_FOUND, "Not Found")
+    @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
     @Middlewares(validateSchemaMiddleware(idParamSchema, "params"))
     public async getById(@Path() id: string): Promise<SuccessDataResponse<IKisanCommunity>> {
         const result = await kisanCommunityService.getOne(id);

@@ -22,7 +22,9 @@ class CustomFileService {
     destinationPath: string
   ): Promise<{ url: string; key: string }> {
     // 1. Ensure the dynamic destination directory exists.
-    await fs.mkdir(destinationPath, { recursive: true });
+    const absolutePath = path.resolve(process.cwd(), destinationPath);
+    console.log(`Creating directory: ${absolutePath}`);
+    await fs.mkdir(absolutePath, { recursive: true });
 
     // 2. Create a unique filename to avoid collisions.
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -30,10 +32,21 @@ class CustomFileService {
     const filename = file.fieldname + '-' + uniqueSuffix + extension;
 
     // 3. Define the full path for saving the file.
-    const fullPath = path.join(destinationPath, filename);
+    const fullPath = path.join(absolutePath, filename);
 
-    // 4. Write the buffer to the disk.
-    await fs.writeFile(fullPath, file.buffer);
+    // 4. Write the file to the disk.
+    if (file.buffer) {
+      console.log('Saving file from buffer...');
+      await fs.writeFile(fullPath, file.buffer);
+    } else if (file.path) {
+      console.log(`Moving file from ${file.path} to ${fullPath}...`);
+      // If file is already on disk (multer diskStorage), move/copy it
+      await fs.copyFile(file.path, fullPath);
+      // Optional: delete the original temp file if you want to "move" it
+      // await fs.unlink(file.path); 
+    } else {
+      throw new Error('File has neither buffer nor path. Cannot save.');
+    }
 
     // 5. Return the public-facing URL and the key for database storage.
     return {
@@ -149,7 +162,7 @@ class CustomFileService {
   ): Promise<Array<{ url: string; key: string }>> {
     // Delete old files (don't wait for completion to speed up the process)
     if (oldKeys && oldKeys.length > 0) {
-      this.deleteMultipleFiles(oldKeys, destinationPath).catch(err => 
+      this.deleteMultipleFiles(oldKeys, destinationPath).catch(err =>
         console.error('Error deleting old files:', err)
       );
     }
@@ -195,7 +208,7 @@ class CustomFileService {
   //     // - `recursive: true`: Deletes the directory and all its contents.
   //     // - `force: true`: Suppresses errors if the directory doesn't exist.
   //     await fs.rm(absolutePathToDelete, { recursive: true, force: true });
-      
+
   //     console.log(`Successfully deleted directory: ${directoryName}`);
 
   //   } catch (err: any) {
@@ -227,7 +240,7 @@ class CustomFileService {
       console.log(`Attempting to delete directory: ${absolutePathToDelete}`);
 
       await fs.rm(absolutePathToDelete, { recursive: true, force: true });
-      
+
       console.log(`Successfully deleted directory: ${directoryName}`);
 
     } catch (err: any) {
@@ -246,7 +259,7 @@ class CustomFileService {
     try {
       const fullPath = path.join(destinationPath, key);
       const stats = await fs.stat(fullPath);
-      
+
       return {
         exists: true,
         size: stats.size,
@@ -270,7 +283,7 @@ class CustomFileService {
       throw error;
     }
   }
-  
+
 }
 
 

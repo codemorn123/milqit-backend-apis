@@ -31,6 +31,7 @@ export class AdminCategoryController extends Controller {
   @Post("/")
   @Consumes("multipart/form-data")
   @SuccessResponseTags(StatusCodes.CREATED, "Created")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   @Middlewares([jwtAuthMiddleware])
   public async create(
     @FormField() name: string,
@@ -42,6 +43,8 @@ export class AdminCategoryController extends Controller {
     @FormField() slug?: string,
     @UploadedFile("categoryImage") categoryImage?: Express.Multer.File
   ): Promise<SuccessResponse<ICategory>> {
+    console.log('AdminCategoryController.create called');
+    console.log('categoryImage:', categoryImage ? 'Present' : 'Missing');
     // Manual validation for multipart/form-data fields since middleware can't easily validate them before TSOA parses them
     // However, we can construct an object and validate it using Joi
     const dataToValidate = { name, description, parentId, backgroundColor, textColor, deepLink, slug };
@@ -76,6 +79,7 @@ export class AdminCategoryController extends Controller {
   @Get("{id}")
   @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
   @SuccessResponseTags(StatusCodes.OK, "Success")
+  @Response(StatusCodes.NOT_FOUND, "Category Not Found")
   public async getCategoryById(@Path() id: string): Promise<SuccessResponse<ICategory>> {
     const category = await categoryService.getOne(id);
     return success(category);
@@ -88,6 +92,8 @@ export class AdminCategoryController extends Controller {
   @Consumes("multipart/form-data")
   @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
   @SuccessResponseTags(StatusCodes.OK, "Success")
+  @Response(StatusCodes.NOT_FOUND, "Category Not Found")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   public async update(
     @Path() id: string,
     @FormField() name?: string,
@@ -119,6 +125,7 @@ export class AdminCategoryController extends Controller {
   @Delete("{id}")
   @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
   @SuccessResponseTags(StatusCodes.OK, "Success")
+  @Response(StatusCodes.NOT_FOUND, "Category Not Found")
   public async delete(@Path() id: string): Promise<SuccessResponse<{ message: string }>> {
     const result = await categoryService.delete(id);
     return success(result as any);

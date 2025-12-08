@@ -1,10 +1,5 @@
-
-
-
-
-
 import {
-  Controller, Get, Path, Route, Tags, Queries, Response
+  Controller, Get, Path, Route, Tags, Queries, Response, Middlewares
 } from 'tsoa';
 import { productService } from '../../services/product.service';
 import { success, SuccessResponse } from '../../utils/SuccessResponse';
@@ -12,6 +7,11 @@ import { ErrorResponse, PaginatedResponse } from '../../types/common.types';
 import { IProduct, ProductDocument } from '../../models/product.model';
 import { ProductFilterQueryParams } from '../../types/product.types';
 import APIError from '../../error/api-error';
+import { validateSchemaMiddleware } from '../../middleware/common-validate';
+import { validateZodSchemaMiddleware } from '../../middleware/zod-validate';
+import { productQuerySchema } from '../../validations/product.validation';
+import { idParamSchema, categoryIdParamSchema } from '../../constants/common.validator';
+import { StatusCodes } from 'http-status-codes';
 
 // Customer-specific response interfaces
 interface ProductAvailabilityResponse {
@@ -53,9 +53,9 @@ interface PriceRangeFilters extends ProductFilters {
 
 @Tags('CUSTOMER: Products')
 @Route('customer/products')
-@Response<ErrorResponse>(400, "Bad Request")
-@Response<ErrorResponse>(404, "Not Found")
-@Response<ErrorResponse>(500, "Server Error")
+@Response<ErrorResponse>(StatusCodes.BAD_REQUEST, "Bad Request")
+@Response<ErrorResponse>(StatusCodes.NOT_FOUND, "Not Found")
+@Response<ErrorResponse>(StatusCodes.INTERNAL_SERVER_ERROR, "Server Error")
 export class CustomerProductController extends Controller {
 
   /**
@@ -64,6 +64,8 @@ export class CustomerProductController extends Controller {
    * @summary Get Products for Customers
    */
   @Get('/')
+  @Middlewares(validateZodSchemaMiddleware(productQuerySchema, "query"))
+  @Response(StatusCodes.OK, "Success")
   public async getProducts(
     @Queries() filters: ProductFilters
   ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
@@ -103,45 +105,11 @@ export class CustomerProductController extends Controller {
   }
 
   /**
-   * Get a single product by ID for customers
-   * @summary Get Product Details
-   */
-  @Get('{id}')
-  public async getProductById(
-    @Path() id: string
-  ): Promise<SuccessResponse<IProduct | null>> {
-    try {
-      const product = await productService.findByIdForUsers(id);
-
-      if (!product) {
-        return success(null, 'Product not found or unavailable.');
-      }
-
-      const discountPercentage = product.mrp > 0
-        ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
-        : 0;
-
-      // const customerProduct: CustomerProductResponse = {
-      //   ...product,
-      //   discountPercentage,
-      //   savings: product.mrp - product.sellingPrice,
-      //   hasDiscount: product.sellingPrice < product.mrp
-      // };
-
-      return success(product, 'Product details fetched successfully.');
-    } catch (error: any) {
-      if (error instanceof APIError) {
-        throw error;
-      }
-      throw new APIError(`Error fetching product: ${error.message}`, 500);
-    }
-  }
-
-  /**
    * Get a product by slug for customers
    * @summary Get Product by Slug
    */
   @Get('slug/{slug}')
+  @Response(StatusCodes.OK, "Success")
   public async getProductBySlug(
     @Path() slug: string
   ): Promise<SuccessResponse<CustomerProductResponse | null>> {
@@ -174,6 +142,8 @@ export class CustomerProductController extends Controller {
    * @summary Search Products
    */
   @Get('search')
+  @Middlewares(validateZodSchemaMiddleware(productQuerySchema, "query"))
+  @Response(StatusCodes.OK, "Success")
   public async searchProducts(
     @Queries() params: SearchProductFilters
   ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
@@ -219,6 +189,7 @@ export class CustomerProductController extends Controller {
    * @summary Get Featured Products
    */
   @Get('featured')
+  @Response(StatusCodes.OK, "Success")
   public async getFeaturedProducts(
     @Queries() params: { limit?: number }
   ): Promise<SuccessResponse<IProduct[]>> {
@@ -250,6 +221,11 @@ export class CustomerProductController extends Controller {
    * @summary Get Products by Category
    */
   @Get('category/{categoryId}')
+  @Middlewares([
+    validateSchemaMiddleware(categoryIdParamSchema, "params"),
+    validateZodSchemaMiddleware(productQuerySchema, "query")
+  ])
+  @Response(StatusCodes.OK, "Success")
   public async getProductsByCategory(
     @Path() categoryId: string,
     @Queries() filters: ProductFilters
@@ -282,113 +258,12 @@ export class CustomerProductController extends Controller {
   }
 
   /**
-   * Get products by brand for customers
-   * @summary Get Products by Brand
-   */
-  // @Get('brand/{brand}')
-  // public async getProductsByBrand(
-  //   @Path() brand: string,
-  //   @Queries() filters: ProductFilters
-  // ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
-  //   try {
-  //     const results = await productService.getProductsByBrand(brand, filters, true);
-
-  //     const transformedDocs = results.docs.map(product => {
-  //       const discountPercentage = product.mrp > 0 
-  //         ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100) 
-  //         : 0;
-
-  //       return {
-  //         ...product,
-  //         discountPercentage,
-  //         savings: product.mrp - product.sellingPrice,
-  //         hasDiscount: product.sellingPrice < product.mrp
-  //       } as CustomerProductResponse;
-  //     });
-
-  //     const result = {
-  //       ...results,
-  //       docs: transformedDocs
-  //     };
-
-  //     return success(result, 'Products fetched by brand successfully.');
-  //   } catch (error: any) {
-  //     throw new APIError(`Error fetching products by brand: ${error.message}`, 500);
-  //   }
-  // }
-
-  /**
-   * Get related products for a specific product
-   * @summary Get Related Products
-   */
-  @Get('{id}/related')
-  public async getRelatedProducts(
-    @Path() id: string,
-    @Queries() params: { limit?: number }
-  ): Promise<SuccessResponse<CustomerProductResponse[]>> {
-    try {
-      const limit = Math.min(params.limit || 6, 20); // Cap at 20 for performance
-      const products = await productService.getRelatedProducts(id, limit);
-
-      const transformedProducts = products.map(product => {
-        const discountPercentage = product.mrp > 0
-          ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
-          : 0;
-
-        return {
-          ...product,
-          discountPercentage,
-          savings: product.mrp - product.sellingPrice,
-          hasDiscount: product.sellingPrice < product.mrp
-        } as CustomerProductResponse;
-      });
-
-      return success(transformedProducts, 'Related products fetched successfully.');
-    } catch (error: any) {
-      throw new APIError(`Error fetching related products: ${error.message}`, 500);
-    }
-  }
-
-  /**
-   * Check product availability for customers
-   * @summary Check Product Availability
-   */
-  // @Get('{id}/availability')
-  // public async checkProductAvailability(
-  //   @Path() id: string
-  // ): Promise<SuccessResponse<ProductAvailabilityResponse | null>> {
-  //   try {
-  //     const availability = await productService.checkProductAvailability(id);
-
-  //     if (!availability) {
-  //       return success(null, 'Product not found or unavailable.');
-  //     }
-
-  //     const discountPercentage = availability.mrp > 0 
-  //       ? Math.round(((availability.mrp - availability.sellingPrice) / availability.mrp) * 100) 
-  //       : 0;
-
-  //     const response: ProductAvailabilityResponse = {
-  //       ...availability,
-  //       discountPercentage,
-  //       savings: availability.mrp - availability.sellingPrice
-  //     };
-
-  //     return success(response, 'Product availability checked successfully.');
-  //   } catch (error: any) {
-  //     throw new APIError(`Error checking product availability: ${error.message}`, 500);
-  //   }
-  // }
-
-  /**
-   * Get products with discounts (sale items)
-   * @summary Get Sale Products
-   */
-  /**
    * Get products with discounts (sale items)
    * @summary Get Sale Products
    */
   @Get('sale')
+  @Middlewares(validateZodSchemaMiddleware(productQuerySchema, "query"))
+  @Response(StatusCodes.OK, "Success")
   public async getSaleProducts(
     @Queries() filters: SaleProductFilters
   ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
@@ -441,6 +316,7 @@ export class CustomerProductController extends Controller {
    * @summary Get New Arrivals
    */
   @Get('new-arrivals')
+  @Response(StatusCodes.OK, "Success")
   public async getNewArrivals(
     @Queries() params: { limit?: number; days?: number }
   ): Promise<SuccessResponse<CustomerProductResponse[]>> {
@@ -487,6 +363,8 @@ export class CustomerProductController extends Controller {
    * @summary Get Products by Price Range
    */
   @Get('price-range')
+  @Middlewares(validateZodSchemaMiddleware(productQuerySchema, "query"))
+  @Response(StatusCodes.OK, "Success")
   public async getProductsByPriceRange(
     @Queries() params: PriceRangeFilters
   ): Promise<SuccessResponse<PaginatedResponse<CustomerProductResponse>>> {
@@ -537,6 +415,66 @@ export class CustomerProductController extends Controller {
         throw error;
       }
       throw new APIError(`Error fetching products by price range: ${error.message}`, 500);
+    }
+  }
+
+  /**
+   * Get related products for a specific product
+   * @summary Get Related Products
+   */
+  @Get('{id}/related')
+  @Middlewares(validateSchemaMiddleware(idParamSchema, "params"))
+  @Response(StatusCodes.OK, "Success")
+  public async getRelatedProducts(
+    @Path() id: string,
+    @Queries() params: { limit?: number }
+  ): Promise<SuccessResponse<CustomerProductResponse[]>> {
+    try {
+      const limit = Math.min(params.limit || 6, 20); // Cap at 20 for performance
+      const products = await productService.getRelatedProducts(id, limit);
+
+      const transformedProducts = products.map(product => {
+        const discountPercentage = product.mrp > 0
+          ? Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
+          : 0;
+
+        return {
+          ...product,
+          discountPercentage,
+          savings: product.mrp - product.sellingPrice,
+          hasDiscount: product.sellingPrice < product.mrp
+        } as CustomerProductResponse;
+      });
+
+      return success(transformedProducts, 'Related products fetched successfully.');
+    } catch (error: any) {
+      throw new APIError(`Error fetching related products: ${error.message}`, 500);
+    }
+  }
+
+  /**
+   * Get a single product by ID for customers
+   * @summary Get Product Details
+   */
+  @Get('{id}')
+  @Middlewares(validateSchemaMiddleware(idParamSchema, "params"))
+  @Response(StatusCodes.OK, "Success")
+  public async getProductById(
+    @Path() id: string
+  ): Promise<SuccessResponse<IProduct | null>> {
+    try {
+      const product = await productService.findByIdForUsers(id);
+
+      if (!product) {
+        return success(null, 'Product not found or unavailable.');
+      }
+
+      return success(product, 'Product details fetched successfully.');
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw new APIError(`Error fetching product: ${error.message}`, 500);
     }
   }
 }

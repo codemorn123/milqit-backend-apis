@@ -1,0 +1,153 @@
+  console.log
+    [dotenv@17.2.1] injecting env (15) from .env.test -- tip: ⚙️  suppress all logs with { quiet: true }
+
+      at _log (node_modules/dotenv/lib/main.js:139:11)
+
+  console.log
+    ✅ CartModel initialized successfully by MarotiKathoke at 2025-12-07T15:05:45.109Z
+
+      at Object.<anonymous> (src/models/CartModel.ts:1841:9)
+
+{"level":"warn","time":"2025-12-07T15:05:45.963Z","pid":21384,"hostname":"Marutis-MacBook-Air.local","msg":"Firebase Service Account Key not provided. FCM will not work."}
+  console.log
+    ✅ Write permissions verified for: /Users/maruti/Desktop/milkit/milqit-backend-apis/uploads/images
+
+      at createUploadDirs (src/utils/upload.ts:30:13)
+
+  console.error
+    ❌ Global Error Handler: {
+      error: '"redirectLink" must be a valid URL',
+      stack: undefined,
+      url: '/v1/admin/banners',
+      method: 'POST',
+      contentType: 'multipart/form-data; boundary=--------------------------7eb1f2ca0465b1f46d807581'
+    }
+
+      157 |
+      158 | app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    > 159 |   console.error('❌ Global Error Handler:', {
+          |           ^
+      160 |     error: error.message,
+      161 |     stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      162 |     url: req.url,
+
+      at src/app.ts:159:11
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at Layer.handleError (node_modules/router/lib/layer.js:111:12)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+      at ExpressTemplateService.apiHandler (node_modules/@tsoa/runtime/src/routeGeneration/templates/express/expressTemplateService.ts:47:14)
+      at BannerController_createBanner (src/generated/routes.ts:5714:17)
+
+{"level":"info","time":"2025-12-07T15:05:47.459Z","pid":21384,"hostname":"Marutis-MacBook-Air.local","req":{"id":1,"method":"POST","url":"/v1/admin/banners","query":{},"params":{},"headers":{"host":"127.0.0.1:61722","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTdjYjY2ODFjNGM1Zjk4ZWI4MmUiLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NjUxMTk5NDcsImV4cCI6MTc2NTEyMDg0NywiaXNzIjoiYmxpbmtpdC1hcGkifQ.YPbU_PjCmhQ2Fr6V_N625NSTneD_raFp2PLXkZCVGxY","content-type":"multipart/form-data; boundary=--------------------------7eb1f2ca0465b1f46d807581","content-length":"925","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":61723},"res":{"statusCode":400,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"99","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"66","etag":"W/\"42-sjy9IlpD+z99laIhDAet3/svc84\"","vary":"Accept-Encoding"}},"responseTime":30,"msg":"request completed"}
+{"level":"info","time":"2025-12-07T15:05:47.461Z","pid":21384,"hostname":"Marutis-MacBook-Air.local","msg":"::ffff:127.0.0.1 - - [07/Dec/2025:15:05:47 +0000] \"POST /v1/admin/banners HTTP/1.1\" 400 66 \"-\" \"-\"\n"}
+{"level":"info","time":"2025-12-07T15:05:47.461Z","pid":21384,"hostname":"Marutis-MacBook-Air.local","req":{"id":1,"method":"POST","url":"/v1/admin/banners","query":{},"params":{},"headers":{"host":"127.0.0.1:61722","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTdjYjY2ODFjNGM1Zjk4ZWI4MmUiLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NjUxMTk5NDcsImV4cCI6MTc2NTEyMDg0NywiaXNzIjoiYmxpbmtpdC1hcGkifQ.YPbU_PjCmhQ2Fr6V_N625NSTneD_raFp2PLXkZCVGxY","content-type":"multipart/form-data; boundary=--------------------------7eb1f2ca0465b1f46d807581","content-length":"925","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":61723},"res":{"statusCode":400,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"99","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"66","etag":"W/\"42-sjy9IlpD+z99laIhDAet3/svc84\"","vary":"Accept-Encoding"}},"responseTime":32,"msg":"request completed"}
+  console.error
+    ❌ Global Error Handler: {
+      error: '',
+      stack: undefined,
+      url: '/v1/customer/banners?placement=HOME_HERO_CAROUSEL',
+      method: 'GET',
+      contentType: undefined
+    }
+
+      157 |
+      158 | app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    > 159 |   console.error('❌ Global Error Handler:', {
+          |           ^
+      160 |     error: error.message,
+      161 |     stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      162 |     url: req.url,
+
+      at src/app.ts:159:11
+      at Layer.handleError (node_modules/router/lib/layer.js:116:17)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at Layer.handleError (node_modules/router/lib/layer.js:111:12)
+      at trimPrefix (node_modules/router/index.js:340:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/router/index.js:688:15
+      at next (node_modules/router/index.js:276:14)
+      at next (node_modules/router/lib/route.js:132:14)
+      at CustomerBannerController_getAll (src/generated/routes.ts:4652:24)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at next (node_modules/router/lib/route.js:157:13)
+      at src/middleware/common-validate.ts:29:5
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at next (node_modules/router/lib/route.js:157:13)
+      at Route.dispatch (node_modules/router/lib/route.js:117:3)
+      at handle (node_modules/router/index.js:435:11)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at node_modules/router/index.js:295:15
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at Function.handle (node_modules/router/index.js:186:3)
+      at router (node_modules/router/index.js:60:12)
+      at Layer.handleRequest (node_modules/router/lib/layer.js:152:17)
+      at trimPrefix (node_modules/router/index.js:342:13)
+      at node_modules/router/index.js:297:9
+      at processParams (node_modules/router/index.js:582:12)
+      at next (node_modules/router/index.js:291:5)
+      at node_modules/express-rate-limit/dist/index.cjs:942:7
+      at node_modules/express-rate-limit/dist/index.cjs:825:5
+
+{"level":"info","time":"2025-12-07T15:05:47.478Z","pid":21384,"hostname":"Marutis-MacBook-Air.local","req":{"id":2,"method":"GET","url":"/v1/customer/banners?placement=HOME_HERO_CAROUSEL","query":{"placement":"HOME_HERO_CAROUSEL"},"params":{},"headers":{"host":"127.0.0.1:61730","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTdjYjY2ODFjNGM1Zjk4ZWI4MmYiLCJyb2xlcyI6WyJjdXN0b21lciJdLCJpYXQiOjE3NjUxMTk5NDcsImV4cCI6MTc2NTEyMDg0NywiaXNzIjoiYmxpbmtpdC1hcGkifQ.Tf8cPEFh48LZ-aFX9qkXCh84ChCuxkdR93Lr_7SDsP4","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":61731},"res":{"statusCode":400,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"98","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"51","etag":"W/\"33-c6t0+YFApI07Xot38Q+tPy9rRvI\"","vary":"Accept-Encoding"}},"responseTime":7,"msg":"request completed"}
+{"level":"info","time":"2025-12-07T15:05:47.478Z","pid":21384,"hostname":"Marutis-MacBook-Air.local","msg":"::ffff:127.0.0.1 - - [07/Dec/2025:15:05:47 +0000] \"GET /v1/customer/banners?placement=HOME_HERO_CAROUSEL HTTP/1.1\" 400 51 \"-\" \"-\"\n"}
+{"level":"info","time":"2025-12-07T15:05:47.478Z","pid":21384,"hostname":"Marutis-MacBook-Air.local","req":{"id":2,"method":"GET","url":"/v1/customer/banners?placement=HOME_HERO_CAROUSEL","query":{"placement":"HOME_HERO_CAROUSEL"},"params":{},"headers":{"host":"127.0.0.1:61730","accept-encoding":"gzip, deflate","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTM1OTdjYjY2ODFjNGM1Zjk4ZWI4MmYiLCJyb2xlcyI6WyJjdXN0b21lciJdLCJpYXQiOjE3NjUxMTk5NDcsImV4cCI6MTc2NTEyMDg0NywiaXNzIjoiYmxpbmtpdC1hcGkifQ.Tf8cPEFh48LZ-aFX9qkXCh84ChCuxkdR93Lr_7SDsP4","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":61731},"res":{"statusCode":400,"headers":{"content-security-policy":"default-src 'self';script-src 'self' 'unsafe-inline' 'unsafe-eval';style-src 'self' 'unsafe-inline';img-src 'self' data:;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';upgrade-insecure-requests","cross-origin-opener-policy":"same-origin","cross-origin-resource-policy":"same-origin","origin-agent-cluster":"?1","referrer-policy":"no-referrer","strict-transport-security":"max-age=31536000; includeSubDomains","x-content-type-options":"nosniff","x-dns-prefetch-control":"off","x-download-options":"noopen","x-frame-options":"SAMEORIGIN","x-permitted-cross-domain-policies":"none","x-xss-protection":"0","access-control-allow-origin":"*","access-control-allow-credentials":"true","ratelimit-policy":"100;w=900","ratelimit-limit":"100","ratelimit-remaining":"98","ratelimit-reset":"900","content-type":"application/json; charset=utf-8","content-length":"51","etag":"W/\"33-c6t0+YFApI07Xot38Q+tPy9rRvI\"","vary":"Accept-Encoding"}},"responseTime":7,"msg":"request completed"}
+FAIL src/tests/banner.test.ts (7.393 s)
+  Banner API Tests
+    ✕ should create banner (Admin) (50 ms)
+    ✕ should list banners (Customer) (12 ms)
+
+  ● Banner API Tests › should create banner (Admin)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 400
+
+      59 |             .attach('image', Buffer.from('dummy image'), 'banner.png');
+      60 |
+    > 61 |         expect(res.status).toBe(201);
+         |                            ^
+      62 |         expect(res.body.success).toBe(true);
+      63 |         expect(res.body.data.title).toBe('Summer Sale');
+      64 |         expect(res.body.data.placement).toBe(BannerPlacement.HOME_HERO_CAROUSEL);
+
+      at Object.<anonymous> (src/tests/banner.test.ts:61:28)
+
+  ● Banner API Tests › should list banners (Customer)
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+      73 |             .query({ placement: BannerPlacement.HOME_HERO_CAROUSEL });
+      74 |
+    > 75 |         expect(res.status).toBe(200);
+         |                            ^
+      76 |         expect(res.body.success).toBe(true);
+      77 |         expect(res.body.result.docs).toBeDefined();
+      78 |         expect(Array.isArray(res.body.result.docs)).toBe(true);
+
+      at Object.<anonymous> (src/tests/banner.test.ts:75:28)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 2 total
+Snapshots:   0 total
+Time:        7.57 s
+Ran all test suites matching src/tests/banner.test.ts.

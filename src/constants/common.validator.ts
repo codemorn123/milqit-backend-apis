@@ -10,6 +10,16 @@ export const idParamSchema = Joi.object({
     }),
 });
 
+export const categoryIdParamSchema = Joi.object({
+  categoryId: Joi.string()
+    .regex(/^[0-9a-fA-F]{24}$/)
+    .required()
+    .messages({
+      "string.pattern.base": '"categoryId" must be a valid MongoDB ObjectID',
+      "any.required": '"categoryId" is required',
+    }),
+});
+
 
 
 export const objectIdValidator = Joi.string().custom((value, helpers) => {
