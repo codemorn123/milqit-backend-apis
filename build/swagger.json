@@ -7033,7 +7033,7 @@
 				"parameters": []
 			}
 		},
-		"/customer/user/{userId}/profile": {
+		"/customer/user/profile": {
 			"get": {
 				"operationId": "GetUserProfile",
 				"responses": {
@@ -7100,16 +7100,7 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
+				"parameters": []
 			},
 			"put": {
 				"operationId": "UpdateProfile",
@@ -7177,16 +7168,7 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -7261,19 +7243,10 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
+				"parameters": []
 			}
 		},
-		"/customer/user/{userId}/addresses": {
+		"/customer/user/addresses": {
 			"get": {
 				"operationId": "GetAddresses",
 				"responses": {
@@ -7340,16 +7313,7 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
+				"parameters": []
 			},
 			"post": {
 				"operationId": "AddAddress",
@@ -7414,16 +7378,7 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -7499,16 +7454,7 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -7529,7 +7475,7 @@
 				}
 			}
 		},
-		"/customer/user/{userId}/addresses/primary": {
+		"/customer/user/addresses/primary": {
 			"put": {
 				"operationId": "SetPrimaryAddress",
 				"responses": {
@@ -7596,16 +7542,7 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {

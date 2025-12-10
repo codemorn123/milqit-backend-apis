@@ -13,7 +13,7 @@ export async function expressAuthentication(request: Request, securityName: stri
 
     try {
       const payload = tokenService.verifyAccessToken(token);
-      return { id: payload.userId, roles: payload.roles };
+      return { userId: payload.userId, roles: payload.roles };
     } catch (error) {
       return Promise.reject(new APIError("Invalid token", 401));
     }

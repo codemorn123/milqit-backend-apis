@@ -10,18 +10,19 @@ import {
   Security,
   Middlewares,
   Response,
-  Path,
+  // Path, // Removed as userId is no longer in path
+  Request,
   Example,
   SuccessResponse as TsoaSuccessResponse
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { ClientErrorInterface, PresentableError } from '../../error/clientErrorHelper';
-import { UserProfile } from '../../types/auth.types';
+// import { UserProfile } from '../../types/auth.types'; // Unused
 import UserService from '../../services/user.service';
 import { success, SuccessResponse } from '../../utils/SuccessResponse';
 import { IUser } from '../../models/UserModel';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
-import { idParamSchema } from '../../constants/common.validator';
+// import { idParamSchema } from '../../constants/common.validator'; // Removed as userId is no longer in path
 import {
   updateProfileSchema,
   addAddressSchema,
@@ -44,15 +45,16 @@ export class MobileUserController extends Controller {
   /**
    * Get the current user's profile based on their authentication token.
    */
-  @Get('{userId}/profile')
+  @Get('profile')
   @Security('jwt')
-  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
+  // @Middlewares([validateSchemaMiddleware(idParamSchema, "params")]) // Removed
   @Example<SuccessResponse<any>>(
     success({}, 'User profile retrieved successfully')
   )
   public async getUserProfile(
-    @Path() userId: string
+    @Request() req: any
   ): Promise<SuccessResponse<IUser>> {
+    const userId = req.user.userId;
     const user = await UserService.getActiveUserById(userId);
     if (!user) {
       throw new PresentableError('NOT_FOUND', 'User not found');
@@ -63,17 +65,18 @@ export class MobileUserController extends Controller {
   /**
    * Update the current user's profile.
    */
-  @Put('{userId}/profile')
+  @Put('profile')
   @Security('jwt')
   @Middlewares([
-    validateSchemaMiddleware(idParamSchema, "params"),
+    // validateSchemaMiddleware(idParamSchema, "params"), // Removed
     validateSchemaMiddleware(updateProfileSchema)
   ])
   @Example<SuccessResponse<{}>>(success({}, 'Profile updated successfully'))
   public async updateProfile(
-    @Path() userId: string,
+    @Request() req: any,
     @Body() body: IUpdateProfileRequest
   ): Promise<SuccessResponse<IUser>> {
+    const userId = req.user.userId;
     const updatedUser = await UserService.updateUserProfile(userId, body);
     if (!updatedUser) {
       throw new PresentableError('NOT_FOUND', 'User not found');
@@ -84,13 +87,14 @@ export class MobileUserController extends Controller {
   /**
    * Delete user profile (Deactivate account)
    */
-  @Delete('{userId}/profile')
+  @Delete('profile')
   @Security('jwt')
-  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
+  // @Middlewares([validateSchemaMiddleware(idParamSchema, "params")]) // Removed
   @TsoaSuccessResponse(StatusCodes.OK, "Profile Deleted")
   public async deleteProfile(
-    @Path() userId: string
+    @Request() req: any
   ): Promise<SuccessResponse<{ success: boolean }>> {
+    const userId = req.user.userId;
     await UserService.deactivateUser(userId);
     return success({ success: true }, 'Profile deleted successfully');
   }
@@ -98,15 +102,16 @@ export class MobileUserController extends Controller {
   /**
    * Get all saved addresses for the current user.
    */
-  @Get('{userId}/addresses')
+  @Get('addresses')
   @Security('jwt')
-  @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
+  // @Middlewares([validateSchemaMiddleware(idParamSchema, "params")]) // Removed
   @Example<SuccessResponse<any[]>>(
     success([], 'Addresses retrieved successfully')
   )
   public async getAddresses(
-    @Path() userId: string
+    @Request() req: any
   ): Promise<SuccessResponse<any>> {
+    const userId = req.user.userId;
     const user = await UserService.getActiveUserById(userId);
     if (!user) {
       throw new PresentableError('NOT_FOUND', 'User not found');
@@ -117,17 +122,18 @@ export class MobileUserController extends Controller {
   /**
    * Add a new delivery address for the current user.
    */
-  @Post('{userId}/addresses')
+  @Post('addresses')
   @Security('jwt')
   @Middlewares([
-    validateSchemaMiddleware(idParamSchema, "params"),
+    // validateSchemaMiddleware(idParamSchema, "params"), // Removed
     validateSchemaMiddleware(addAddressSchema)
   ])
   @TsoaSuccessResponse(StatusCodes.CREATED, "Address Added")
   public async addAddress(
-    @Path() userId: string,
+    @Request() req: any,
     @Body() address: any
   ): Promise<SuccessResponse<any>> {
+    const userId = req.user.userId;
     const updatedUser = await UserService.addUserAddress(userId, address);
     const newAddress = updatedUser?.addresses?.slice(-1)[0];
     this.setStatus(StatusCodes.CREATED);
@@ -137,19 +143,20 @@ export class MobileUserController extends Controller {
   /**
    * Set a primary delivery address from the user's saved addresses.
    */
-  @Put('{userId}/addresses/primary')
+  @Put('addresses/primary')
   @Security('jwt')
   @Middlewares([
-    validateSchemaMiddleware(idParamSchema, "params"),
+    // validateSchemaMiddleware(idParamSchema, "params"), // Removed
     validateSchemaMiddleware(addressIdSchema)
   ])
   @Example<SuccessResponse<{ success: boolean }>>(
     success({ success: true }, 'Primary address set successfully')
   )
   public async setPrimaryAddress(
-    @Path() userId: string,
+    @Request() req: any,
     @Body() body: { addressId: string }
   ): Promise<SuccessResponse<{ success: boolean }>> {
+    const userId = req.user.userId;
     await UserService.setPrimaryAddress(userId, body.addressId);
     return success({ success: true }, 'Primary address set successfully');
   }
@@ -157,19 +164,20 @@ export class MobileUserController extends Controller {
   /**
    * Delete a saved address for the current user.
    */
-  @Delete('{userId}/addresses')
+  @Delete('addresses')
   @Security('jwt')
   @Middlewares([
-    validateSchemaMiddleware(idParamSchema, "params"),
+    // validateSchemaMiddleware(idParamSchema, "params"), // Removed
     validateSchemaMiddleware(addressIdSchema)
   ])
   @Example<SuccessResponse<{ success: boolean }>>(
     success({ success: true }, 'Address removed successfully')
   )
   public async removeAddress(
-    @Path() userId: string,
+    @Request() req: any,
     @Body() body: { addressId: string }
   ): Promise<SuccessResponse<{ success: boolean }>> {
+    const userId = req.user.userId;
     await UserService.removeUserAddress(userId, body.addressId);
     return success({ success: true }, 'Address removed successfully');
   }
