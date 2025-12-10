@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Route, Tags, Response, Middlewares } from 'tsoa';
+import { Body, Controller, Post, Route, Tags, Response, Middlewares, SuccessResponse as TsoaSuccessResponse } from 'tsoa';
 import { StatusCodes } from 'http-status-codes/build/cjs';
 import UserService from '../../services/user.service';
 import { ISendOtpInput, IVerifyOtpInput, IAuthResponse } from '../../types/auth.types';
@@ -20,13 +20,13 @@ export class MobileAuthController extends Controller {
   @Post('send-otp')
   @Middlewares([validateSchemaMiddleware(sendOtpSchema, "body")])
 
-  public async sendOtp(@Body() body: ISendOtpInput): Promise<SuccessResponse<{ isNewUser: boolean, otp:string }>> {
-      const otpResult = await authService.sendLoginOtp(body.phone);
-      const isNewUser = !(await UserService.findUserByPhone(body.phone));
-      	return success({ isNewUser, otp: otpResult.otp }, 'OTP sent successfully');
+  public async sendOtp(@Body() body: ISendOtpInput): Promise<SuccessResponse<{ isNewUser: boolean, otp: string }>> {
+    const otpResult = await authService.sendLoginOtp(body.phone);
+    const isNewUser = !(await UserService.findUserByPhone(body.phone));
+    return success({ isNewUser, otp: otpResult.otp }, 'OTP sent successfully');
   }
 
-  @Post('verify-otp')  
+  @Post('verify-otp')
   @Middlewares([validateSchemaMiddleware(verifyOtpSchema, "body")])
   public async verifyOtp(@Body() body: IVerifyOtpInput): Promise<SuccessResponse<IAuthResponse>> {
     const result = await authService.loginOrRegister(body.phone, body.otp);
@@ -35,8 +35,18 @@ export class MobileAuthController extends Controller {
 
   @Post('resend-otp')
   @Middlewares([validateSchemaMiddleware(sendOtpSchema, "body")])
-  public async resendOtp(@Body() body: ISendOtpInput): Promise<SuccessResponse<{  otp:string }>> {
-     const otpResult = await authService.sendLoginOtp(body.phone);
-    	return success({ otp: otpResult.otp }, 'OTP sent successfully');
+  public async resendOtp(@Body() body: ISendOtpInput): Promise<SuccessResponse<{ otp: string }>> {
+    const otpResult = await authService.sendLoginOtp(body.phone);
+    return success({ otp: otpResult.otp }, 'OTP sent successfully');
+  }
+
+  /**
+   * Refresh authentication tokens
+   */
+  @Post('refresh-token')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  public async refreshToken(@Body() body: { refreshToken: string }): Promise<SuccessResponse<{ tokens: any }>> {
+    const result = await authService.refreshToken(body);
+    return success(result, 'Tokens refreshed successfully');
   }
 }

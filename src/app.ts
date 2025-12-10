@@ -38,9 +38,29 @@ app.use(helmet({
   }
 }));
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://www.localhost:3000',
+  'http://www.localhost:3001',
+  'https://admin.milqit.com',
+  'https://www.milqit.com',
+  config.cors.origin
+].filter(Boolean);
+
 app.use(cors({
-  origin: config.cors.origin,
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1 || config.cors.origin === '*') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
 }));
 
 app.use(compression());
@@ -50,15 +70,6 @@ const stream = {
   write: (message: string) => logger.info(message.trim() + '\n')
 };
 app.use(morgan('combined', { stream }));
-
-// enable cors
-app.use(
-  cors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true
-  })
-);
 
 
 app.use(cookieParser());

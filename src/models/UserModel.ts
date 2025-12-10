@@ -7,10 +7,12 @@ export interface IUser {
   id: string;
   name: string;
   phone: string;
+  email?: string; // Optioanl
   passwordHash: string;
   roles: string[];
   isActive: boolean;
   isPhoneVerified: boolean;
+  isEmailVerified: boolean;
   lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -42,12 +44,20 @@ const UserSchema = new Schema<IUserDocument>(
       },
       unique: true
     },
-
+    email: {
+      type: String,
+      unique: true,
+      index: true,
+      sparse: true,
+      trim: true,
+      lowercase: true
+    },
     name: { type: String, trim: true, default: "Guest User" },
     passwordHash: { type: String, required: true },
     roles: { type: [String], default: ['customer'], index: true },
     isActive: { type: Boolean, default: true, index: true },
     isPhoneVerified: { type: Boolean, default: false },
+    isEmailVerified: { type: Boolean, default: false },
     isNewUser: { type: Boolean, default: true },
     lastLogin: { type: Date },
     primaryAddressId: { type: String },

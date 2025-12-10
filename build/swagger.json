@@ -330,6 +330,9 @@
 					"phone": {
 						"type": "string"
 					},
+					"email": {
+						"type": "string"
+					},
 					"passwordHash": {
 						"type": "string"
 					},
@@ -343,6 +346,9 @@
 						"type": "boolean"
 					},
 					"isPhoneVerified": {
+						"type": "boolean"
+					},
+					"isEmailVerified": {
 						"type": "boolean"
 					},
 					"lastLogin": {
@@ -401,6 +407,7 @@
 					"roles",
 					"isActive",
 					"isPhoneVerified",
+					"isEmailVerified",
 					"createdAt",
 					"updatedAt",
 					"isNewUser"
@@ -4347,6 +4354,36 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SuccessResponse__tokens-any__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"tokens": {}
+						},
+						"required": [
+							"tokens"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ICoupon": {
 				"properties": {
 					"code": {
@@ -6498,6 +6535,38 @@
 							"$ref": "#/components/schemas/UserProfile"
 						},
 						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__tokens-AuthTokens__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"tokens": {
+								"$ref": "#/components/schemas/AuthTokens"
+							}
+						},
+						"required": [
+							"tokens"
+						],
+						"type": "object"
 					}
 				},
 				"required": [
@@ -13318,6 +13387,127 @@
 				}
 			}
 		},
+		"/customer/auth/refresh-token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__tokens-any__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Refresh authentication tokens",
+				"tags": [
+					"Customer Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"refreshToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"refreshToken"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/customer/coupons/available": {
 			"get": {
 				"operationId": "GetAvailableCoupons",
@@ -17294,6 +17484,115 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/admin/refresh-token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__tokens-AuthTokens__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed"
+					},
+					"401": {
+						"description": "Invalid Token"
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Refresh authentication tokens",
+				"tags": [
+					"Admin Management"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "Refresh token",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"refreshToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"refreshToken"
+								],
+								"type": "object",
+								"description": "Refresh token"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/admin/settings": {

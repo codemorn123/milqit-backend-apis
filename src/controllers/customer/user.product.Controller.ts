@@ -13,20 +13,7 @@ import { productQuerySchema } from '../../validations/product.validation';
 import { idParamSchema, categoryIdParamSchema } from '../../constants/common.validator';
 import { StatusCodes } from 'http-status-codes';
 
-// Customer-specific response interfaces
-interface ProductAvailabilityResponse {
-  id: string;
-  name: string;
-  isAvailable: boolean;
-  quantity: number;
-  unit: string;
-  sellingPrice: number;
-  mrp: number;
-  hasDiscount: boolean;
-  discountPercentage?: number;
-  savings?: number;
 
-}
 
 interface CustomerProductResponse extends Omit<IProduct, 'createdBy' | 'updatedBy'> {
   discountPercentage: number;

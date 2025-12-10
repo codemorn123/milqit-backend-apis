@@ -222,4 +222,26 @@ export class AdminController extends Controller {
       throw error;
     }
   }
+
+
+  /**
+   * Refresh authentication tokens
+   * @param body Refresh token
+   */
+  @Post('refresh-token')
+  @NoSecurity()
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
+  @Response(StatusCodes.UNAUTHORIZED, "Invalid Token")
+  public async refreshToken(
+    @Body() body: { refreshToken: string }
+  ): Promise<SuccessResponse<{ tokens: AuthTokens }>> {
+    try {
+      const result = await AuthService.refreshToken(body);
+      return success(result, 'Tokens refreshed successfully');
+    } catch (error: any) {
+      this.setStatus(error instanceof APIError ? error.getStatusCode() : 500);
+      throw error;
+    }
+  }
 }
