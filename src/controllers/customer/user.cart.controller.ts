@@ -44,7 +44,7 @@ interface ClearCartRequest {
 }
 
 interface AuthRequest {
-  user: { id: string };
+  user: { userId: string };
 }
 
 
@@ -65,10 +65,10 @@ export class UserCartController extends Controller {
    * Validate user authentication
    */
   private validateUser(req: AuthRequest): string {
-    if (!req.user?.id) {
+    if (!req.user?.userId) {
       throw new APIError('Unauthorized - User not authenticated', 401);
     }
-    return req.user.id;
+    return req.user.userId;
   }
 
   /**
@@ -125,7 +125,7 @@ export class UserCartController extends Controller {
       this.setStatus(200);
       return success(cart, 'Item added to cart successfully');
     } catch (error) {
-      return this.handleError(error, 'addToCart', req.user?.id);
+      return this.handleError(error, 'addToCart', req.user?.userId);
     }
   }
 
@@ -154,7 +154,7 @@ export class UserCartController extends Controller {
       this.setStatus(200);
       return success(cart, 'Cart fetched successfully');
     } catch (error) {
-      return this.handleError(error, 'getCart', req.user?.id);
+      return this.handleError(error, 'getCart', req.user?.userId);
     }
   }
 
@@ -185,7 +185,7 @@ export class UserCartController extends Controller {
       this.setStatus(200);
       return success(cart, message);
     } catch (error) {
-      return this.handleError(error, 'updateCartItem', req.user?.id);
+      return this.handleError(error, 'updateCartItem', req.user?.userId);
     }
   }
 
@@ -213,7 +213,7 @@ export class UserCartController extends Controller {
       this.setStatus(200);
       return success(cart, 'Item removed from cart successfully');
     } catch (error) {
-      return this.handleError(error, 'removeFromCart', req.user?.id);
+      return this.handleError(error, 'removeFromCart', req.user?.userId);
     }
   }
 
@@ -240,7 +240,7 @@ export class UserCartController extends Controller {
         'Cart cleared successfully'
       );
     } catch (error) {
-      return this.handleError(error, 'clearCart', req.user?.id);
+      return this.handleError(error, 'clearCart', req.user?.userId);
     }
   }
 
@@ -265,7 +265,7 @@ export class UserCartController extends Controller {
       this.setStatus(200);
       return success(cart, 'Coupon applied successfully');
     } catch (error) {
-      return this.handleError(error, 'applyCoupon', req.user?.id);
+      return this.handleError(error, 'applyCoupon', req.user?.userId);
     }
   }
 
@@ -295,7 +295,7 @@ export class UserCartController extends Controller {
       this.setStatus(200);
       return success(cart, 'Delivery information set successfully');
     } catch (error) {
-      return this.handleError(error, 'setDeliveryInfo', req.user?.id);
+      return this.handleError(error, 'setDeliveryInfo', req.user?.userId);
     }
   }
 
@@ -315,7 +315,7 @@ export class UserCartController extends Controller {
       this.setStatus(200);
       return success(summary, 'Cart summary retrieved successfully');
     } catch (error) {
-      return this.handleError(error, 'getCartSummary', req.user?.id);
+      return this.handleError(error, 'getCartSummary', req.user?.userId);
     }
   }
 }
