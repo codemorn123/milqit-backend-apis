@@ -62,8 +62,11 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  optionsSuccessStatus: 204,
+  maxAge: 86400 // 24 hours
 }));
 
 app.use(compression());
@@ -80,7 +83,7 @@ app.use(express.json());
 app.use(urlencoded({ extended: true }));
 
 app.use(pinoHttp({ logger }));
-app.use(errorHandler);
+
 app.get('/health', (_req, res) => {
   res.status(200).json({
     status: 'ok',
@@ -116,6 +119,13 @@ app.use((error: any, req: express.Request, res: express.Response, next: express.
     method: req.method,
     contentType: req.get('Content-Type')
   });
+
+  // Ensure CORS headers are set on error responses
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
 
   if (error.code === 'LIMIT_FILE_SIZE') {
     return res.status(400).json({
@@ -169,6 +179,8 @@ app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
   return res.send(swaggerUi.generateHTML(customSwagger));
 });
 
+// Error handler should be last
+app.use(errorHandler);
 
 export { app };
 
