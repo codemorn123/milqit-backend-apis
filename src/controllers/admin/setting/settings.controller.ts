@@ -8,6 +8,7 @@ import {
   Tags,
   Controller,
   Put,
+  Get,
   Body,
   Middlewares,
   Security,
@@ -29,5 +30,15 @@ export class AdminSettingsController extends Controller {
   ): Promise<SuccessDataResponse<ISettings>> {
     const result = await settingsService.updateSettings(requestBody);
     return success(result, 'Application settings updated successfully');
+  }
+
+  /**
+   * Get application settings
+   */
+  @Get("/")
+  @SuccessResponse(StatusCodes.OK, "Success")
+  public async getSettings(): Promise<SuccessDataResponse<Partial<ISettings>>> {
+    const result = await settingsService.getSettings();
+    return success(result, 'Application settings retrieved successfully');
   }
 }

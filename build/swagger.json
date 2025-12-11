@@ -3104,6 +3104,73 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SuccessResponse_IOrder_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IOrder"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ICreateOrderRequest": {
+				"properties": {
+					"user": {
+						"type": "string"
+					},
+					"items": {
+						"items": {
+							"properties": {
+								"quantity": {
+									"type": "number",
+									"format": "double"
+								},
+								"product": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"quantity",
+								"product"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"shippingAddress": {
+						"$ref": "#/components/schemas/IShippingAddress"
+					},
+					"paymentMethod": {
+						"$ref": "#/components/schemas/PaymentMethod"
+					},
+					"notes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user",
+					"items",
+					"shippingAddress",
+					"paymentMethod"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PaginatedResponse_IOrder_": {
 				"properties": {
 					"docs": {
@@ -3179,140 +3246,6 @@
 					"success",
 					"message",
 					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"OrderFilterQueryParams": {
-				"properties": {
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit": {
-						"type": "number",
-						"format": "double"
-					},
-					"orderStatus": {
-						"$ref": "#/components/schemas/OrderStatus"
-					},
-					"paymentStatus": {
-						"$ref": "#/components/schemas/PaymentStatus"
-					},
-					"user": {
-						"type": "string"
-					},
-					"orderNumber": {
-						"type": "string"
-					},
-					"startDate": {
-						"type": "string"
-					},
-					"endDate": {
-						"type": "string"
-					},
-					"sortBy": {
-						"type": "string"
-					},
-					"sortOrder": {
-						"type": "string",
-						"enum": [
-							"asc",
-							"desc"
-						]
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_IOrder_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/IOrder"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IUpdateOrderRequest": {
-				"properties": {
-					"orderStatus": {
-						"$ref": "#/components/schemas/OrderStatus"
-					},
-					"paymentStatus": {
-						"$ref": "#/components/schemas/PaymentStatus"
-					},
-					"trackingNumber": {
-						"type": "string"
-					},
-					"estimatedDelivery": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"cancellationReason": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"NullSuccessResponse": {
-				"$ref": "#/components/schemas/SuccessResponse_null_"
-			},
-			"ICreateOrderRequest": {
-				"properties": {
-					"user": {
-						"type": "string"
-					},
-					"items": {
-						"items": {
-							"properties": {
-								"quantity": {
-									"type": "number",
-									"format": "double"
-								},
-								"product": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"quantity",
-								"product"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					},
-					"shippingAddress": {
-						"$ref": "#/components/schemas/IShippingAddress"
-					},
-					"paymentMethod": {
-						"$ref": "#/components/schemas/PaymentMethod"
-					},
-					"notes": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"user",
-					"items",
-					"shippingAddress",
-					"paymentMethod"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3786,6 +3719,9 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"NullSuccessResponse": {
+				"$ref": "#/components/schemas/SuccessResponse_null_"
 			},
 			"SuccessResponse_ILiveLocation-Array_": {
 				"properties": {
@@ -5127,6 +5063,77 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Pagination": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"pages": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"total",
+					"page",
+					"limit",
+					"pages"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaginatedList_IUser_": {
+				"properties": {
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IUser"
+						},
+						"type": "array"
+					},
+					"meta": {
+						"$ref": "#/components/schemas/Pagination"
+					}
+				},
+				"required": [
+					"data",
+					"meta"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_PaginatedList_IUser__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/PaginatedList_IUser_"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"SuccessResponse_IReelResponse_": {
 				"properties": {
 					"success": {
@@ -5578,6 +5585,103 @@
 							}
 						],
 						"nullable": true
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OrderFilterQueryParams": {
+				"properties": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderStatus": {
+						"$ref": "#/components/schemas/OrderStatus"
+					},
+					"paymentStatus": {
+						"$ref": "#/components/schemas/PaymentStatus"
+					},
+					"user": {
+						"type": "string"
+					},
+					"orderNumber": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"endDate": {
+						"type": "string"
+					},
+					"sortBy": {
+						"type": "string"
+					},
+					"sortOrder": {
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUpdateOrderRequest": {
+				"properties": {
+					"orderStatus": {
+						"$ref": "#/components/schemas/OrderStatus"
+					},
+					"paymentStatus": {
+						"$ref": "#/components/schemas/PaymentStatus"
+					},
+					"trackingNumber": {
+						"type": "string"
+					},
+					"estimatedDelivery": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"cancellationReason": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__updated-number__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"updated": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"updated"
+						],
+						"type": "object"
 					}
 				},
 				"required": [
@@ -10632,843 +10736,7 @@
 				}
 			}
 		},
-		"/admin/orders": {
-			"get": {
-				"operationId": "GetAllOrders",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"page": 1,
-											"limit": 10,
-											"orderStatus": "pending",
-											"paymentStatus": "paid",
-											"sortBy": "createdAt",
-											"sortOrder": "desc"
-										}
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get all orders with pagination and filters",
-				"summary": "Get list of all orders",
-				"tags": [
-					"ADMIN: Orders"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "orderStatus",
-						"required": false,
-						"schema": {
-							"$ref": "#/components/schemas/OrderStatus"
-						}
-					},
-					{
-						"in": "query",
-						"name": "paymentStatus",
-						"required": false,
-						"schema": {
-							"$ref": "#/components/schemas/PaymentStatus"
-						}
-					},
-					{
-						"in": "query",
-						"name": "user",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "orderNumber",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "startDate",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "endDate",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					}
-				]
-			}
-		},
-		"/admin/orders/{id}": {
-			"get": {
-				"operationId": "GetOrderById",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get a single order by its ID",
-				"summary": "Get order details",
-				"tags": [
-					"ADMIN: Orders"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "UpdateOrder",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"orderStatus": "confirmed",
-											"paymentStatus": "paid",
-											"trackingNumber": "TRK123456789",
-											"estimatedDelivery": "2025-10-05T00:00:00.000Z"
-										}
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Update order status and details",
-				"summary": "Update order",
-				"tags": [
-					"ADMIN: Orders"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/IUpdateOrderRequest"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteOrder",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/NullSuccessResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Delete an order",
-				"summary": "Delete order",
-				"tags": [
-					"ADMIN: Orders"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/admin/orders/order-number/{orderNumber}": {
-			"get": {
-				"operationId": "GetOrderByOrderNumber",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get order by order number",
-				"summary": "Get order by order number",
-				"tags": [
-					"ADMIN: Orders"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "orderNumber",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/admin/orders/{id}/cancel": {
-			"post": {
-				"operationId": "CancelOrder",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Cancel an order",
-				"summary": "Cancel order",
-				"tags": [
-					"ADMIN: Orders"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"reason": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"reason"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/admin/orders/stats/overview": {
-			"get": {
-				"operationId": "GetOrderStats",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_any_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get order statistics",
-				"summary": "Get order statistics",
-				"tags": [
-					"ADMIN: Orders"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/user/orders": {
+		"/customer/orders": {
 			"post": {
 				"operationId": "CreateOrder",
 				"responses": {
@@ -11478,35 +10746,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"user": "60f7b3b3b3f1b40015c8e8a1",
-											"items": [
-												{
-													"product": "60f7b3b3b3f1b40015c8e8a2",
-													"quantity": 2
-												},
-												{
-													"product": "60f7b3b3b3f1b40015c8e8a3",
-													"quantity": 1
-												}
-											],
-											"shippingAddress": {
-												"fullName": "John Doe",
-												"phone": "+919876543210",
-												"addressLine1": "123, Main Street",
-												"addressLine2": "Near City Mall",
-												"city": "Mumbai",
-												"state": "Maharashtra",
-												"pincode": "400001",
-												"landmark": "Opposite Bank"
-											},
-											"paymentMethod": "upi",
-											"notes": "Please deliver between 10 AM to 2 PM"
-										}
-									}
 								}
 							}
 						}
@@ -11531,6 +10770,16 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
 					"404": {
 						"description": "Not Found",
 						"content": {
@@ -11542,7 +10791,7 @@
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -11552,12 +10801,16 @@
 						}
 					}
 				},
-				"description": "Create a new order",
-				"summary": "Place a new order",
+				"description": "Create a new order (Place an order)",
+				"summary": "Place a new grocery/vegetable order",
 				"tags": [
-					"USER: Orders"
+					"Customer: Orders"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -11603,6 +10856,16 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
 					"404": {
 						"description": "Not Found",
 						"content": {
@@ -11614,7 +10877,7 @@
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -11624,20 +10887,43 @@
 						}
 					}
 				},
-				"description": "Get user's orders",
+				"description": "Get user's orders with pagination",
 				"summary": "Get my orders",
 				"tags": [
-					"USER: Orders"
+					"Customer: Orders"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",
-						"name": "page",
+						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderStatus",
+						"required": false,
+						"schema": {
+							"type": "string"
 						}
 					},
 					{
@@ -11651,76 +10937,17 @@
 					},
 					{
 						"in": "query",
-						"name": "orderStatus",
+						"name": "page",
 						"required": false,
 						"schema": {
-							"$ref": "#/components/schemas/OrderStatus"
-						}
-					},
-					{
-						"in": "query",
-						"name": "paymentStatus",
-						"required": false,
-						"schema": {
-							"$ref": "#/components/schemas/PaymentStatus"
-						}
-					},
-					{
-						"in": "query",
-						"name": "user",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "orderNumber",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "startDate",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "endDate",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
 			}
 		},
-		"/user/orders/{id}": {
+		"/customer/orders/{id}": {
 			"get": {
 				"operationId": "GetOrderById",
 				"responses": {
@@ -11754,18 +10981,14 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Access Denied"
+					},
 					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
+						"description": "Order Not Found"
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -11776,11 +10999,15 @@
 					}
 				},
 				"description": "Get specific order details",
-				"summary": "Get order details",
+				"summary": "Get order details by ID",
 				"tags": [
-					"USER: Orders"
+					"Customer: Orders"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -11793,9 +11020,9 @@
 				]
 			}
 		},
-		"/user/orders/{id}/cancel": {
-			"post": {
-				"operationId": "CancelOrder",
+		"/customer/orders/track/{orderNumber}": {
+			"get": {
+				"operationId": "TrackOrder",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -11827,6 +11054,89 @@
 							}
 						}
 					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Order Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Track order status",
+				"summary": "Track order by order number",
+				"tags": [
+					"Customer: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderNumber",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/customer/orders/{id}/cancel": {
+			"post": {
+				"operationId": "CancelOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Cannot cancel order in current state"
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
 					"404": {
 						"description": "Not Found",
 						"content": {
@@ -11838,7 +11148,7 @@
 						}
 					},
 					"500": {
-						"description": "Server Error",
+						"description": "Internal Server Error",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -11851,9 +11161,13 @@
 				"description": "Cancel user's order",
 				"summary": "Cancel my order",
 				"tags": [
-					"USER: Orders"
+					"Customer: Orders"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -11882,6 +11196,287 @@
 						}
 					}
 				}
+			}
+		},
+		"/customer/orders/active": {
+			"get": {
+				"operationId": "GetActiveOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get active orders (pending, confirmed, shipped)",
+				"summary": "Get my active orders",
+				"tags": [
+					"Customer: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/customer/orders/history": {
+			"get": {
+				"operationId": "GetOrderHistory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get order history (delivered orders)",
+				"summary": "Get my order history",
+				"tags": [
+					"Customer: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/customer/orders/{id}/reorder": {
+			"post": {
+				"operationId": "Reorder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Reorder - Create a new order from a previous order",
+				"summary": "Reorder from previous order",
+				"tags": [
+					"Customer: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/customer/notifications": {
@@ -14268,10 +13863,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/IUser"
-									},
-									"type": "array"
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedList_IUser__"
 								}
 							}
 						}
@@ -14295,6 +13887,26 @@
 					}
 				],
 				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"default": 1,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 10,
+							"format": "double",
+							"type": "number"
+						}
+					},
 					{
 						"in": "query",
 						"name": "status",
@@ -15678,6 +15290,1502 @@
 						}
 					}
 				]
+			}
+		},
+		"/admin/orders": {
+			"get": {
+				"operationId": "GetAllOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"page": 1,
+											"limit": 20,
+											"orderStatus": "pending",
+											"paymentStatus": "paid",
+											"sortBy": "createdAt",
+											"sortOrder": "desc"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all orders with pagination and filters",
+				"summary": "Get list of all orders with advanced filtering",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderStatus",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/OrderStatus"
+						}
+					},
+					{
+						"in": "query",
+						"name": "paymentStatus",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/PaymentStatus"
+						}
+					},
+					{
+						"in": "query",
+						"name": "user",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderNumber",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "startDate",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "endDate",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/{id}": {
+			"get": {
+				"operationId": "GetOrderById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Order Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a single order by its ID with full details",
+				"summary": "Get order details",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"orderStatus": "confirmed",
+											"paymentStatus": "paid",
+											"trackingNumber": "TRK123456789",
+											"estimatedDelivery": "2025-12-15T00:00:00.000Z"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update order status and details",
+				"summary": "Update order (for status changes, tracking, etc.)",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUpdateOrderRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse____"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete an order (soft delete)",
+				"summary": "Delete order",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/order-number/{orderNumber}": {
+			"get": {
+				"operationId": "GetOrderByOrderNumber",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Order Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get order by order number",
+				"summary": "Get order by order number",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderNumber",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/{id}/confirm": {
+			"post": {
+				"operationId": "ConfirmOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid Order State"
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Confirm an order (move from pending to confirmed)",
+				"summary": "Confirm order",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"estimatedDelivery": {
+										"type": "string",
+										"format": "date-time"
+									}
+								},
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/orders/{id}/dispatch": {
+			"post": {
+				"operationId": "DispatchOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid Order State"
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Dispatch an order (assign for delivery)",
+				"summary": "Dispatch order for delivery",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"deliveryPartner": {
+										"type": "string"
+									},
+									"estimatedDelivery": {
+										"type": "string",
+										"format": "date-time"
+									},
+									"trackingNumber": {
+										"type": "string"
+									}
+								},
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/orders/{id}/out-for-delivery": {
+			"post": {
+				"operationId": "OutForDelivery",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Mark order as out for delivery",
+				"summary": "Mark order as out for delivery",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/{id}/deliver": {
+			"post": {
+				"operationId": "DeliverOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid Order State"
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Mark order as delivered",
+				"summary": "Mark order as delivered",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"deliveryNotes": {
+										"type": "string"
+									}
+								},
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/orders/{id}/cancel": {
+			"post": {
+				"operationId": "CancelOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cancel an order",
+				"summary": "Cancel order",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"reason": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"reason"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/orders/{id}/refund": {
+			"post": {
+				"operationId": "RefundOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Process refund for an order",
+				"summary": "Process refund",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"refundAmount": {
+										"type": "number",
+										"format": "double"
+									},
+									"reason": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"reason"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/orders/analytics/stats": {
+			"get": {
+				"operationId": "GetOrderStats",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_any_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get order statistics",
+				"summary": "Get order statistics and analytics",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/orders/pending-dispatch": {
+			"get": {
+				"operationId": "GetPendingDispatchOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get orders pending dispatch",
+				"summary": "Get orders that need to be dispatched",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/active-deliveries": {
+			"get": {
+				"operationId": "GetActiveDeliveries",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IOrder__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get active deliveries (orders currently being delivered)",
+				"summary": "Get orders currently out for delivery",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/admin/orders/bulk/update-status": {
+			"put": {
+				"operationId": "BulkUpdateStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__updated-number__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Bulk update order status",
+				"summary": "Bulk update multiple orders",
+				"tags": [
+					"ADMIN: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"orderStatus": {
+										"$ref": "#/components/schemas/OrderStatus"
+									},
+									"orderIds": {
+										"items": {
+											"type": "string"
+										},
+										"type": "array"
+									}
+								},
+								"required": [
+									"orderStatus",
+									"orderIds"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/admin/categories": {
@@ -17629,6 +18737,31 @@
 						}
 					}
 				}
+			},
+			"get": {
+				"operationId": "GetSettings",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessDataResponse_Partial_ISettings__"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get application settings",
+				"tags": [
+					"ADMIN: Settings"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/admin/cms/notifications": {

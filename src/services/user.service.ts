@@ -27,6 +27,24 @@ const UserService = {
         return UserModel.findById(id).where('isActive', true).exec();
     },
 
+    /**
+     * Get user by ID and validate status.
+     * Throws specific errors if not found or inactive.
+     */
+    async getAndValidateUser(userId: string): Promise<IUser> {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
+        }
+        const user = await UserModel.findById(userId).exec();
+        if (!user) {
+            throw new PresentableError('NOT_FOUND', 'User not found');
+        }
+        if (!user.isActive) {
+            throw new PresentableError('UNAUTHORIZED', 'Account deactivated. Please contact support.');
+        }
+        return user;
+    },
+
 
     /**
      * Create a new user
@@ -107,10 +125,7 @@ const UserService = {
         }
 
         try {
-            const user = await this.getActiveUserById(userId);
-            if (!user) {
-                throw new PresentableError('NOT_FOUND', 'User not found');
-            }
+            await this.getAndValidateUser(userId);
 
             // Add address with unique ID
             const addressId = new mongoose.Types.ObjectId().toString();
@@ -144,10 +159,7 @@ const UserService = {
         }
 
         try {
-            const user = await this.getActiveUserById(userId);
-            if (!user) {
-                throw new PresentableError('NOT_FOUND', 'User not found');
-            }
+            const user = await this.getAndValidateUser(userId);
 
             // Find the address
             const addressExists = user.addresses?.some(addr => addr.id === addressId);
@@ -184,6 +196,7 @@ const UserService = {
         }
 
         try {
+            await this.getAndValidateUser(userId);
             // Validate coordinates
             if (!location.latitude || !location.longitude) {
                 throw new PresentableError('BAD_REQUEST', 'Invalid location coordinates');
@@ -229,10 +242,7 @@ const UserService = {
         }
 
         try {
-            const user = await this.getActiveUserById(userId);
-            if (!user) {
-                throw new PresentableError('NOT_FOUND', 'User not found');
-            }
+            const user = await this.getAndValidateUser(userId);
 
             // Remove address
             const updatedUser = await UserModel.findByIdAndUpdate(
@@ -301,6 +311,7 @@ const UserService = {
         }
 
         try {
+            await this.getAndValidateUser(userId);
             await UserModel.findByIdAndUpdate(
                 userId,
                 {
@@ -326,6 +337,7 @@ const UserService = {
         }
 
         try {
+            await this.getAndValidateUser(userId);
             // Prevent updating sensitive fields directly
             delete data.passwordHash;
             delete data.roles;
@@ -364,6 +376,7 @@ const UserService = {
         }
 
         try {
+            await this.getAndValidateUser(userId);
             const user = await UserModel.findByIdAndUpdate(
                 userId,
                 {

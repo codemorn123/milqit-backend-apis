@@ -22,9 +22,7 @@ import { CustomerReelController } from './../controllers/customer/reel.controlle
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { PaymentController } from './../controllers/customer/payment.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AdminOrderController } from './../controllers/customer/order.controller';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UserOrderController } from './../controllers/customer/order.controller';
+import { CustomerOrderController } from './../controllers/customer/order.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CustomerNotificationController } from './../controllers/customer/notification.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -51,6 +49,8 @@ import { AdminUsersController } from './../controllers/admin/admin.users.control
 import { AdminReelController } from './../controllers/admin/admin.reel.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AdminProductController } from './../controllers/admin/admin.product.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AdminOrderController } from './../controllers/admin/admin.order.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AdminCategoryController } from './../controllers/admin/admin.categories.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -1014,6 +1014,28 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IOrder_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"IOrder","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ICreateOrderRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "user": {"dataType":"string","required":true},
+            "items": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"quantity":{"dataType":"double","required":true},"product":{"dataType":"string","required":true}}},"required":true},
+            "shippingAddress": {"ref":"IShippingAddress","required":true},
+            "paymentMethod": {"ref":"PaymentMethod","required":true},
+            "notes": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PaginatedResponse_IOrder_": {
         "dataType": "refObject",
         "properties": {
@@ -1036,62 +1058,6 @@ const models: TsoaRoute.Models = {
             "success": {"dataType":"enum","enums":[true],"required":true},
             "message": {"dataType":"string","required":true},
             "result": {"ref":"PaginatedResponse_IOrder_","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "OrderFilterQueryParams": {
-        "dataType": "refObject",
-        "properties": {
-            "page": {"dataType":"double"},
-            "limit": {"dataType":"double"},
-            "orderStatus": {"ref":"OrderStatus"},
-            "paymentStatus": {"ref":"PaymentStatus"},
-            "user": {"dataType":"string"},
-            "orderNumber": {"dataType":"string"},
-            "startDate": {"dataType":"string"},
-            "endDate": {"dataType":"string"},
-            "sortBy": {"dataType":"string"},
-            "sortOrder": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse_IOrder_": {
-        "dataType": "refObject",
-        "properties": {
-            "success": {"dataType":"enum","enums":[true],"required":true},
-            "message": {"dataType":"string","required":true},
-            "result": {"ref":"IOrder","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IUpdateOrderRequest": {
-        "dataType": "refObject",
-        "properties": {
-            "orderStatus": {"ref":"OrderStatus"},
-            "paymentStatus": {"ref":"PaymentStatus"},
-            "trackingNumber": {"dataType":"string"},
-            "estimatedDelivery": {"dataType":"datetime"},
-            "cancellationReason": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "NullSuccessResponse": {
-        "dataType": "refAlias",
-        "type": {"ref":"SuccessResponse_null_","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ICreateOrderRequest": {
-        "dataType": "refObject",
-        "properties": {
-            "user": {"dataType":"string","required":true},
-            "items": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"quantity":{"dataType":"double","required":true},"product":{"dataType":"string","required":true}}},"required":true},
-            "shippingAddress": {"ref":"IShippingAddress","required":true},
-            "paymentMethod": {"ref":"PaymentMethod","required":true},
-            "notes": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -1265,6 +1231,11 @@ const models: TsoaRoute.Models = {
             "result": {"dataType":"union","subSchemas":[{"ref":"ILiveLocation"},{"dataType":"enum","enums":[null]}],"required":true},
         },
         "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "NullSuccessResponse": {
+        "dataType": "refAlias",
+        "type": {"ref":"SuccessResponse_null_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SuccessResponse_ILiveLocation-Array_": {
@@ -1725,6 +1696,36 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pagination": {
+        "dataType": "refObject",
+        "properties": {
+            "total": {"dataType":"double","required":true},
+            "page": {"dataType":"double","required":true},
+            "limit": {"dataType":"double","required":true},
+            "pages": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaginatedList_IUser_": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"IUser"},"required":true},
+            "meta": {"ref":"Pagination","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_PaginatedList_IUser__": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"PaginatedList_IUser_","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SuccessResponse_IReelResponse_": {
         "dataType": "refObject",
         "properties": {
@@ -1873,6 +1874,45 @@ const models: TsoaRoute.Models = {
             "success": {"dataType":"enum","enums":[true],"required":true},
             "message": {"dataType":"string","required":true},
             "result": {"dataType":"union","subSchemas":[{"ref":"IProduct"},{"dataType":"enum","enums":[null]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OrderFilterQueryParams": {
+        "dataType": "refObject",
+        "properties": {
+            "page": {"dataType":"double"},
+            "limit": {"dataType":"double"},
+            "orderStatus": {"ref":"OrderStatus"},
+            "paymentStatus": {"ref":"PaymentStatus"},
+            "user": {"dataType":"string"},
+            "orderNumber": {"dataType":"string"},
+            "startDate": {"dataType":"string"},
+            "endDate": {"dataType":"string"},
+            "sortBy": {"dataType":"string"},
+            "sortOrder": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUpdateOrderRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "orderStatus": {"ref":"OrderStatus"},
+            "paymentStatus": {"ref":"PaymentStatus"},
+            "trackingNumber": {"dataType":"string"},
+            "estimatedDelivery": {"dataType":"datetime"},
+            "cancellationReason": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse__updated-number__": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"updated":{"dataType":"double","required":true}},"required":true},
         },
         "additionalProperties": false,
     },
@@ -3746,233 +3786,24 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAdminOrderController_getAllOrders: Record<string, TsoaRoute.ParameterSchema> = {
-                filter: {"in":"queries","name":"filter","required":true,"ref":"OrderFilterQueryParams"},
-        };
-        app.get('/admin/orders',
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getAllOrders)),
-
-            async function AdminOrderController_getAllOrders(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getAllOrders, request, response });
-
-                const controller = new AdminOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'getAllOrders',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAdminOrderController_getOrderById: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-        };
-        app.get('/admin/orders/:id',
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getOrderById)),
-
-            async function AdminOrderController_getOrderById(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getOrderById, request, response });
-
-                const controller = new AdminOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'getOrderById',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAdminOrderController_getOrderByOrderNumber: Record<string, TsoaRoute.ParameterSchema> = {
-                orderNumber: {"in":"path","name":"orderNumber","required":true,"dataType":"string"},
-        };
-        app.get('/admin/orders/order-number/:orderNumber',
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getOrderByOrderNumber)),
-
-            async function AdminOrderController_getOrderByOrderNumber(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getOrderByOrderNumber, request, response });
-
-                const controller = new AdminOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'getOrderByOrderNumber',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAdminOrderController_updateOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                data: {"in":"body","name":"data","required":true,"ref":"IUpdateOrderRequest"},
-        };
-        app.put('/admin/orders/:id',
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.updateOrder)),
-
-            async function AdminOrderController_updateOrder(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_updateOrder, request, response });
-
-                const controller = new AdminOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'updateOrder',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAdminOrderController_cancelOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
-        };
-        app.post('/admin/orders/:id/cancel',
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.cancelOrder)),
-
-            async function AdminOrderController_cancelOrder(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_cancelOrder, request, response });
-
-                const controller = new AdminOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'cancelOrder',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAdminOrderController_deleteOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-        };
-        app.delete('/admin/orders/:id',
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.deleteOrder)),
-
-            async function AdminOrderController_deleteOrder(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_deleteOrder, request, response });
-
-                const controller = new AdminOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'deleteOrder',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAdminOrderController_getOrderStats: Record<string, TsoaRoute.ParameterSchema> = {
-        };
-        app.get('/admin/orders/stats/overview',
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getOrderStats)),
-
-            async function AdminOrderController_getOrderStats(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getOrderStats, request, response });
-
-                const controller = new AdminOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'getOrderStats',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserOrderController_createOrder: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsCustomerOrderController_createOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 data: {"in":"body","name":"data","required":true,"ref":"ICreateOrderRequest"},
         };
-        app.post('/user/orders',
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController.prototype.createOrder)),
+        app.post('/customer/orders',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.createOrder)),
 
-            async function UserOrderController_createOrder(request: ExRequest, response: ExResponse, next: any) {
+            async function CustomerOrderController_createOrder(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserOrderController_createOrder, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_createOrder, request, response });
 
-                const controller = new UserOrderController();
+                const controller = new CustomerOrderController();
 
               await templateService.apiHandler({
                 methodName: 'createOrder',
@@ -3987,22 +3818,24 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserOrderController_getMyOrders: Record<string, TsoaRoute.ParameterSchema> = {
-                filter: {"in":"queries","name":"filter","required":true,"ref":"OrderFilterQueryParams"},
+        const argsCustomerOrderController_getMyOrders: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                filter: {"in":"queries","name":"filter","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"sortOrder":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},"sortBy":{"dataType":"string"},"orderStatus":{"dataType":"string"},"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
         };
-        app.get('/user/orders',
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController.prototype.getMyOrders)),
+        app.get('/customer/orders',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.getMyOrders)),
 
-            async function UserOrderController_getMyOrders(request: ExRequest, response: ExResponse, next: any) {
+            async function CustomerOrderController_getMyOrders(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserOrderController_getMyOrders, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_getMyOrders, request, response });
 
-                const controller = new UserOrderController();
+                const controller = new CustomerOrderController();
 
               await templateService.apiHandler({
                 methodName: 'getMyOrders',
@@ -4017,22 +3850,24 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserOrderController_getOrderById: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsCustomerOrderController_getOrderById: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/user/orders/:id',
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController.prototype.getOrderById)),
+        app.get('/customer/orders/:id',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.getOrderById)),
 
-            async function UserOrderController_getOrderById(request: ExRequest, response: ExResponse, next: any) {
+            async function CustomerOrderController_getOrderById(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserOrderController_getOrderById, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_getOrderById, request, response });
 
-                const controller = new UserOrderController();
+                const controller = new CustomerOrderController();
 
               await templateService.apiHandler({
                 methodName: 'getOrderById',
@@ -4047,26 +3882,156 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserOrderController_cancelOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+        const argsCustomerOrderController_trackOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                orderNumber: {"in":"path","name":"orderNumber","required":true,"dataType":"string"},
         };
-        app.post('/user/orders/:id/cancel',
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(UserOrderController.prototype.cancelOrder)),
+        app.get('/customer/orders/track/:orderNumber',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.trackOrder)),
 
-            async function UserOrderController_cancelOrder(request: ExRequest, response: ExResponse, next: any) {
+            async function CustomerOrderController_trackOrder(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserOrderController_cancelOrder, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_trackOrder, request, response });
 
-                const controller = new UserOrderController();
+                const controller = new CustomerOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'trackOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCustomerOrderController_cancelOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+        };
+        app.post('/customer/orders/:id/cancel',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.cancelOrder)),
+
+            async function CustomerOrderController_cancelOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_cancelOrder, request, response });
+
+                const controller = new CustomerOrderController();
 
               await templateService.apiHandler({
                 methodName: 'cancelOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCustomerOrderController_getActiveOrders: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                filter: {"in":"queries","name":"filter","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
+        };
+        app.get('/customer/orders/active',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.getActiveOrders)),
+
+            async function CustomerOrderController_getActiveOrders(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_getActiveOrders, request, response });
+
+                const controller = new CustomerOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getActiveOrders',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCustomerOrderController_getOrderHistory: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                filter: {"in":"queries","name":"filter","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
+        };
+        app.get('/customer/orders/history',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.getOrderHistory)),
+
+            async function CustomerOrderController_getOrderHistory(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_getOrderHistory, request, response });
+
+                const controller = new CustomerOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getOrderHistory',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCustomerOrderController_reorder: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.post('/customer/orders/:id/reorder',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.reorder)),
+
+            async function CustomerOrderController_reorder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_reorder, request, response });
+
+                const controller = new CustomerOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'reorder',
                 controller,
                 response,
                 next,
@@ -4999,6 +4964,8 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAdminUsersController_getUsers: Record<string, TsoaRoute.ParameterSchema> = {
+                page: {"default":1,"in":"query","name":"page","dataType":"double"},
+                limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
                 status: {"in":"query","name":"status","dataType":"union","subSchemas":[{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["inactive"]}]},
         };
         app.get('/admin/users',
@@ -5502,6 +5469,476 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'deleteProduct',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_getAllOrders: Record<string, TsoaRoute.ParameterSchema> = {
+                filter: {"in":"queries","name":"filter","required":true,"ref":"OrderFilterQueryParams"},
+        };
+        app.get('/admin/orders',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getAllOrders)),
+
+            async function AdminOrderController_getAllOrders(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getAllOrders, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getAllOrders',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_getOrderById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/admin/orders/:id',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getOrderById)),
+
+            async function AdminOrderController_getOrderById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getOrderById, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getOrderById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_getOrderByOrderNumber: Record<string, TsoaRoute.ParameterSchema> = {
+                orderNumber: {"in":"path","name":"orderNumber","required":true,"dataType":"string"},
+        };
+        app.get('/admin/orders/order-number/:orderNumber',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getOrderByOrderNumber)),
+
+            async function AdminOrderController_getOrderByOrderNumber(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getOrderByOrderNumber, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getOrderByOrderNumber',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_updateOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                data: {"in":"body","name":"data","required":true,"ref":"IUpdateOrderRequest"},
+        };
+        app.put('/admin/orders/:id',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.updateOrder)),
+
+            async function AdminOrderController_updateOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_updateOrder, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'updateOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_confirmOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"estimatedDelivery":{"dataType":"datetime"}}},
+        };
+        app.post('/admin/orders/:id/confirm',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.confirmOrder)),
+
+            async function AdminOrderController_confirmOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_confirmOrder, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'confirmOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_dispatchOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"deliveryPartner":{"dataType":"string"},"estimatedDelivery":{"dataType":"datetime"},"trackingNumber":{"dataType":"string"}}},
+        };
+        app.post('/admin/orders/:id/dispatch',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.dispatchOrder)),
+
+            async function AdminOrderController_dispatchOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_dispatchOrder, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'dispatchOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_outForDelivery: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.post('/admin/orders/:id/out-for-delivery',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.outForDelivery)),
+
+            async function AdminOrderController_outForDelivery(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_outForDelivery, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'outForDelivery',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_deliverOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"deliveryNotes":{"dataType":"string"}}},
+        };
+        app.post('/admin/orders/:id/deliver',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.deliverOrder)),
+
+            async function AdminOrderController_deliverOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_deliverOrder, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'deliverOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_cancelOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+        };
+        app.post('/admin/orders/:id/cancel',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.cancelOrder)),
+
+            async function AdminOrderController_cancelOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_cancelOrder, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'cancelOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_refundOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"refundAmount":{"dataType":"double"},"reason":{"dataType":"string","required":true}}},
+        };
+        app.post('/admin/orders/:id/refund',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.refundOrder)),
+
+            async function AdminOrderController_refundOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_refundOrder, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'refundOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_deleteOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/admin/orders/:id',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.deleteOrder)),
+
+            async function AdminOrderController_deleteOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_deleteOrder, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_getOrderStats: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/admin/orders/analytics/stats',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getOrderStats)),
+
+            async function AdminOrderController_getOrderStats(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getOrderStats, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getOrderStats',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_getPendingDispatchOrders: Record<string, TsoaRoute.ParameterSchema> = {
+                filter: {"in":"queries","name":"filter","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
+        };
+        app.get('/admin/orders/pending-dispatch',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getPendingDispatchOrders)),
+
+            async function AdminOrderController_getPendingDispatchOrders(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getPendingDispatchOrders, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getPendingDispatchOrders',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_getActiveDeliveries: Record<string, TsoaRoute.ParameterSchema> = {
+                filter: {"in":"queries","name":"filter","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
+        };
+        app.get('/admin/orders/active-deliveries',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.getActiveDeliveries)),
+
+            async function AdminOrderController_getActiveDeliveries(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_getActiveDeliveries, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getActiveDeliveries',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminOrderController_bulkUpdateStatus: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"orderStatus":{"ref":"OrderStatus","required":true},"orderIds":{"dataType":"array","array":{"dataType":"string"},"required":true}}},
+        };
+        app.put('/admin/orders/bulk/update-status',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminOrderController.prototype.bulkUpdateStatus)),
+
+            async function AdminOrderController_bulkUpdateStatus(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminOrderController_bulkUpdateStatus, request, response });
+
+                const controller = new AdminOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'bulkUpdateStatus',
                 controller,
                 response,
                 next,
@@ -6176,6 +6613,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'updateSettings',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminSettingsController_getSettings: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/admin/settings',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminSettingsController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminSettingsController.prototype.getSettings)),
+
+            async function AdminSettingsController_getSettings(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminSettingsController_getSettings, request, response });
+
+                const controller = new AdminSettingsController();
+
+              await templateService.apiHandler({
+                methodName: 'getSettings',
                 controller,
                 response,
                 next,

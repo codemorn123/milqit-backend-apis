@@ -1,4 +1,4 @@
-import { success, SuccessResponse } from './../../utils/SuccessResponse';
+import { success, SuccessResponse, PaginatedList } from './../../utils/SuccessResponse';
 import { IUser } from './../../models/UserModel';
 import { AdminUserService } from './../../services/admin/admin.users.service';
 import { errorSuccess } from '../../utils/SuccessResponse';
@@ -33,15 +33,21 @@ export class AdminUsersController extends Controller {
   @Get("/")
   @Response(StatusCodes.OK, "Users retrieved")
   public async getUsers(
+    @Query() page: number = 1,
+    @Query() limit: number = 10,
     @Query() status?: 'active' | 'inactive'
-  ): Promise<IUser[]> {
-    if (status === 'active') {
-      return this.adminUserService.getAllActiveUsers();
-    }
-    if (status === 'inactive') {
-      return this.adminUserService.getAllInactiveUsers();
-    }
-    return this.adminUserService.getAllUsers();
+  ): Promise<SuccessResponse<PaginatedList<IUser>>> {
+    const { users, total, totalPages } = await this.adminUserService.getUsersPaginated(page, limit, status);
+
+    return success({
+      data: users,
+      meta: {
+        total,
+        page,
+        limit,
+        pages: totalPages
+      }
+    }, "Users retrieved successfully");
   }
 
   /**

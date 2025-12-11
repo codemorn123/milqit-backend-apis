@@ -1,216 +1,264 @@
 import {
-    Body, Controller, Post, Get, Put, Delete, Path, Route, Tags,
-    Middlewares, Response, Example, Queries, SuccessResponse as TsoaSuccessResponse
-  } from 'tsoa';
-  import { StatusCodes } from 'http-status-codes';
-  import { orderService, OrderFilterQueryParams } from '../../services/order.service';
-  import { createOrderSchema, updateOrderSchema } from '../../validations/order.validation';
-  import { success, SuccessResponse, NullSuccessResponse } from '../../utils/SuccessResponse';
-  import { ErrorResponse, PaginatedResponse } from '../../types/common.types';
-  import { IOrder, ICreateOrderRequest, IUpdateOrderRequest } from '../../models/order.model';
-  import { validateSchemaMiddleware } from '../../middleware/common-validate';
-  import { idParamSchema } from '../../constants/common.validator';
-  import APIError from '../../error/api-error';
-  
-  @Tags('ADMIN: Orders')
-  @Route('admin/orders')
-  // @Security('jwt', ['admin'])
-  @Response<ErrorResponse>(400, "Bad Request")
-  @Response<ErrorResponse>(401, "Unauthorized")
-  @Response<ErrorResponse>(403, "Forbidden")
-  @Response<ErrorResponse>(404, "Not Found")
-  @Response<ErrorResponse>(409, "Conflict")
-  @Response<ErrorResponse>(422, "Validation Error")
-  @Response<ErrorResponse>(500, "Server Error")
-  export class AdminOrderController extends Controller {
-    /**
-     * Get all orders with pagination and filters
-     * @summary Get list of all orders
-     */
-    @Get('/')
-    @Example<OrderFilterQueryParams>({
-      page: 1,
-      limit: 10,
-      orderStatus: 'pending',
-      paymentStatus: 'paid',
-      sortBy: 'createdAt',
+  Body, Controller, Post, Get, Put, Path, Route, Tags,
+  Middlewares, Response, Queries, SuccessResponse as TsoaSuccessResponse, Security, Request
+} from 'tsoa';
+import { StatusCodes } from 'http-status-codes';
+import { orderService, OrderFilterQueryParams } from '../../services/order.service';
+import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { PaginatedResponse, ErrorResponse } from '../../types/common.types';
+import { IOrder, ICreateOrderRequest } from '../../models/order.model';
+import { validateSchemaMiddleware } from '../../middleware/common-validate';
+import { idParamSchema } from '../../constants/common.validator';
+import APIError from '../../error/api-error';
+import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
+
+/**
+ * Customer Order Controller
+ * Handles order placement, tracking, and cancellation for customers
+ */
+@Tags('Customer: Orders')
+@Route('customer/orders')
+@Security('jwt')
+@Response<ErrorResponse>(StatusCodes.BAD_REQUEST, 'Bad Request')
+@Response<ErrorResponse>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
+@Response<ErrorResponse>(StatusCodes.FORBIDDEN, 'Forbidden')
+@Response<ErrorResponse>(StatusCodes.NOT_FOUND, 'Not Found')
+@Response<ErrorResponse>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
+export class CustomerOrderController extends Controller {
+
+  /**
+   * Create a new order (Place an order)
+   * @summary Place a new grocery/vegetable order
+   */
+  @Post('/')
+  @Middlewares([jwtAuthMiddleware])
+  @TsoaSuccessResponse(StatusCodes.CREATED, "Created")
+  public async createOrder(
+    @Request() req: any,
+    @Body() data: ICreateOrderRequest
+  ): Promise<SuccessResponse<IOrder>> {
+    // Get user ID from authenticated request
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
+    }
+
+    // Override user from request body with authenticated user
+    const orderData = {
+      ...data,
+      user: userId
+    };
+
+    const order = await orderService.createOrder(orderData);
+    this.setStatus(StatusCodes.CREATED);
+    return success(order, 'Order placed successfully. You will receive updates via notifications.');
+  }
+
+  /**
+   * Get user's orders with pagination
+   * @summary Get my orders
+   */
+  @Get('/')
+  @Middlewares([jwtAuthMiddleware])
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  public async getMyOrders(
+    @Request() req: any,
+    @Queries() filter: { page?: number; limit?: number; orderStatus?: string; sortBy?: string; sortOrder?: 'asc' | 'desc' }
+  ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
+    }
+
+    // Add user filter to only fetch authenticated user's orders
+    const userFilter: any = {
+      ...filter,
+      user: userId
+    };
+
+    const paginatedResult = await orderService.listOrders(userFilter);
+    return success(paginatedResult, 'Your orders fetched successfully.');
+  }
+
+  /**
+   * Get specific order details
+   * @summary Get order details by ID
+   */
+  @Get('{id}')
+  @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
+  @Response(StatusCodes.NOT_FOUND, 'Order Not Found')
+  @Response(StatusCodes.FORBIDDEN, 'Access Denied')
+  public async getOrderById(
+    @Request() req: any,
+    @Path() id: string
+  ): Promise<SuccessResponse<IOrder>> {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
+    }
+
+    const order = await orderService.getOrderById(id);
+
+    // Verify the order belongs to the authenticated user
+    if (order.user.toString() !== userId) {
+      throw new APIError('You do not have permission to view this order', StatusCodes.FORBIDDEN);
+    }
+
+    return success(order, 'Order details fetched successfully.');
+  }
+
+  /**
+   * Track order status
+   * @summary Track order by order number
+   */
+  @Get('track/{orderNumber}')
+  @Middlewares([jwtAuthMiddleware])
+  @Response(StatusCodes.NOT_FOUND, 'Order Not Found')
+  public async trackOrder(
+    @Request() req: any,
+    @Path() orderNumber: string
+  ): Promise<SuccessResponse<IOrder>> {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
+    }
+
+    const order = await orderService.getOrderByOrderNumber(orderNumber);
+
+    // Verify the order belongs to the authenticated user
+    if (order.user.toString() !== userId) {
+      throw new APIError('You do not have permission to track this order', StatusCodes.FORBIDDEN);
+    }
+
+    return success(order, 'Order tracking information retrieved.');
+  }
+
+  /**
+   * Cancel user's order
+   * @summary Cancel my order
+   */
+  @Post('{id}/cancel')
+  @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
+  @Response(StatusCodes.BAD_REQUEST, 'Cannot cancel order in current state')
+  public async cancelOrder(
+    @Request() req: any,
+    @Path() id: string,
+    @Body() body: { reason: string }
+  ): Promise<SuccessResponse<IOrder>> {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
+    }
+
+    if (!body.reason) {
+      throw new APIError('Cancellation reason is required', StatusCodes.BAD_REQUEST);
+    }
+
+    const order = await orderService.getOrderById(id);
+
+    // Verify the order belongs to the authenticated user
+    if (order.user.toString() !== userId) {
+      throw new APIError('You do not have permission to cancel this order', StatusCodes.FORBIDDEN);
+    }
+
+    // Check if order can be cancelled
+    if (['delivered', 'cancelled', 'refunded'].includes(order.orderStatus)) {
+      throw new APIError(
+        `Cannot cancel order that is already ${order.orderStatus}`,
+        StatusCodes.BAD_REQUEST
+      );
+    }
+
+    const cancelledOrder = await orderService.cancelOrder(id, body.reason);
+    return success(cancelledOrder, 'Order cancelled successfully. Refund will be processed if applicable.');
+  }
+
+  /**
+   * Get active orders (pending, confirmed, shipped)
+   * @summary Get my active orders
+   */
+  @Get('active')
+  @Middlewares([jwtAuthMiddleware])
+  public async getActiveOrders(
+    @Request() req: any,
+    @Queries() filter: { page?: number; limit?: number }
+  ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
+    }
+
+    const paginatedResult = await orderService.listOrders({
+      ...filter,
+      user: userId,
+      orderStatus: 'pending' // You might want to filter for multiple statuses
+    });
+
+    return success(paginatedResult, 'Active orders fetched successfully.');
+  }
+
+  /**
+   * Get order history (delivered orders)
+   * @summary Get my order history
+   */
+  @Get('history')
+  @Middlewares([jwtAuthMiddleware])
+  public async getOrderHistory(
+    @Request() req: any,
+    @Queries() filter: { page?: number; limit?: number }
+  ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
+    }
+
+    const paginatedResult = await orderService.listOrders({
+      ...filter,
+      user: userId,
+      orderStatus: 'delivered',
+      sortBy: 'deliveredAt',
       sortOrder: 'desc'
-    })
-    public async getAllOrders(
-      @Queries() filter: OrderFilterQueryParams
-    ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
-      const paginatedResult = await orderService.listOrders(filter);
-      return success(paginatedResult, 'Orders fetched successfully.');
-    }
-  
-    /**
-     * Get a single order by its ID
-     * @summary Get order details
-     */
-    @Get('{id}')
-    @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-    public async getOrderById(@Path() id: string): Promise<SuccessResponse<IOrder>> {
-      const order = await orderService.getOrderById(id);
-      return success(order, 'Order fetched successfully.');
-    }
-  
-    /**
-     * Get order by order number
-     * @summary Get order by order number
-     */
-    @Get('order-number/{orderNumber}')
-    public async getOrderByOrderNumber(@Path() orderNumber: string): Promise<SuccessResponse<IOrder>> {
-      const order = await orderService.getOrderByOrderNumber(orderNumber);
-      return success(order, 'Order fetched successfully.');
-    }
-  
-    /**
-     * Update order status and details
-     * @summary Update order
-     */
-    @Put('{id}')
-    @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-    @Example<IUpdateOrderRequest>({
-      orderStatus: 'confirmed',
-      paymentStatus: 'paid',
-      trackingNumber: 'TRK123456789',
-      estimatedDelivery: new Date('2025-10-05')
-    })
-    public async updateOrder(
-      @Path() id: string,
-      @Body() data: IUpdateOrderRequest
-    ): Promise<SuccessResponse<IOrder>> {
-      const order = await orderService.updateOrder(id, data);
-      return success(order, 'Order updated successfully.');
-    }
-  
-    /**
-     * Cancel an order
-     * @summary Cancel order
-     */
-    @Post('{id}/cancel')
-    @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-    public async cancelOrder(
-      @Path() id: string,
-      @Body() body: { reason: string }
-    ): Promise<SuccessResponse<IOrder>> {
-      if (!body.reason) {
-        throw new APIError('Cancellation reason is required', StatusCodes.BAD_REQUEST);
-      }
-      const order = await orderService.cancelOrder(id, body.reason);
-      return success(order, 'Order cancelled successfully.');
-    }
-  
-    /**
-     * Delete an order
-     * @summary Delete order
-     */
-    @Delete('{id}')
-    @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-    @TsoaSuccessResponse(StatusCodes.NO_CONTENT, "No Content")
-    public async deleteOrder(@Path() id: string): Promise<NullSuccessResponse> {
-      await orderService.deleteOrder(id);
-      this.setStatus(StatusCodes.NO_CONTENT);
-      return success(null, 'Order deleted successfully.');
-    }
-  
-    /**
-     * Get order statistics
-     * @summary Get order statistics
-     */
-    @Get('stats/overview')
-    public async getOrderStats(): Promise<SuccessResponse<any>> {
-      const stats = await orderService.getOrderStats();
-      return success(stats, 'Order statistics fetched successfully.');
-    }
+    });
+
+    return success(paginatedResult, 'Order history fetched successfully.');
   }
-  
-  @Tags('USER: Orders')
-  @Route('user/orders')
-  // @Security('jwt', ['user'])
-  @Response<ErrorResponse>(400, "Bad Request")
-  @Response<ErrorResponse>(401, "Unauthorized")
-  @Response<ErrorResponse>(404, "Not Found")
-  @Response<ErrorResponse>(500, "Server Error")
-  export class UserOrderController extends Controller {
-    /**
-     * Create a new order
-     * @summary Place a new order
-     */
-    @Post('/')
-    @TsoaSuccessResponse(StatusCodes.CREATED, "Created")
-    @Example<ICreateOrderRequest>({
-      user: "60f7b3b3b3f1b40015c8e8a1",
-      items: [
-        {
-          product: "60f7b3b3b3f1b40015c8e8a2",
-          quantity: 2
-        },
-        {
-          product: "60f7b3b3b3f1b40015c8e8a3",
-          quantity: 1
-        }
-      ],
-      shippingAddress: {
-        fullName: "John Doe",
-        phone: "+919876543210",
-        addressLine1: "123, Main Street",
-        addressLine2: "Near City Mall",
-        city: "Mumbai",
-        state: "Maharashtra",
-        pincode: "400001",
-        landmark: "Opposite Bank"
-      },
-      paymentMethod: "upi",
-      notes: "Please deliver between 10 AM to 2 PM"
-    })
-    public async createOrder(
-      @Body() data: ICreateOrderRequest
-    ): Promise<SuccessResponse<IOrder>> {
-      const order = await orderService.createOrder(data);
-      this.setStatus(StatusCodes.CREATED);
-      return success(order, 'Order placed successfully.');
+
+  /**
+   * Reorder - Create a new order from a previous order
+   * @summary Reorder from previous order
+   */
+  @Post('{id}/reorder')
+  @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
+  public async reorder(
+    @Request() req: any,
+    @Path() id: string
+  ): Promise<SuccessResponse<IOrder>> {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
     }
-  
-    /**
-     * Get user's orders
-     * @summary Get my orders
-     */
-    @Get('/')
-    public async getMyOrders(
-      @Queries() filter: OrderFilterQueryParams
-    ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
-      // In real implementation, get userId from authenticated user
-      // For now, using filter.user
-      const paginatedResult = await orderService.listOrders(filter);
-      return success(paginatedResult, 'Orders fetched successfully.');
+
+    const previousOrder = await orderService.getOrderById(id);
+
+    // Verify the order belongs to the authenticated user
+    if (previousOrder.user.toString() !== userId) {
+      throw new APIError('You do not have permission to reorder this order', StatusCodes.FORBIDDEN);
     }
-  
-    /**
-     * Get specific order details
-     * @summary Get order details
-     */
-    @Get('{id}')
-    @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-    public async getOrderById(@Path() id: string): Promise<SuccessResponse<IOrder>> {
-      const order = await orderService.getOrderById(id);
-      return success(order, 'Order fetched successfully.');
-    }
-  
-    /**
-     * Cancel user's order
-     * @summary Cancel my order
-     */
-    @Post('{id}/cancel')
-    @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-    public async cancelOrder(
-      @Path() id: string,
-      @Body() body: { reason: string }
-    ): Promise<SuccessResponse<IOrder>> {
-      if (!body.reason) {
-        throw new APIError('Cancellation reason is required', StatusCodes.BAD_REQUEST);
-      }
-      const order = await orderService.cancelOrder(id, body.reason);
-      return success(order, 'Order cancelled successfully.');
-    }
+
+    // Create new order from previous order
+    const newOrderData: ICreateOrderRequest = {
+      user: userId,
+      items: previousOrder.items.map(item => ({
+        product: item.product.toString(),
+        quantity: item.quantity
+      })),
+      shippingAddress: previousOrder.shippingAddress,
+      paymentMethod: previousOrder.paymentMethod,
+      notes: 'Reordered from previous order'
+    };
+
+    const newOrder = await orderService.createOrder(newOrderData);
+    this.setStatus(StatusCodes.CREATED);
+    return success(newOrder, 'Order recreated successfully.');
   }
+}

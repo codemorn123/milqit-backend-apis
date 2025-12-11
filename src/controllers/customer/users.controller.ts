@@ -55,10 +55,7 @@ export class MobileUserController extends Controller {
     @Request() req: any
   ): Promise<SuccessResponse<IUser>> {
     const userId = req.user.userId;
-    const user = await UserService.getActiveUserById(userId);
-    if (!user) {
-      throw new PresentableError('NOT_FOUND', 'User not found');
-    }
+    const user = await UserService.getAndValidateUser(userId);
     return success(user, 'User profile retrieved successfully');
   }
 
