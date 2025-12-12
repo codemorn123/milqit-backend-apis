@@ -6,6 +6,8 @@ import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { PublicSettingsController } from './../controllers/public/settings.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { DeliveryBoyAuthController } from './../controllers/deliveryBoy/deliveryBoy.auth.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MobileUserController } from './../controllers/customer/users.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CustomerProductController } from './../controllers/customer/user.product.controller';
@@ -51,6 +53,8 @@ import { AdminReelController } from './../controllers/admin/admin.reel.controlle
 import { AdminProductController } from './../controllers/admin/admin.product.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AdminOrderController } from './../controllers/admin/admin.order.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AdminDeliveryBoyController } from './../controllers/admin/admin.deliveryBoy.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AdminDashboardController } from './../controllers/admin/admin.dashboard.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -124,6 +128,172 @@ const models: TsoaRoute.Models = {
             "success": {"dataType":"enum","enums":[true],"required":true},
             "message": {"dataType":"string","required":true},
             "result": {"ref":"Partial_ISettings_","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse__isExistingDeliveryBoy-boolean--otp-string__": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"otp":{"dataType":"string","required":true},"isExistingDeliveryBoy":{"dataType":"boolean","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IDeliveryBoySendOtpInput": {
+        "dataType": "refObject",
+        "properties": {
+            "phone": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IDeliveryBoy": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "phone": {"dataType":"string","required":true},
+            "email": {"dataType":"string"},
+            "passwordHash": {"dataType":"string","required":true},
+            "isActive": {"dataType":"boolean","required":true},
+            "isPhoneVerified": {"dataType":"boolean","required":true},
+            "isEmailVerified": {"dataType":"boolean","required":true},
+            "lastLogin": {"dataType":"datetime"},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "vehicleType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["bike"]},{"dataType":"enum","enums":["scooter"]},{"dataType":"enum","enums":["bicycle"]},{"dataType":"enum","enums":["car"]}]},
+            "vehicleNumber": {"dataType":"string"},
+            "drivingLicenseNumber": {"dataType":"string"},
+            "aadharNumber": {"dataType":"string"},
+            "panNumber": {"dataType":"string"},
+            "isDocumentVerified": {"dataType":"boolean","required":true},
+            "isBackgroundCheckDone": {"dataType":"boolean","required":true},
+            "isAvailable": {"dataType":"boolean","required":true},
+            "currentLocation": {"dataType":"nestedObjectLiteral","nestedProperties":{"coordinates":{"dataType":"array","array":{"dataType":"double"},"required":true},"type":{"dataType":"string","required":true}}},
+            "lastLocationUpdate": {"dataType":"datetime"},
+            "deliveryZone": {"dataType":"array","array":{"dataType":"string"}},
+            "totalDeliveries": {"dataType":"double","required":true},
+            "completedDeliveries": {"dataType":"double","required":true},
+            "cancelledDeliveries": {"dataType":"double","required":true},
+            "averageRating": {"dataType":"double","required":true},
+            "bankAccountNumber": {"dataType":"string"},
+            "ifscCode": {"dataType":"string"},
+            "bankAccountHolderName": {"dataType":"string"},
+            "upiId": {"dataType":"string"},
+            "emergencyContactName": {"dataType":"string"},
+            "emergencyContactPhone": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AuthTokens": {
+        "dataType": "refObject",
+        "properties": {
+            "accessToken": {"dataType":"string","required":true},
+            "refreshToken": {"dataType":"string","required":true},
+            "expiresIn": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IDeliveryBoyAuthResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "deliveryBoy": {"ref":"IDeliveryBoy","required":true},
+            "tokens": {"ref":"AuthTokens","required":true},
+            "isNewDeliveryBoy": {"dataType":"boolean","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IDeliveryBoyAuthResponse_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"IDeliveryBoyAuthResponse","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IDeliveryBoyVerifyOtpInput": {
+        "dataType": "refObject",
+        "properties": {
+            "phone": {"dataType":"string","required":true},
+            "otp": {"dataType":"string","required":true},
+            "name": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "vehicleType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["bike"]},{"dataType":"enum","enums":["scooter"]},{"dataType":"enum","enums":["bicycle"]},{"dataType":"enum","enums":["car"]}]},
+            "vehicleNumber": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse__otp-string__": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"otp":{"dataType":"string","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse__tokens-any__": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"tokens":{"dataType":"any","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IDeliveryBoy_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"IDeliveryBoy","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUpdateDeliveryBoyProfileInput": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "vehicleType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["bike"]},{"dataType":"enum","enums":["scooter"]},{"dataType":"enum","enums":["bicycle"]},{"dataType":"enum","enums":["car"]}]},
+            "vehicleNumber": {"dataType":"string"},
+            "drivingLicenseNumber": {"dataType":"string"},
+            "deliveryZone": {"dataType":"array","array":{"dataType":"string"}},
+            "emergencyContactName": {"dataType":"string"},
+            "emergencyContactPhone": {"dataType":"string"},
+            "bankAccountNumber": {"dataType":"string"},
+            "ifscCode": {"dataType":"string"},
+            "bankAccountHolderName": {"dataType":"string"},
+            "upiId": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUpdateDeliveryBoyLocationInput": {
+        "dataType": "refObject",
+        "properties": {
+            "latitude": {"dataType":"double","required":true},
+            "longitude": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IUpdateDeliveryBoyAvailabilityInput": {
+        "dataType": "refObject",
+        "properties": {
+            "isAvailable": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
     },
@@ -1384,16 +1554,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AuthTokens": {
-        "dataType": "refObject",
-        "properties": {
-            "accessToken": {"dataType":"string","required":true},
-            "refreshToken": {"dataType":"string","required":true},
-            "expiresIn": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IAuthResponse": {
         "dataType": "refObject",
         "properties": {
@@ -1420,26 +1580,6 @@ const models: TsoaRoute.Models = {
             "otp": {"dataType":"string","required":true},
             "name": {"dataType":"string"},
             "deviceId": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse__otp-string__": {
-        "dataType": "refObject",
-        "properties": {
-            "success": {"dataType":"enum","enums":[true],"required":true},
-            "message": {"dataType":"string","required":true},
-            "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"otp":{"dataType":"string","required":true}},"required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse__tokens-any__": {
-        "dataType": "refObject",
-        "properties": {
-            "success": {"dataType":"enum","enums":[true],"required":true},
-            "message": {"dataType":"string","required":true},
-            "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"tokens":{"dataType":"any","required":true}},"required":true},
         },
         "additionalProperties": false,
     },
@@ -1915,6 +2055,199 @@ const models: TsoaRoute.Models = {
             "success": {"dataType":"enum","enums":[true],"required":true},
             "message": {"dataType":"string","required":true},
             "result": {"dataType":"nestedObjectLiteral","nestedProperties":{"updated":{"dataType":"double","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IAdminCreateDeliveryBoyInput": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "phone": {"dataType":"string","required":true},
+            "email": {"dataType":"string"},
+            "password": {"dataType":"string"},
+            "vehicleType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["bike"]},{"dataType":"enum","enums":["scooter"]},{"dataType":"enum","enums":["bicycle"]},{"dataType":"enum","enums":["car"]}]},
+            "vehicleNumber": {"dataType":"string"},
+            "drivingLicenseNumber": {"dataType":"string"},
+            "aadharNumber": {"dataType":"string"},
+            "panNumber": {"dataType":"string"},
+            "deliveryZone": {"dataType":"array","array":{"dataType":"string"}},
+            "isActive": {"dataType":"boolean"},
+            "emergencyContactName": {"dataType":"string"},
+            "emergencyContactPhone": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IPaginatedDeliveryBoyList": {
+        "dataType": "refObject",
+        "properties": {
+            "deliveryBoys": {"dataType":"array","array":{"dataType":"refObject","ref":"IDeliveryBoy"},"required":true},
+            "pagination": {"dataType":"nestedObjectLiteral","nestedProperties":{"hasPrev":{"dataType":"boolean","required":true},"hasNext":{"dataType":"boolean","required":true},"totalPages":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true},"total":{"dataType":"double","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IPaginatedDeliveryBoyList_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"IPaginatedDeliveryBoyList","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Record_string.number_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"double"},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IDeliveryBoyStats": {
+        "dataType": "refObject",
+        "properties": {
+            "totalDeliveryBoys": {"dataType":"double","required":true},
+            "activeDeliveryBoys": {"dataType":"double","required":true},
+            "availableDeliveryBoys": {"dataType":"double","required":true},
+            "onDelivery": {"dataType":"double","required":true},
+            "documentsVerified": {"dataType":"double","required":true},
+            "documentsPending": {"dataType":"double","required":true},
+            "averageRating": {"dataType":"double","required":true},
+            "totalDeliveries": {"dataType":"double","required":true},
+            "completedDeliveries": {"dataType":"double","required":true},
+            "cancelledDeliveries": {"dataType":"double","required":true},
+            "byVehicleType": {"dataType":"nestedObjectLiteral","nestedProperties":{"car":{"dataType":"double","required":true},"bicycle":{"dataType":"double","required":true},"scooter":{"dataType":"double","required":true},"bike":{"dataType":"double","required":true}},"required":true},
+            "byZone": {"ref":"Record_string.number_","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IDeliveryBoyStats_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"IDeliveryBoyStats","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IAdminUpdateDeliveryBoyInput": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "vehicleType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["bike"]},{"dataType":"enum","enums":["scooter"]},{"dataType":"enum","enums":["bicycle"]},{"dataType":"enum","enums":["car"]}]},
+            "vehicleNumber": {"dataType":"string"},
+            "drivingLicenseNumber": {"dataType":"string"},
+            "aadharNumber": {"dataType":"string"},
+            "panNumber": {"dataType":"string"},
+            "deliveryZone": {"dataType":"array","array":{"dataType":"string"}},
+            "isActive": {"dataType":"boolean"},
+            "isDocumentVerified": {"dataType":"boolean"},
+            "isBackgroundCheckDone": {"dataType":"boolean"},
+            "bankAccountNumber": {"dataType":"string"},
+            "ifscCode": {"dataType":"string"},
+            "bankAccountHolderName": {"dataType":"string"},
+            "upiId": {"dataType":"string"},
+            "emergencyContactName": {"dataType":"string"},
+            "emergencyContactPhone": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IToggleDeliveryBoyStatusInput": {
+        "dataType": "refObject",
+        "properties": {
+            "isActive": {"dataType":"boolean","required":true},
+            "reason": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IVerifyDeliveryBoyDocumentsInput": {
+        "dataType": "refObject",
+        "properties": {
+            "isDocumentVerified": {"dataType":"boolean","required":true},
+            "isBackgroundCheckDone": {"dataType":"boolean"},
+            "verificationNotes": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IAssignDeliveryZonesInput": {
+        "dataType": "refObject",
+        "properties": {
+            "deliveryZone": {"dataType":"array","array":{"dataType":"string"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IDeliveryBoyPerformance": {
+        "dataType": "refObject",
+        "properties": {
+            "deliveryBoyId": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "phone": {"dataType":"string","required":true},
+            "totalDeliveries": {"dataType":"double","required":true},
+            "completedDeliveries": {"dataType":"double","required":true},
+            "cancelledDeliveries": {"dataType":"double","required":true},
+            "averageRating": {"dataType":"double","required":true},
+            "completionRate": {"dataType":"double","required":true},
+            "onTimeDeliveryRate": {"dataType":"double"},
+            "averageDeliveryTime": {"dataType":"double"},
+            "totalEarnings": {"dataType":"double"},
+            "lastDelivery": {"dataType":"datetime"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IDeliveryBoyPerformance_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"IDeliveryBoyPerformance","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IDeliveryBoy-Array_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"dataType":"array","array":{"dataType":"refObject","ref":"IDeliveryBoy"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IBulkOperationResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"double","required":true},
+            "failed": {"dataType":"double","required":true},
+            "errors": {"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"error":{"dataType":"string","required":true},"deliveryBoyId":{"dataType":"string","required":true}}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_IBulkOperationResponse_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"IBulkOperationResponse","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IBulkDeliveryBoyOperation": {
+        "dataType": "refObject",
+        "properties": {
+            "deliveryBoyIds": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "operation": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["activate"]},{"dataType":"enum","enums":["deactivate"]},{"dataType":"enum","enums":["verify"]},{"dataType":"enum","enums":["delete"]}],"required":true},
+            "reason": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -2491,6 +2824,253 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 next,
                 validatedArgs,
                 successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_sendOtp: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"IDeliveryBoySendOtpInput"},
+        };
+        app.post('/delivery-boy/auth/send-otp',
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.sendOtp)),
+
+            async function DeliveryBoyAuthController_sendOtp(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_sendOtp, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'sendOtp',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_verifyOtp: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"IDeliveryBoyVerifyOtpInput"},
+        };
+        app.post('/delivery-boy/auth/verify-otp',
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.verifyOtp)),
+
+            async function DeliveryBoyAuthController_verifyOtp(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_verifyOtp, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'verifyOtp',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_resendOtp: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"IDeliveryBoySendOtpInput"},
+        };
+        app.post('/delivery-boy/auth/resend-otp',
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.resendOtp)),
+
+            async function DeliveryBoyAuthController_resendOtp(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_resendOtp, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'resendOtp',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_refreshToken: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"refreshToken":{"dataType":"string","required":true}}},
+        };
+        app.post('/delivery-boy/auth/refresh-token',
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.refreshToken)),
+
+            async function DeliveryBoyAuthController_refreshToken(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_refreshToken, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'refreshToken',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_getProfile: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        app.get('/delivery-boy/auth/profile',
+            authenticateMiddleware([{"jwt":["delivery_boy"]}]),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.getProfile)),
+
+            async function DeliveryBoyAuthController_getProfile(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_getProfile, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'getProfile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_updateProfile: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"IUpdateDeliveryBoyProfileInput"},
+        };
+        app.put('/delivery-boy/auth/profile',
+            authenticateMiddleware([{"jwt":["delivery_boy"]}]),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.updateProfile)),
+
+            async function DeliveryBoyAuthController_updateProfile(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_updateProfile, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'updateProfile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_updateLocation: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"IUpdateDeliveryBoyLocationInput"},
+        };
+        app.put('/delivery-boy/auth/location',
+            authenticateMiddleware([{"jwt":["delivery_boy"]}]),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.updateLocation)),
+
+            async function DeliveryBoyAuthController_updateLocation(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_updateLocation, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'updateLocation',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDeliveryBoyAuthController_updateAvailability: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"IUpdateDeliveryBoyAvailabilityInput"},
+        };
+        app.put('/delivery-boy/auth/availability',
+            authenticateMiddleware([{"jwt":["delivery_boy"]}]),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(DeliveryBoyAuthController.prototype.updateAvailability)),
+
+            async function DeliveryBoyAuthController_updateAvailability(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDeliveryBoyAuthController_updateAvailability, request, response });
+
+                const controller = new DeliveryBoyAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'updateAvailability',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);
@@ -6123,6 +6703,390 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_createDeliveryBoy: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"IAdminCreateDeliveryBoyInput"},
+        };
+        app.post('/admin/delivery-boys',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.createDeliveryBoy)),
+
+            async function AdminDeliveryBoyController_createDeliveryBoy(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_createDeliveryBoy, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'createDeliveryBoy',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_getDeliveryBoysList: Record<string, TsoaRoute.ParameterSchema> = {
+                page: {"in":"query","name":"page","dataType":"double"},
+                limit: {"in":"query","name":"limit","dataType":"double"},
+                search: {"in":"query","name":"search","dataType":"string"},
+                isActive: {"in":"query","name":"isActive","dataType":"boolean"},
+                isAvailable: {"in":"query","name":"isAvailable","dataType":"boolean"},
+                isDocumentVerified: {"in":"query","name":"isDocumentVerified","dataType":"boolean"},
+                vehicleType: {"in":"query","name":"vehicleType","dataType":"union","subSchemas":[{"dataType":"enum","enums":["bike"]},{"dataType":"enum","enums":["scooter"]},{"dataType":"enum","enums":["bicycle"]},{"dataType":"enum","enums":["car"]}]},
+                deliveryZone: {"in":"query","name":"deliveryZone","dataType":"string"},
+                sortBy: {"in":"query","name":"sortBy","dataType":"union","subSchemas":[{"dataType":"enum","enums":["name"]},{"dataType":"enum","enums":["createdAt"]},{"dataType":"enum","enums":["totalDeliveries"]},{"dataType":"enum","enums":["averageRating"]}]},
+                sortOrder: {"in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+        };
+        app.get('/admin/delivery-boys',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.getDeliveryBoysList)),
+
+            async function AdminDeliveryBoyController_getDeliveryBoysList(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_getDeliveryBoysList, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'getDeliveryBoysList',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_getStatistics: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/admin/delivery-boys/stats',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.getStatistics)),
+
+            async function AdminDeliveryBoyController_getStatistics(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_getStatistics, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'getStatistics',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_getDeliveryBoy: Record<string, TsoaRoute.ParameterSchema> = {
+                deliveryBoyId: {"in":"path","name":"deliveryBoyId","required":true,"dataType":"string"},
+        };
+        app.get('/admin/delivery-boys/:deliveryBoyId',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.getDeliveryBoy)),
+
+            async function AdminDeliveryBoyController_getDeliveryBoy(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_getDeliveryBoy, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'getDeliveryBoy',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_updateDeliveryBoy: Record<string, TsoaRoute.ParameterSchema> = {
+                deliveryBoyId: {"in":"path","name":"deliveryBoyId","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"IAdminUpdateDeliveryBoyInput"},
+        };
+        app.put('/admin/delivery-boys/:deliveryBoyId',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.updateDeliveryBoy)),
+
+            async function AdminDeliveryBoyController_updateDeliveryBoy(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_updateDeliveryBoy, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'updateDeliveryBoy',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_deleteDeliveryBoy: Record<string, TsoaRoute.ParameterSchema> = {
+                deliveryBoyId: {"in":"path","name":"deliveryBoyId","required":true,"dataType":"string"},
+        };
+        app.delete('/admin/delivery-boys/:deliveryBoyId',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.deleteDeliveryBoy)),
+
+            async function AdminDeliveryBoyController_deleteDeliveryBoy(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_deleteDeliveryBoy, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteDeliveryBoy',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_toggleStatus: Record<string, TsoaRoute.ParameterSchema> = {
+                deliveryBoyId: {"in":"path","name":"deliveryBoyId","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"IToggleDeliveryBoyStatusInput"},
+        };
+        app.put('/admin/delivery-boys/:deliveryBoyId/status',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.toggleStatus)),
+
+            async function AdminDeliveryBoyController_toggleStatus(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_toggleStatus, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'toggleStatus',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_verifyDocuments: Record<string, TsoaRoute.ParameterSchema> = {
+                deliveryBoyId: {"in":"path","name":"deliveryBoyId","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"IVerifyDeliveryBoyDocumentsInput"},
+        };
+        app.put('/admin/delivery-boys/:deliveryBoyId/verify-documents',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.verifyDocuments)),
+
+            async function AdminDeliveryBoyController_verifyDocuments(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_verifyDocuments, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'verifyDocuments',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_assignZones: Record<string, TsoaRoute.ParameterSchema> = {
+                deliveryBoyId: {"in":"path","name":"deliveryBoyId","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"IAssignDeliveryZonesInput"},
+        };
+        app.put('/admin/delivery-boys/:deliveryBoyId/assign-zones',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.assignZones)),
+
+            async function AdminDeliveryBoyController_assignZones(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_assignZones, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'assignZones',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_getPerformance: Record<string, TsoaRoute.ParameterSchema> = {
+                deliveryBoyId: {"in":"path","name":"deliveryBoyId","required":true,"dataType":"string"},
+        };
+        app.get('/admin/delivery-boys/:deliveryBoyId/performance',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.getPerformance)),
+
+            async function AdminDeliveryBoyController_getPerformance(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_getPerformance, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'getPerformance',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_getAvailableDeliveryBoys: Record<string, TsoaRoute.ParameterSchema> = {
+                zone: {"in":"query","name":"zone","dataType":"string"},
+        };
+        app.get('/admin/delivery-boys/available/list',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.getAvailableDeliveryBoys)),
+
+            async function AdminDeliveryBoyController_getAvailableDeliveryBoys(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_getAvailableDeliveryBoys, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'getAvailableDeliveryBoys',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDeliveryBoyController_bulkOperation: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"IBulkDeliveryBoyOperation"},
+        };
+        app.post('/admin/delivery-boys/bulk-operation',
+            authenticateMiddleware([{"jwt":["admin"]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDeliveryBoyController.prototype.bulkOperation)),
+
+            async function AdminDeliveryBoyController_bulkOperation(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDeliveryBoyController_bulkOperation, request, response });
+
+                const controller = new AdminDeliveryBoyController();
+
+              await templateService.apiHandler({
+                methodName: 'bulkOperation',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAdminDashboardController_getDashboardStats: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/admin/dashboard/stats',
@@ -7201,7 +8165,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 email: {"in":"formData","name":"email","dataType":"string"},
                 profileImage: {"in":"formData","name":"profileImage","dataType":"file"},
         };
-        app.post('/dashbord/cms/kisan-community',
+        app.post('/admin/cms/kisan-community',
             upload.fields([
                 {
                     name: "profileImage",
@@ -7237,7 +8201,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsKisanCommunityController_getAll: Record<string, TsoaRoute.ParameterSchema> = {
                 queryParams: {"in":"queries","name":"queryParams","required":true,"ref":"IFilter"},
         };
-        app.get('/dashbord/cms/kisan-community',
+        app.get('/admin/cms/kisan-community',
             ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
             ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.getAll)),
 
@@ -7267,7 +8231,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsKisanCommunityController_getById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/dashbord/cms/kisan-community/:id',
+        app.get('/admin/cms/kisan-community/:id',
             ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
             ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.getById)),
 
@@ -7305,7 +8269,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 email: {"in":"formData","name":"email","dataType":"string"},
                 profileImage: {"in":"formData","name":"profileImage","dataType":"file"},
         };
-        app.put('/dashbord/cms/kisan-community/:id',
+        app.put('/admin/cms/kisan-community/:id',
             upload.fields([
                 {
                     name: "profileImage",
@@ -7341,7 +8305,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsKisanCommunityController_delete: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/dashbord/cms/kisan-community/:id',
+        app.delete('/admin/cms/kisan-community/:id',
             ...(fetchMiddlewares<RequestHandler>(KisanCommunityController)),
             ...(fetchMiddlewares<RequestHandler>(KisanCommunityController.prototype.delete)),
 

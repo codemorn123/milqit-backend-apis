@@ -27,7 +27,7 @@ import { errorSuccess, success, SuccessResponse as SuccessDataResponse } from '.
 
 
 
-@Route("dashbord/cms/kisan-community")
+@Route("admin/cms/kisan-community")
 @Tags("Kisan Community")
 export class KisanCommunityController extends Controller {
 

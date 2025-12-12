@@ -77,6 +77,11 @@ const stream = {
 };
 app.use(morgan('combined', { stream }));
 
+// Import timeout middleware
+import { requestTimeout, enhancedHealthCheck } from './middleware/timeout';
+
+// Add request timeout (30 seconds) to prevent indefinite hangs
+app.use(requestTimeout(30000));
 
 app.use(cookieParser());
 app.use(express.json());
@@ -84,14 +89,8 @@ app.use(urlencoded({ extended: true }));
 
 app.use(pinoHttp({ logger }));
 
-app.get('/health', (_req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: config.env,
-    version: process.env.npm_package_version || '1.0.0'
-  });
-});
+// Enhanced health check with database status
+app.get('/health', enhancedHealthCheck);
 
 
 

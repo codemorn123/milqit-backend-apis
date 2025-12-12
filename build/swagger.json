@@ -256,6 +256,480 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SuccessResponse__isExistingDeliveryBoy-boolean--otp-string__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"otp": {
+								"type": "string"
+							},
+							"isExistingDeliveryBoy": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"otp",
+							"isExistingDeliveryBoy"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IDeliveryBoySendOtpInput": {
+				"description": "Send OTP request for delivery boy",
+				"properties": {
+					"phone": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"phone"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IDeliveryBoy": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"passwordHash": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"isPhoneVerified": {
+						"type": "boolean"
+					},
+					"isEmailVerified": {
+						"type": "boolean"
+					},
+					"lastLogin": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"vehicleType": {
+						"type": "string",
+						"enum": [
+							"bike",
+							"scooter",
+							"bicycle",
+							"car"
+						]
+					},
+					"vehicleNumber": {
+						"type": "string"
+					},
+					"drivingLicenseNumber": {
+						"type": "string"
+					},
+					"aadharNumber": {
+						"type": "string"
+					},
+					"panNumber": {
+						"type": "string"
+					},
+					"isDocumentVerified": {
+						"type": "boolean"
+					},
+					"isBackgroundCheckDone": {
+						"type": "boolean"
+					},
+					"isAvailable": {
+						"type": "boolean"
+					},
+					"currentLocation": {
+						"properties": {
+							"coordinates": {
+								"items": {
+									"type": "number",
+									"format": "double"
+								},
+								"type": "array"
+							},
+							"type": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"coordinates",
+							"type"
+						],
+						"type": "object"
+					},
+					"lastLocationUpdate": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deliveryZone": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"totalDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"completedDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"cancelledDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"averageRating": {
+						"type": "number",
+						"format": "double"
+					},
+					"bankAccountNumber": {
+						"type": "string"
+					},
+					"ifscCode": {
+						"type": "string"
+					},
+					"bankAccountHolderName": {
+						"type": "string"
+					},
+					"upiId": {
+						"type": "string"
+					},
+					"emergencyContactName": {
+						"type": "string"
+					},
+					"emergencyContactPhone": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"phone",
+					"passwordHash",
+					"isActive",
+					"isPhoneVerified",
+					"isEmailVerified",
+					"createdAt",
+					"updatedAt",
+					"isDocumentVerified",
+					"isBackgroundCheckDone",
+					"isAvailable",
+					"totalDeliveries",
+					"completedDeliveries",
+					"cancelledDeliveries",
+					"averageRating"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuthTokens": {
+				"description": "Authentication tokens returned after successful authentication",
+				"properties": {
+					"accessToken": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					},
+					"expiresIn": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"accessToken",
+					"refreshToken",
+					"expiresIn"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IDeliveryBoyAuthResponse": {
+				"description": "Complete authentication response for delivery boy",
+				"properties": {
+					"deliveryBoy": {
+						"$ref": "#/components/schemas/IDeliveryBoy"
+					},
+					"tokens": {
+						"$ref": "#/components/schemas/AuthTokens"
+					},
+					"isNewDeliveryBoy": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"deliveryBoy",
+					"tokens",
+					"isNewDeliveryBoy"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IDeliveryBoyAuthResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IDeliveryBoyAuthResponse"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IDeliveryBoyVerifyOtpInput": {
+				"description": "Verify OTP and login/register delivery boy",
+				"properties": {
+					"phone": {
+						"type": "string"
+					},
+					"otp": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"vehicleType": {
+						"type": "string",
+						"enum": [
+							"bike",
+							"scooter",
+							"bicycle",
+							"car"
+						]
+					},
+					"vehicleNumber": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"phone",
+					"otp"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__otp-string__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"otp": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"otp"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__tokens-any__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"tokens": {}
+						},
+						"required": [
+							"tokens"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IDeliveryBoy_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IDeliveryBoy"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUpdateDeliveryBoyProfileInput": {
+				"description": "Update delivery boy profile request",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"vehicleType": {
+						"type": "string",
+						"enum": [
+							"bike",
+							"scooter",
+							"bicycle",
+							"car"
+						]
+					},
+					"vehicleNumber": {
+						"type": "string"
+					},
+					"drivingLicenseNumber": {
+						"type": "string"
+					},
+					"deliveryZone": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"emergencyContactName": {
+						"type": "string"
+					},
+					"emergencyContactPhone": {
+						"type": "string"
+					},
+					"bankAccountNumber": {
+						"type": "string"
+					},
+					"ifscCode": {
+						"type": "string"
+					},
+					"bankAccountHolderName": {
+						"type": "string"
+					},
+					"upiId": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUpdateDeliveryBoyLocationInput": {
+				"description": "Update delivery boy location",
+				"properties": {
+					"latitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"longitude": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"latitude",
+					"longitude"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUpdateDeliveryBoyAvailabilityInput": {
+				"description": "Update delivery boy availability",
+				"properties": {
+					"isAvailable": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"isAvailable"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Address": {
 				"description": "Address information",
 				"properties": {
@@ -4173,28 +4647,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AuthTokens": {
-				"description": "Authentication tokens returned after successful authentication",
-				"properties": {
-					"accessToken": {
-						"type": "string"
-					},
-					"refreshToken": {
-						"type": "string"
-					},
-					"expiresIn": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"accessToken",
-					"refreshToken",
-					"expiresIn"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"IAuthResponse": {
 				"description": "Mobile authentication response",
 				"properties": {
@@ -4254,68 +4706,6 @@
 				"required": [
 					"phone",
 					"otp"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse__otp-string__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"properties": {
-							"otp": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"otp"
-						],
-						"type": "object"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse__tokens-any__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"properties": {
-							"tokens": {}
-						},
-						"required": [
-							"tokens"
-						],
-						"type": "object"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -5688,6 +6078,587 @@
 					"success",
 					"message",
 					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IAdminCreateDeliveryBoyInput": {
+				"description": "Admin create delivery boy request",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"vehicleType": {
+						"type": "string",
+						"enum": [
+							"bike",
+							"scooter",
+							"bicycle",
+							"car"
+						]
+					},
+					"vehicleNumber": {
+						"type": "string"
+					},
+					"drivingLicenseNumber": {
+						"type": "string"
+					},
+					"aadharNumber": {
+						"type": "string"
+					},
+					"panNumber": {
+						"type": "string"
+					},
+					"deliveryZone": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"emergencyContactName": {
+						"type": "string"
+					},
+					"emergencyContactPhone": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"phone"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IPaginatedDeliveryBoyList": {
+				"description": "Paginated delivery boy list response",
+				"properties": {
+					"deliveryBoys": {
+						"items": {
+							"$ref": "#/components/schemas/IDeliveryBoy"
+						},
+						"type": "array"
+					},
+					"pagination": {
+						"properties": {
+							"hasPrev": {
+								"type": "boolean"
+							},
+							"hasNext": {
+								"type": "boolean"
+							},
+							"totalPages": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"hasPrev",
+							"hasNext",
+							"totalPages",
+							"limit",
+							"page",
+							"total"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"deliveryBoys",
+					"pagination"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IPaginatedDeliveryBoyList_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IPaginatedDeliveryBoyList"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Record_string.number_": {
+				"properties": {},
+				"additionalProperties": {
+					"type": "number",
+					"format": "double"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"IDeliveryBoyStats": {
+				"description": "Delivery boy statistics",
+				"properties": {
+					"totalDeliveryBoys": {
+						"type": "number",
+						"format": "double"
+					},
+					"activeDeliveryBoys": {
+						"type": "number",
+						"format": "double"
+					},
+					"availableDeliveryBoys": {
+						"type": "number",
+						"format": "double"
+					},
+					"onDelivery": {
+						"type": "number",
+						"format": "double"
+					},
+					"documentsVerified": {
+						"type": "number",
+						"format": "double"
+					},
+					"documentsPending": {
+						"type": "number",
+						"format": "double"
+					},
+					"averageRating": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"completedDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"cancelledDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"byVehicleType": {
+						"properties": {
+							"car": {
+								"type": "number",
+								"format": "double"
+							},
+							"bicycle": {
+								"type": "number",
+								"format": "double"
+							},
+							"scooter": {
+								"type": "number",
+								"format": "double"
+							},
+							"bike": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"car",
+							"bicycle",
+							"scooter",
+							"bike"
+						],
+						"type": "object"
+					},
+					"byZone": {
+						"$ref": "#/components/schemas/Record_string.number_"
+					}
+				},
+				"required": [
+					"totalDeliveryBoys",
+					"activeDeliveryBoys",
+					"availableDeliveryBoys",
+					"onDelivery",
+					"documentsVerified",
+					"documentsPending",
+					"averageRating",
+					"totalDeliveries",
+					"completedDeliveries",
+					"cancelledDeliveries",
+					"byVehicleType",
+					"byZone"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IDeliveryBoyStats_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IDeliveryBoyStats"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IAdminUpdateDeliveryBoyInput": {
+				"description": "Admin update delivery boy request",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"vehicleType": {
+						"type": "string",
+						"enum": [
+							"bike",
+							"scooter",
+							"bicycle",
+							"car"
+						]
+					},
+					"vehicleNumber": {
+						"type": "string"
+					},
+					"drivingLicenseNumber": {
+						"type": "string"
+					},
+					"aadharNumber": {
+						"type": "string"
+					},
+					"panNumber": {
+						"type": "string"
+					},
+					"deliveryZone": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"isDocumentVerified": {
+						"type": "boolean"
+					},
+					"isBackgroundCheckDone": {
+						"type": "boolean"
+					},
+					"bankAccountNumber": {
+						"type": "string"
+					},
+					"ifscCode": {
+						"type": "string"
+					},
+					"bankAccountHolderName": {
+						"type": "string"
+					},
+					"upiId": {
+						"type": "string"
+					},
+					"emergencyContactName": {
+						"type": "string"
+					},
+					"emergencyContactPhone": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IToggleDeliveryBoyStatusInput": {
+				"description": "Delivery boy activation/deactivation request",
+				"properties": {
+					"isActive": {
+						"type": "boolean"
+					},
+					"reason": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"isActive"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IVerifyDeliveryBoyDocumentsInput": {
+				"description": "Document verification request",
+				"properties": {
+					"isDocumentVerified": {
+						"type": "boolean"
+					},
+					"isBackgroundCheckDone": {
+						"type": "boolean"
+					},
+					"verificationNotes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"isDocumentVerified"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IAssignDeliveryZonesInput": {
+				"description": "Assign delivery zones request",
+				"properties": {
+					"deliveryZone": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"deliveryZone"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IDeliveryBoyPerformance": {
+				"description": "Delivery boy performance metrics",
+				"properties": {
+					"deliveryBoyId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"totalDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"completedDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"cancelledDeliveries": {
+						"type": "number",
+						"format": "double"
+					},
+					"averageRating": {
+						"type": "number",
+						"format": "double"
+					},
+					"completionRate": {
+						"type": "number",
+						"format": "double"
+					},
+					"onTimeDeliveryRate": {
+						"type": "number",
+						"format": "double"
+					},
+					"averageDeliveryTime": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalEarnings": {
+						"type": "number",
+						"format": "double"
+					},
+					"lastDelivery": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"deliveryBoyId",
+					"name",
+					"phone",
+					"totalDeliveries",
+					"completedDeliveries",
+					"cancelledDeliveries",
+					"averageRating",
+					"completionRate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IDeliveryBoyPerformance_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IDeliveryBoyPerformance"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IDeliveryBoy-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/IDeliveryBoy"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IBulkOperationResponse": {
+				"description": "Bulk operation response",
+				"properties": {
+					"success": {
+						"type": "number",
+						"format": "double"
+					},
+					"failed": {
+						"type": "number",
+						"format": "double"
+					},
+					"errors": {
+						"items": {
+							"properties": {
+								"error": {
+									"type": "string"
+								},
+								"deliveryBoyId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"error",
+								"deliveryBoyId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"failed",
+					"errors"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_IBulkOperationResponse_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/IBulkOperationResponse"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IBulkDeliveryBoyOperation": {
+				"description": "Bulk operation request",
+				"properties": {
+					"deliveryBoyIds": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"operation": {
+						"type": "string",
+						"enum": [
+							"activate",
+							"deactivate",
+							"verify",
+							"delete"
+						]
+					},
+					"reason": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"deliveryBoyIds",
+					"operation"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -7599,6 +8570,1032 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/delivery-boy/auth/send-otp": {
+			"post": {
+				"operationId": "SendOtp",
+				"responses": {
+					"200": {
+						"description": "OTP sent successfully (OTP included in response for development)",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__isExistingDeliveryBoy-boolean--otp-string__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Send OTP to delivery boy's phone number for login/registration",
+				"summary": "Send OTP for delivery boy authentication",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "Phone number for OTP",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IDeliveryBoySendOtpInput",
+								"description": "Phone number for OTP"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/delivery-boy/auth/verify-otp": {
+			"post": {
+				"operationId": "VerifyOtp",
+				"responses": {
+					"200": {
+						"description": "Authentication tokens and delivery boy profile",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoyAuthResponse_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Verify OTP and login or register delivery boy",
+				"summary": "Verify OTP and authenticate delivery boy",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "OTP verification data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IDeliveryBoyVerifyOtpInput",
+								"description": "OTP verification data"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/delivery-boy/auth/resend-otp": {
+			"post": {
+				"operationId": "ResendOtp",
+				"responses": {
+					"200": {
+						"description": "OTP sent successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__otp-string__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Resend OTP to delivery boy's phone number",
+				"summary": "Resend OTP for delivery boy authentication",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "Phone number for OTP",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IDeliveryBoySendOtpInput",
+								"description": "Phone number for OTP"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/delivery-boy/auth/refresh-token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "New authentication tokens",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse__tokens-any__"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Refresh authentication tokens for delivery boy",
+				"summary": "Refresh tokens",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "Refresh token",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"refreshToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"refreshToken"
+								],
+								"type": "object",
+								"description": "Refresh token"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/delivery-boy/auth/profile": {
+			"get": {
+				"operationId": "GetProfile",
+				"responses": {
+					"200": {
+						"description": "Delivery boy profile",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Get current delivery boy profile",
+				"summary": "Get authenticated delivery boy profile",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [
+					{
+						"jwt": [
+							"delivery_boy"
+						]
+					}
+				],
+				"parameters": []
+			},
+			"put": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"200": {
+						"description": "Updated delivery boy profile",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Update delivery boy profile",
+				"summary": "Update delivery boy profile",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [
+					{
+						"jwt": [
+							"delivery_boy"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "Profile update data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUpdateDeliveryBoyProfileInput",
+								"description": "Profile update data"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/delivery-boy/auth/location": {
+			"put": {
+				"operationId": "UpdateLocation",
+				"responses": {
+					"200": {
+						"description": "Updated delivery boy profile",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Update delivery boy location",
+				"summary": "Update current location",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [
+					{
+						"jwt": [
+							"delivery_boy"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "Location coordinates",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUpdateDeliveryBoyLocationInput",
+								"description": "Location coordinates"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/delivery-boy/auth/availability": {
+			"put": {
+				"operationId": "UpdateAvailability",
+				"responses": {
+					"200": {
+						"description": "Updated delivery boy profile",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Update delivery boy availability status",
+				"summary": "Update availability status",
+				"tags": [
+					"Delivery Boy Authentication"
+				],
+				"security": [
+					{
+						"jwt": [
+							"delivery_boy"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "Availability status",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUpdateDeliveryBoyAvailabilityInput",
+								"description": "Availability status"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/customer/user/profile": {
@@ -17287,6 +19284,1821 @@
 				}
 			}
 		},
+		"/admin/delivery-boys": {
+			"post": {
+				"operationId": "CreateDeliveryBoy",
+				"responses": {
+					"200": {
+						"description": "Created delivery boy",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new delivery boy account",
+				"summary": "Create delivery boy",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "Delivery boy creation data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IAdminCreateDeliveryBoyInput",
+								"description": "Delivery boy creation data"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetDeliveryBoysList",
+				"responses": {
+					"200": {
+						"description": "Paginated list of delivery boys",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IPaginatedDeliveryBoyList_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Get list of delivery boys with pagination and filters",
+				"summary": "Get delivery boys list",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Page number",
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "Items per page",
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "Search by name, phone, or email",
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "Filter by active status",
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"description": "Filter by availability",
+						"in": "query",
+						"name": "isAvailable",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"description": "Filter by document verification status",
+						"in": "query",
+						"name": "isDocumentVerified",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"description": "Filter by vehicle type",
+						"in": "query",
+						"name": "vehicleType",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"bike",
+								"scooter",
+								"bicycle",
+								"car"
+							]
+						}
+					},
+					{
+						"description": "Filter by delivery zone",
+						"in": "query",
+						"name": "deliveryZone",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "Sort by field",
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"name",
+								"createdAt",
+								"totalDeliveries",
+								"averageRating"
+							]
+						}
+					},
+					{
+						"description": "Sort order",
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/delivery-boys/stats": {
+			"get": {
+				"operationId": "GetStatistics",
+				"responses": {
+					"200": {
+						"description": "Delivery boy statistics",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoyStats_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Get delivery boy statistics",
+				"summary": "Get statistics",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/delivery-boys/{deliveryBoyId}": {
+			"get": {
+				"operationId": "GetDeliveryBoy",
+				"responses": {
+					"200": {
+						"description": "Delivery boy details",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a specific delivery boy by ID",
+				"summary": "Get delivery boy details",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Delivery boy ID",
+						"in": "path",
+						"name": "deliveryBoyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateDeliveryBoy",
+				"responses": {
+					"200": {
+						"description": "Updated delivery boy",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Update delivery boy details",
+				"summary": "Update delivery boy",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Delivery boy ID",
+						"in": "path",
+						"name": "deliveryBoyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Update data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IAdminUpdateDeliveryBoyInput",
+								"description": "Update data"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteDeliveryBoy",
+				"responses": {
+					"200": {
+						"description": "Success message",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_null_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a delivery boy",
+				"summary": "Delete delivery boy",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Delivery boy ID",
+						"in": "path",
+						"name": "deliveryBoyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/delivery-boys/{deliveryBoyId}/status": {
+			"put": {
+				"operationId": "ToggleStatus",
+				"responses": {
+					"200": {
+						"description": "Updated delivery boy",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Toggle delivery boy active status (activate/deactivate)",
+				"summary": "Toggle status",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Delivery boy ID",
+						"in": "path",
+						"name": "deliveryBoyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Status toggle data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IToggleDeliveryBoyStatusInput",
+								"description": "Status toggle data"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/delivery-boys/{deliveryBoyId}/verify-documents": {
+			"put": {
+				"operationId": "VerifyDocuments",
+				"responses": {
+					"200": {
+						"description": "Updated delivery boy",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Verify delivery boy documents",
+				"summary": "Verify documents",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Delivery boy ID",
+						"in": "path",
+						"name": "deliveryBoyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Verification data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IVerifyDeliveryBoyDocumentsInput",
+								"description": "Verification data"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/delivery-boys/{deliveryBoyId}/assign-zones": {
+			"put": {
+				"operationId": "AssignZones",
+				"responses": {
+					"200": {
+						"description": "Updated delivery boy",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Assign delivery zones to delivery boy",
+				"summary": "Assign zones",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Delivery boy ID",
+						"in": "path",
+						"name": "deliveryBoyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Zone assignment data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IAssignDeliveryZonesInput",
+								"description": "Zone assignment data"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/delivery-boys/{deliveryBoyId}/performance": {
+			"get": {
+				"operationId": "GetPerformance",
+				"responses": {
+					"200": {
+						"description": "Performance metrics",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoyPerformance_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Get delivery boy performance metrics",
+				"summary": "Get performance",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Delivery boy ID",
+						"in": "path",
+						"name": "deliveryBoyId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/delivery-boys/available/list": {
+			"get": {
+				"operationId": "GetAvailableDeliveryBoys",
+				"responses": {
+					"200": {
+						"description": "List of available delivery boys",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy-Array_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Get available delivery boys for assignment",
+				"summary": "Get available delivery boys",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"description": "Optional delivery zone filter",
+						"in": "query",
+						"name": "zone",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/delivery-boys/bulk-operation": {
+			"post": {
+				"operationId": "BulkOperation",
+				"responses": {
+					"200": {
+						"description": "Bulk operation results",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IBulkOperationResponse_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "NOT_FOUND",
+											"status": 404,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Conflict",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "VALIDATION_ERROR",
+											"status": 422,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ClientErrorInterface"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"success": false,
+											"code": "SERVER_ERROR",
+											"status": 500,
+											"message": "string"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"description": "Perform bulk operations on delivery boys",
+				"summary": "Bulk operations",
+				"tags": [
+					"Admin - Delivery Boy Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "Bulk operation data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IBulkDeliveryBoyOperation",
+								"description": "Bulk operation data"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/admin/dashboard/stats": {
 			"get": {
 				"operationId": "GetDashboardStats",
@@ -19809,7 +23621,7 @@
 				]
 			}
 		},
-		"/dashbord/cms/kisan-community": {
+		"/admin/cms/kisan-community": {
 			"post": {
 				"operationId": "Create",
 				"responses": {
@@ -19964,7 +23776,7 @@
 				]
 			}
 		},
-		"/dashbord/cms/kisan-community/{id}": {
+		"/admin/cms/kisan-community/{id}": {
 			"get": {
 				"operationId": "GetById",
 				"responses": {

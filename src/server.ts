@@ -22,6 +22,24 @@ async function connectToDatabase(): Promise<void> {
 
     await mongoose.connect(config.mongodb.uri, mongooseOptions);
     logger.info('Connected to MongoDB successfully');
+
+    // MongoDB connection event handlers
+    mongoose.connection.on('error', (err) => {
+      logger.error({ error: err }, 'MongoDB connection error');
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      logger.warn('MongoDB disconnected. Attempting to reconnect...');
+    });
+
+    mongoose.connection.on('reconnected', () => {
+      logger.info('MongoDB reconnected successfully');
+    });
+
+    mongoose.connection.on('close', () => {
+      logger.info('MongoDB connection closed');
+    });
+
   } catch (error) {
     logger.error({
       error: error instanceof Error ? error.message : String(error),
@@ -123,6 +141,43 @@ async function startServer(): Promise<void> {
     process.exit(1);
   }
 }
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) => {
+  logger.error({
+    error: error.message,
+    stack: error.stack,
+    type: 'uncaughtException'
+  }, '💥 UNCAUGHT EXCEPTION! Shutting down...');
+
+  // Give time to log then exit
+  setTimeout(() => {
+    process.exit(1);
+  }, 1000);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+  logger.error({
+    reason: reason instanceof Error ? reason.message : String(reason),
+    stack: reason instanceof Error ? reason.stack : undefined,
+    type: 'unhandledRejection'
+  }, '💥 UNHANDLED REJECTION! Shutting down...');
+
+  // Give time to log then exit
+  setTimeout(() => {
+    process.exit(1);
+  }, 1000);
+});
+
+// Handle warnings
+process.on('warning', (warning: Error) => {
+  logger.warn({
+    name: warning.name,
+    message: warning.message,
+    stack: warning.stack
+  }, 'Process warning');
+});
 
 // Start the server
 startServer().catch((error) => {
