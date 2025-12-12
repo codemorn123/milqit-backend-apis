@@ -94,4 +94,46 @@ export class AdminUserService {
 
     return user;
   }
+
+  /**
+   * Activate a user account (set isActive to true).
+   * @param userId The ID of the user to activate.
+   * @returns The updated user document.
+   */
+  public async activateUser(userId: string): Promise<IUser> {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new PresentableError('NOT_FOUND', 'User not found');
+    }
+
+    if (user.isActive) {
+      return user; // Already active, no change needed
+    }
+
+    user.isActive = true;
+    await user.save();
+
+    return user;
+  }
+
+  /**
+   * Deactivate a user account (set isActive to false).
+   * @param userId The ID of the user to deactivate.
+   * @returns The updated user document.
+   */
+  public async deactivateUser(userId: string): Promise<IUser> {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new PresentableError('NOT_FOUND', 'User not found');
+    }
+
+    if (!user.isActive) {
+      return user; // Already inactive, no change needed
+    }
+
+    user.isActive = false;
+    await user.save();
+
+    return user;
+  }
 }

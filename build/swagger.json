@@ -5692,6 +5692,401 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"DashboardStats": {
+				"properties": {
+					"totalRevenue": {
+						"properties": {
+							"label": {
+								"type": "string"
+							},
+							"percentageChange": {
+								"type": "number",
+								"format": "double"
+							},
+							"previous": {
+								"type": "number",
+								"format": "double"
+							},
+							"current": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"label",
+							"percentageChange",
+							"previous",
+							"current"
+						],
+						"type": "object"
+					},
+					"totalOrders": {
+						"properties": {
+							"label": {
+								"type": "string"
+							},
+							"percentageChange": {
+								"type": "number",
+								"format": "double"
+							},
+							"previous": {
+								"type": "number",
+								"format": "double"
+							},
+							"current": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"label",
+							"percentageChange",
+							"previous",
+							"current"
+						],
+						"type": "object"
+					},
+					"totalProducts": {
+						"properties": {
+							"label": {
+								"type": "string"
+							},
+							"percentageChange": {
+								"type": "number",
+								"format": "double"
+							},
+							"activeProducts": {
+								"type": "number",
+								"format": "double"
+							},
+							"current": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"label",
+							"percentageChange",
+							"activeProducts",
+							"current"
+						],
+						"type": "object"
+					},
+					"newCustomers": {
+						"properties": {
+							"label": {
+								"type": "string"
+							},
+							"percentageChange": {
+								"type": "number",
+								"format": "double"
+							},
+							"current": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"label",
+							"percentageChange",
+							"current"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"totalRevenue",
+					"totalOrders",
+					"totalProducts",
+					"newCustomers"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_DashboardStats_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/DashboardStats"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SalesOverview": {
+				"properties": {
+					"labels": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"revenue": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"orders": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"totalRevenue": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalOrders": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"labels",
+					"revenue",
+					"orders",
+					"totalRevenue",
+					"totalOrders"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_SalesOverview_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/SalesOverview"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RecentOrder": {
+				"properties": {
+					"orderId": {
+						"type": "string"
+					},
+					"orderNumber": {
+						"type": "string"
+					},
+					"customerName": {
+						"type": "string"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"orderId",
+					"orderNumber",
+					"customerName",
+					"amount",
+					"status",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_RecentOrder-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/RecentOrder"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TopProduct": {
+				"properties": {
+					"productId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"totalSales": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalRevenue": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderCount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"productId",
+					"name",
+					"totalSales",
+					"totalRevenue",
+					"orderCount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_TopProduct-Array_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"items": {
+							"$ref": "#/components/schemas/TopProduct"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CustomerInsights": {
+				"properties": {
+					"totalCustomers": {
+						"type": "number",
+						"format": "double"
+					},
+					"activeCustomers": {
+						"type": "number",
+						"format": "double"
+					},
+					"newThisMonth": {
+						"type": "number",
+						"format": "double"
+					},
+					"topCustomers": {
+						"items": {
+							"properties": {
+								"totalSpent": {
+									"type": "number",
+									"format": "double"
+								},
+								"totalOrders": {
+									"type": "number",
+									"format": "double"
+								},
+								"name": {
+									"type": "string"
+								},
+								"customerId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"totalSpent",
+								"totalOrders",
+								"name",
+								"customerId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"totalCustomers",
+					"activeCustomers",
+					"newThisMonth",
+					"topCustomers"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_CustomerInsights_": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"$ref": "#/components/schemas/CustomerInsights"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PaginatedResponse_ICart_": {
 				"properties": {
 					"docs": {
@@ -14088,6 +14483,110 @@
 				]
 			}
 		},
+		"/admin/users/{userId}/activate": {
+			"post": {
+				"operationId": "ActivateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IUser_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "User Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Activate a user account (set isActive to true).\nThis allows inactive/deactivated users to access the system again.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The identifier of the user to activate.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/users/{userId}/deactivate": {
+			"post": {
+				"operationId": "DeactivateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IUser_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid ID"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"404": {
+						"description": "User Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Deactivate a user account (set isActive to false).\nThis prevents the user from accessing the system without deleting their data.",
+				"tags": [
+					"Admin - Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The identifier of the user to deactivate.",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/admin/reels": {
 			"post": {
 				"operationId": "Create",
@@ -16786,6 +17285,306 @@
 						}
 					}
 				}
+			}
+		},
+		"/admin/dashboard/stats": {
+			"get": {
+				"operationId": "GetDashboardStats",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_DashboardStats_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Get dashboard overview statistics",
+				"summary": "Get main dashboard stats (revenue, orders, products, customers)",
+				"tags": [
+					"ADMIN: Dashboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/dashboard/sales-overview": {
+			"get": {
+				"operationId": "GetSalesOverview",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_SalesOverview_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Get sales overview for graphs",
+				"summary": "Get revenue and order trends over time",
+				"tags": [
+					"ADMIN: Dashboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Time period for the data (7days, 30days, 90days, 1year)",
+						"in": "query",
+						"name": "period",
+						"required": false,
+						"schema": {
+							"default": "30days",
+							"type": "string",
+							"enum": [
+								"7days",
+								"30days",
+								"90days",
+								"1year"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/admin/dashboard/recent-orders": {
+			"get": {
+				"operationId": "GetRecentOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_RecentOrder-Array_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Get recent orders",
+				"summary": "Get latest customer orders for dashboard",
+				"tags": [
+					"ADMIN: Dashboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Number of orders to retrieve (default: 10)",
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 10,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/admin/dashboard/top-products": {
+			"get": {
+				"operationId": "GetTopProducts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_TopProduct-Array_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Get top selling products",
+				"summary": "Get products with highest sales",
+				"tags": [
+					"ADMIN: Dashboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "Number of products to retrieve (default: 10)",
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 10,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/admin/dashboard/customer-insights": {
+			"get": {
+				"operationId": "GetCustomerInsights",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_CustomerInsights_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Get customer insights",
+				"summary": "Get customer statistics and top customers",
+				"tags": [
+					"ADMIN: Dashboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/dashboard/order-status-distribution": {
+			"get": {
+				"operationId": "GetOrderStatusDistribution",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_any_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Get order status distribution",
+				"summary": "Get breakdown of orders by status",
+				"tags": [
+					"ADMIN: Dashboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/dashboard/revenue-by-payment-method": {
+			"get": {
+				"operationId": "GetRevenueByPaymentMethod",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_any_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"403": {
+						"description": "Forbidden"
+					},
+					"500": {
+						"description": "Internal Server Error"
+					}
+				},
+				"description": "Get revenue by payment method",
+				"summary": "Get breakdown of revenue by payment method",
+				"tags": [
+					"ADMIN: Dashboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/admin/categories": {

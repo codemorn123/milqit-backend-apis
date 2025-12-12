@@ -11,12 +11,13 @@ import {
   Response,
   Security,
   Get,
+  Post,
   Query,
   Middlewares,
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
-import { idParamSchema } from '../../constants/common.validator';
+import { idParamSchema, userIdParamSchema } from '../../constants/common.validator';
 
 
 @Route("admin/users")
@@ -108,14 +109,43 @@ export class AdminUsersController extends Controller {
   @Response(StatusCodes.OK, "User retrieved")
   @Response(StatusCodes.NOT_FOUND, "User Not Found")
   @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
-  @Middlewares(validateSchemaMiddleware(idParamSchema, 'params'))
+  @Middlewares(validateSchemaMiddleware(userIdParamSchema, 'params'))
   public async getUserById(@Path() userId: string): Promise<IUser> {
     const user = await this.adminUserService.getUserById(userId);
     if (!user) {
       this.setStatus(404);
-      throw new Error('User not found');
+      throw new Error('User not found.');
     }
     return user;
   }
-}
 
+  /**
+   * Activate a user account (set isActive to true).
+   * This allows inactive/deactivated users to access the system again.
+   * @param userId The identifier of the user to activate.
+   */
+  @Post("/{userId}/activate")
+  @Response(StatusCodes.OK, "User activated")
+  @Response(StatusCodes.NOT_FOUND, "User Not Found")
+  @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
+  @Middlewares(validateSchemaMiddleware(userIdParamSchema, 'params'))
+  public async activateUser(@Path() userId: string): Promise<SuccessResponse<IUser>> {
+    const user = await this.adminUserService.activateUser(userId);
+    return success(user, "User activated successfully");
+  }
+
+  /**
+   * Deactivate a user account (set isActive to false).
+   * This prevents the user from accessing the system without deleting their data.
+   * @param userId The identifier of the user to deactivate.
+   */
+  @Post("/{userId}/deactivate")
+  @Response(StatusCodes.OK, "User deactivated")
+  @Response(StatusCodes.NOT_FOUND, "User Not Found")
+  @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
+  @Middlewares(validateSchemaMiddleware(userIdParamSchema, 'params'))
+  public async deactivateUser(@Path() userId: string): Promise<SuccessResponse<IUser>> {
+    const user = await this.adminUserService.deactivateUser(userId);
+    return success(user, "User deactivated successfully");
+  }
+}
