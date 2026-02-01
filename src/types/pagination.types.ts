@@ -33,7 +33,7 @@ export interface PaginationQuery {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     search?: string;
-    populate?: string | string[];
+    populate?: string;
     select?: string;
 }
 

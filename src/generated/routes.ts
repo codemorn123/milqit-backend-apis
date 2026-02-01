@@ -83,39 +83,29 @@ const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "StatusCodes": {
-        "dataType": "refEnum",
-        "enums": [100,101,102,103,200,201,202,203,204,205,206,207,300,301,302,303,304,305,307,308,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,426,428,429,431,451,500,501,502,503,504,505,507,511],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ClientErrorInterface": {
         "dataType": "refObject",
         "properties": {
-            "success": {"dataType":"enum","enums":[false],"required":true},
-            "status": {"ref":"StatusCodes","required":true},
-            "message": {"dataType":"string","required":true},
-            "code": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ErrorDetail": {
-        "dataType": "refObject",
-        "properties": {
+            "success": {"dataType":"boolean","required":true},
+            "error": {"dataType":"string","required":true},
             "code": {"dataType":"string"},
-            "message": {"dataType":"string","required":true},
             "details": {"dataType":"any"},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Record_string.any_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"any"},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ErrorResponse": {
         "dataType": "refObject",
         "properties": {
-            "success": {"dataType":"enum","enums":[false],"required":true},
-            "error": {"ref":"ErrorDetail","required":true},
-            "timestamp": {"dataType":"string"},
-            "developer": {"dataType":"string"},
+            "success": {"dataType":"boolean","required":true},
+            "error": {"dataType":"string","required":true},
+            "code": {"dataType":"string"},
+            "details": {"ref":"Record_string.any_"},
         },
         "additionalProperties": false,
     },
@@ -514,27 +504,21 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_ProductFilterQueryParams.Exclude_keyofProductFilterQueryParams.isActive-or-createdBy-or-updatedBy__": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"category":{"dataType":"string"},"inStock":{"dataType":"boolean"},"brand":{"dataType":"string"},"unit":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["piece"]},{"dataType":"enum","enums":["kg"]},{"dataType":"enum","enums":["gm"]},{"dataType":"enum","enums":["litre"]},{"dataType":"enum","enums":["ml"]},{"dataType":"enum","enums":["pack"]},{"dataType":"enum","enums":["dozen"]}]},"page":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},"limit":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},"sort":{"dataType":"string"},"sortBy":{"dataType":"string"},"sortOrder":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},"search":{"dataType":"string"},"q":{"dataType":"string"},"categoryId":{"dataType":"string"},"isPublic":{"dataType":"boolean"},"minPrice":{"dataType":"double"},"maxPrice":{"dataType":"double"}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ProductFilters": {
         "dataType": "refObject",
         "properties": {
-            "category": {"dataType":"string"},
-            "inStock": {"dataType":"boolean"},
-            "brand": {"dataType":"string"},
-            "unit": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["piece"]},{"dataType":"enum","enums":["kg"]},{"dataType":"enum","enums":["gm"]},{"dataType":"enum","enums":["litre"]},{"dataType":"enum","enums":["ml"]},{"dataType":"enum","enums":["pack"]},{"dataType":"enum","enums":["dozen"]}]},
-            "page": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
-            "limit": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
+            "page": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
+            "limit": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
             "sort": {"dataType":"string"},
             "sortBy": {"dataType":"string"},
             "sortOrder": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
             "search": {"dataType":"string"},
             "q": {"dataType":"string"},
             "categoryId": {"dataType":"string"},
+            "category": {"dataType":"string"},
             "isPublic": {"dataType":"boolean"},
+            "inStock": {"dataType":"boolean"},
+            "isActive": {"dataType":"boolean"},
             "minPrice": {"dataType":"double"},
             "maxPrice": {"dataType":"double"},
         },
@@ -554,19 +538,18 @@ const models: TsoaRoute.Models = {
     "SearchProductFilters": {
         "dataType": "refObject",
         "properties": {
-            "category": {"dataType":"string"},
-            "inStock": {"dataType":"boolean"},
-            "brand": {"dataType":"string"},
-            "unit": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["piece"]},{"dataType":"enum","enums":["kg"]},{"dataType":"enum","enums":["gm"]},{"dataType":"enum","enums":["litre"]},{"dataType":"enum","enums":["ml"]},{"dataType":"enum","enums":["pack"]},{"dataType":"enum","enums":["dozen"]}]},
-            "page": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
-            "limit": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
+            "page": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
+            "limit": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
             "sort": {"dataType":"string"},
             "sortBy": {"dataType":"string"},
             "sortOrder": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
             "search": {"dataType":"string"},
             "q": {"dataType":"string","required":true},
             "categoryId": {"dataType":"string"},
+            "category": {"dataType":"string"},
             "isPublic": {"dataType":"boolean"},
+            "inStock": {"dataType":"boolean"},
+            "isActive": {"dataType":"boolean"},
             "minPrice": {"dataType":"double"},
             "maxPrice": {"dataType":"double"},
         },
@@ -614,19 +597,18 @@ const models: TsoaRoute.Models = {
     "SaleProductFilters": {
         "dataType": "refObject",
         "properties": {
-            "category": {"dataType":"string"},
-            "inStock": {"dataType":"boolean"},
-            "brand": {"dataType":"string"},
-            "unit": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["piece"]},{"dataType":"enum","enums":["kg"]},{"dataType":"enum","enums":["gm"]},{"dataType":"enum","enums":["litre"]},{"dataType":"enum","enums":["ml"]},{"dataType":"enum","enums":["pack"]},{"dataType":"enum","enums":["dozen"]}]},
-            "page": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
-            "limit": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
+            "page": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
+            "limit": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
             "sort": {"dataType":"string"},
             "sortBy": {"dataType":"string"},
             "sortOrder": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
             "search": {"dataType":"string"},
             "q": {"dataType":"string"},
             "categoryId": {"dataType":"string"},
+            "category": {"dataType":"string"},
             "isPublic": {"dataType":"boolean"},
+            "inStock": {"dataType":"boolean"},
+            "isActive": {"dataType":"boolean"},
             "minPrice": {"dataType":"double"},
             "maxPrice": {"dataType":"double"},
             "minDiscount": {"dataType":"double"},
@@ -647,19 +629,18 @@ const models: TsoaRoute.Models = {
     "PriceRangeFilters": {
         "dataType": "refObject",
         "properties": {
-            "category": {"dataType":"string"},
-            "inStock": {"dataType":"boolean"},
-            "brand": {"dataType":"string"},
-            "unit": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["piece"]},{"dataType":"enum","enums":["kg"]},{"dataType":"enum","enums":["gm"]},{"dataType":"enum","enums":["litre"]},{"dataType":"enum","enums":["ml"]},{"dataType":"enum","enums":["pack"]},{"dataType":"enum","enums":["dozen"]}]},
-            "page": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
-            "limit": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
+            "page": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
+            "limit": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
             "sort": {"dataType":"string"},
             "sortBy": {"dataType":"string"},
             "sortOrder": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
             "search": {"dataType":"string"},
             "q": {"dataType":"string"},
             "categoryId": {"dataType":"string"},
+            "category": {"dataType":"string"},
             "isPublic": {"dataType":"boolean"},
+            "inStock": {"dataType":"boolean"},
+            "isActive": {"dataType":"boolean"},
             "minPrice": {"dataType":"double","required":true},
             "maxPrice": {"dataType":"double","required":true},
         },
@@ -709,22 +690,24 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["standard"]},{"dataType":"enum","enums":["express"]},{"dataType":"enum","enums":["scheduled"]},{"dataType":"enum","enums":["pickup"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IDeviceInfo": {
+    "DeviceInfo": {
         "dataType": "refObject",
         "properties": {
             "platform": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["ios"]},{"dataType":"enum","enums":["android"]},{"dataType":"enum","enums":["web"]},{"dataType":"enum","enums":["other"]}],"required":true},
             "version": {"dataType":"string","required":true},
             "deviceId": {"dataType":"string","required":true},
+            "appVersion": {"dataType":"string"},
+            "fcmToken": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ILocation": {
+    "Location": {
         "dataType": "refObject",
         "properties": {
             "latitude": {"dataType":"double","required":true},
             "longitude": {"dataType":"double","required":true},
-            "address": {"dataType":"string","required":true},
+            "address": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -748,8 +731,8 @@ const models: TsoaRoute.Models = {
             "estimatedDelivery": {"dataType":"datetime"},
             "appliedCoupons": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "notes": {"dataType":"string"},
-            "deviceInfo": {"ref":"IDeviceInfo"},
-            "location": {"ref":"ILocation"},
+            "deviceInfo": {"ref":"DeviceInfo"},
+            "location": {"ref":"Location"},
             "lastActivityAt": {"dataType":"datetime","required":true},
             "expiresAt": {"dataType":"datetime","required":true},
             "isActive": {"dataType":"boolean","required":true},
@@ -810,7 +793,7 @@ const models: TsoaRoute.Models = {
             "deliveryType": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["standard"]},{"dataType":"enum","enums":["express"]},{"dataType":"enum","enums":["scheduled"]},{"dataType":"enum","enums":["pickup"]}],"required":true},
             "deliveryAddress": {"dataType":"string"},
             "scheduledDelivery": {"dataType":"datetime"},
-            "location": {"ref":"ILocation"},
+            "location": {"ref":"Location"},
         },
         "additionalProperties": false,
     },
@@ -1027,11 +1010,6 @@ const models: TsoaRoute.Models = {
             "result": {"ref":"PaginatedResponse_any_","required":true},
         },
         "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Record_string.any_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"any"},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateOrderRequest": {
@@ -1843,32 +1821,29 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pagination": {
+    "PaginatedResponse_IUser_": {
         "dataType": "refObject",
         "properties": {
-            "total": {"dataType":"double","required":true},
-            "page": {"dataType":"double","required":true},
+            "docs": {"dataType":"array","array":{"dataType":"refObject","ref":"IUser"},"required":true},
+            "totalDocs": {"dataType":"double","required":true},
             "limit": {"dataType":"double","required":true},
-            "pages": {"dataType":"double","required":true},
+            "page": {"dataType":"double","required":true},
+            "totalPages": {"dataType":"double","required":true},
+            "hasNextPage": {"dataType":"boolean","required":true},
+            "hasPrevPage": {"dataType":"boolean","required":true},
+            "nextPage": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "prevPage": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "pagingCounter": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PaginatedList_IUser_": {
-        "dataType": "refObject",
-        "properties": {
-            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"IUser"},"required":true},
-            "meta": {"ref":"Pagination","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse_PaginatedList_IUser__": {
+    "SuccessResponse_PaginatedResponse_IUser__": {
         "dataType": "refObject",
         "properties": {
             "success": {"dataType":"enum","enums":[true],"required":true},
             "message": {"dataType":"string","required":true},
-            "result": {"ref":"PaginatedList_IUser_","required":true},
+            "result": {"ref":"PaginatedResponse_IUser_","required":true},
         },
         "additionalProperties": false,
     },
@@ -1894,8 +1869,9 @@ const models: TsoaRoute.Models = {
             "thumbnailUrl": {"dataType":"string"},
             "thumbnailKey": {"dataType":"string"},
             "likes": {"dataType":"double","required":true},
-            "likedBy": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "likedBy": {"dataType":"array","array":{"dataType":"refAlias","ref":"mongoose.Types.ObjectId"},"required":true},
             "isActive": {"dataType":"boolean","required":true},
+            "userId": {"ref":"mongoose.Types.ObjectId"},
             "createdAt": {"dataType":"datetime","required":true},
             "updatedAt": {"dataType":"datetime","required":true},
         },
@@ -1979,22 +1955,20 @@ const models: TsoaRoute.Models = {
     "ProductFilterQueryParams": {
         "dataType": "refObject",
         "properties": {
-            "page": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
-            "limit": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"}]},
+            "page": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
+            "limit": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"string"}]},
             "sort": {"dataType":"string"},
             "sortBy": {"dataType":"string"},
             "sortOrder": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
             "search": {"dataType":"string"},
-            "isActive": {"dataType":"boolean"},
-            "category": {"dataType":"string"},
-            "minPrice": {"dataType":"double"},
-            "maxPrice": {"dataType":"double"},
-            "brand": {"dataType":"string"},
-            "unit": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["piece"]},{"dataType":"enum","enums":["kg"]},{"dataType":"enum","enums":["gm"]},{"dataType":"enum","enums":["litre"]},{"dataType":"enum","enums":["ml"]},{"dataType":"enum","enums":["pack"]},{"dataType":"enum","enums":["dozen"]}]},
             "q": {"dataType":"string"},
             "categoryId": {"dataType":"string"},
+            "category": {"dataType":"string"},
             "isPublic": {"dataType":"boolean"},
             "inStock": {"dataType":"boolean"},
+            "isActive": {"dataType":"boolean"},
+            "minPrice": {"dataType":"double"},
+            "maxPrice": {"dataType":"double"},
         },
         "additionalProperties": false,
     },
@@ -2068,21 +2042,29 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IPaginatedDeliveryBoyList": {
+    "PaginatedResponse_IDeliveryBoy_": {
         "dataType": "refObject",
         "properties": {
-            "deliveryBoys": {"dataType":"array","array":{"dataType":"refObject","ref":"IDeliveryBoy"},"required":true},
-            "pagination": {"dataType":"nestedObjectLiteral","nestedProperties":{"hasPrev":{"dataType":"boolean","required":true},"hasNext":{"dataType":"boolean","required":true},"totalPages":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true},"total":{"dataType":"double","required":true}},"required":true},
+            "docs": {"dataType":"array","array":{"dataType":"refObject","ref":"IDeliveryBoy"},"required":true},
+            "totalDocs": {"dataType":"double","required":true},
+            "limit": {"dataType":"double","required":true},
+            "page": {"dataType":"double","required":true},
+            "totalPages": {"dataType":"double","required":true},
+            "hasNextPage": {"dataType":"boolean","required":true},
+            "hasPrevPage": {"dataType":"boolean","required":true},
+            "nextPage": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "prevPage": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "pagingCounter": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse_IPaginatedDeliveryBoyList_": {
+    "SuccessResponse_PaginatedResponse_IDeliveryBoy__": {
         "dataType": "refObject",
         "properties": {
             "success": {"dataType":"enum","enums":[true],"required":true},
             "message": {"dataType":"string","required":true},
-            "result": {"ref":"IPaginatedDeliveryBoyList","required":true},
+            "result": {"ref":"PaginatedResponse_IDeliveryBoy_","required":true},
         },
         "additionalProperties": false,
     },
@@ -2384,27 +2366,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "DeviceInfo": {
-        "dataType": "refObject",
-        "properties": {
-            "platform": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["ios"]},{"dataType":"enum","enums":["android"]},{"dataType":"enum","enums":["web"]},{"dataType":"enum","enums":["other"]}],"required":true},
-            "version": {"dataType":"string","required":true},
-            "deviceId": {"dataType":"string","required":true},
-            "appVersion": {"dataType":"string"},
-            "fcmToken": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Location": {
-        "dataType": "refObject",
-        "properties": {
-            "latitude": {"dataType":"double","required":true},
-            "longitude": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Cart": {
         "dataType": "refObject",
         "properties": {
@@ -2444,7 +2405,6 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string","required":true},
             "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"cart":{"ref":"Cart","required":true}},"required":true},
             "timestamp": {"dataType":"string","required":true},
-            "user": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -2470,7 +2430,6 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string","required":true},
             "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"analytics":{"ref":"CartAnalytics","required":true}},"required":true},
             "timestamp": {"dataType":"string","required":true},
-            "user": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -2491,7 +2450,6 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string","required":true},
             "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"result":{"ref":"CleanupResult","required":true}},"required":true},
             "timestamp": {"dataType":"string","required":true},
-            "user": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -2524,7 +2482,6 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string","required":true},
             "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"funnel":{"ref":"CartFunnel","required":true}},"required":true},
             "timestamp": {"dataType":"string","required":true},
-            "user": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -2583,33 +2540,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PaginatedResponse_IUser_": {
-        "dataType": "refObject",
-        "properties": {
-            "docs": {"dataType":"array","array":{"dataType":"refObject","ref":"IUser"},"required":true},
-            "totalDocs": {"dataType":"double","required":true},
-            "limit": {"dataType":"double","required":true},
-            "page": {"dataType":"double","required":true},
-            "totalPages": {"dataType":"double","required":true},
-            "hasNextPage": {"dataType":"boolean","required":true},
-            "hasPrevPage": {"dataType":"boolean","required":true},
-            "nextPage": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
-            "prevPage": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
-            "pagingCounter": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse_PaginatedResponse_IUser__": {
-        "dataType": "refObject",
-        "properties": {
-            "success": {"dataType":"enum","enums":[true],"required":true},
-            "message": {"dataType":"string","required":true},
-            "result": {"ref":"PaginatedResponse_IUser_","required":true},
         },
         "additionalProperties": false,
     },
@@ -4496,103 +4426,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsCustomerOrderController_getOrderById: Record<string, TsoaRoute.ParameterSchema> = {
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-        };
-        app.get('/customer/orders/:id',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.getOrderById)),
-
-            async function CustomerOrderController_getOrderById(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_getOrderById, request, response });
-
-                const controller = new CustomerOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'getOrderById',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsCustomerOrderController_trackOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-                orderNumber: {"in":"path","name":"orderNumber","required":true,"dataType":"string"},
-        };
-        app.get('/customer/orders/track/:orderNumber',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.trackOrder)),
-
-            async function CustomerOrderController_trackOrder(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_trackOrder, request, response });
-
-                const controller = new CustomerOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'trackOrder',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsCustomerOrderController_cancelOrder: Record<string, TsoaRoute.ParameterSchema> = {
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
-        };
-        app.post('/customer/orders/:id/cancel',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
-            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.cancelOrder)),
-
-            async function CustomerOrderController_cancelOrder(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_cancelOrder, request, response });
-
-                const controller = new CustomerOrderController();
-
-              await templateService.apiHandler({
-                methodName: 'cancelOrder',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsCustomerOrderController_getActiveOrders: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 filter: {"in":"queries","name":"filter","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
@@ -4646,6 +4479,103 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getOrderHistory',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCustomerOrderController_trackOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                orderNumber: {"in":"path","name":"orderNumber","required":true,"dataType":"string"},
+        };
+        app.get('/customer/orders/track/:orderNumber',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.trackOrder)),
+
+            async function CustomerOrderController_trackOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_trackOrder, request, response });
+
+                const controller = new CustomerOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'trackOrder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCustomerOrderController_getOrderById: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/customer/orders/:id',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.getOrderById)),
+
+            async function CustomerOrderController_getOrderById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_getOrderById, request, response });
+
+                const controller = new CustomerOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'getOrderById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsCustomerOrderController_cancelOrder: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+        };
+        app.post('/customer/orders/:id/cancel',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController)),
+            ...(fetchMiddlewares<RequestHandler>(CustomerOrderController.prototype.cancelOrder)),
+
+            async function CustomerOrderController_cancelOrder(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsCustomerOrderController_cancelOrder, request, response });
+
+                const controller = new CustomerOrderController();
+
+              await templateService.apiHandler({
+                methodName: 'cancelOrder',
                 controller,
                 response,
                 next,
@@ -7319,7 +7249,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAdminCartController_getCarts: Record<string, TsoaRoute.ParameterSchema> = {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
                 limit: {"default":20,"in":"query","name":"limit","dataType":"double"},
-                status: {"in":"query","name":"status","dataType":"union","subSchemas":[{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["checkout"]},{"dataType":"enum","enums":["completed"]},{"dataType":"enum","enums":["abandoned"]},{"dataType":"enum","enums":[""]}]},
+                status: {"in":"query","name":"status","dataType":"union","subSchemas":[{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["completed"]},{"dataType":"enum","enums":["abandoned"]}]},
                 userId: {"in":"query","name":"userId","dataType":"string"},
                 startDate: {"in":"query","name":"startDate","dataType":"string"},
                 endDate: {"in":"query","name":"endDate","dataType":"string"},
@@ -7327,7 +7257,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 sortOrder: {"default":"desc","in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
         };
         app.get('/admin/carts',
-            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController)),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController.prototype.getCarts)),
 
@@ -7358,7 +7287,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 cartId: {"in":"path","name":"cartId","required":true,"dataType":"string"},
         };
         app.get('/admin/carts/:cartId',
-            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController)),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController.prototype.getCartById)),
 
@@ -7388,7 +7316,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAdminCartController_getCartAnalytics: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/admin/carts/analytics/stats',
-            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController)),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController.prototype.getCartAnalytics)),
 
@@ -7419,7 +7346,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 days: {"default":7,"in":"query","name":"days","dataType":"double"},
         };
         app.delete('/admin/carts/cleanup/abandoned',
-            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController)),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController.prototype.cleanupAbandonedCarts)),
 
@@ -7449,7 +7375,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAdminCartController_getCartFunnel: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/admin/carts/analytics/funnel',
-            authenticateMiddleware([{"jwt":["admin"]}]),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController)),
             ...(fetchMiddlewares<RequestHandler>(AdminCartController.prototype.getCartFunnel)),
 

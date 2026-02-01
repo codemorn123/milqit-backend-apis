@@ -2,7 +2,7 @@
 import { ICart, ICartItem, CartStatus, DeliveryType } from '../models/CartModel';
 
 
-import { DeviceInfo, IFilter } from "./common.types";
+import { DeviceInfo, IFilter, Location } from "./common.types";
 import { Address } from "./location.types";
 
 // Simple, direct interfaces without "I" prefix
@@ -34,12 +34,7 @@ export interface UserInfo {
 
 
 
-
-export interface Location {
-  latitude: number;
-  longitude: number;
-  address?: string;
-}
+// Location is imported from common.types.ts
 
 export interface Cart {
   id: string;

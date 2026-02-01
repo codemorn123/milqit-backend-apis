@@ -7,130 +7,45 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"StatusCodes": {
-				"enum": [
-					100,
-					101,
-					102,
-					103,
-					200,
-					201,
-					202,
-					203,
-					204,
-					205,
-					206,
-					207,
-					300,
-					301,
-					302,
-					303,
-					304,
-					305,
-					307,
-					308,
-					400,
-					401,
-					402,
-					403,
-					404,
-					405,
-					406,
-					407,
-					408,
-					409,
-					410,
-					411,
-					412,
-					413,
-					414,
-					415,
-					416,
-					417,
-					418,
-					419,
-					420,
-					421,
-					422,
-					423,
-					424,
-					426,
-					428,
-					429,
-					431,
-					451,
-					500,
-					501,
-					502,
-					503,
-					504,
-					505,
-					507,
-					511
-				],
-				"type": "number"
-			},
 			"ClientErrorInterface": {
 				"properties": {
 					"success": {
-						"type": "boolean",
-						"enum": [
-							false
-						],
-						"nullable": false
+						"type": "boolean"
 					},
-					"status": {
-						"$ref": "#/components/schemas/StatusCodes"
-					},
-					"message": {
+					"error": {
 						"type": "string"
 					},
 					"code": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"success",
-					"status",
-					"message",
-					"code"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ErrorDetail": {
-				"properties": {
-					"code": {
-						"type": "string"
-					},
-					"message": {
 						"type": "string"
 					},
 					"details": {}
 				},
 				"required": [
-					"message"
+					"success",
+					"error"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Record_string.any_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
 			"ErrorResponse": {
 				"properties": {
 					"success": {
-						"type": "boolean",
-						"enum": [
-							false
-						],
-						"nullable": false
+						"type": "boolean"
 					},
 					"error": {
-						"$ref": "#/components/schemas/ErrorDetail"
-					},
-					"timestamp": {
 						"type": "string"
 					},
-					"developer": {
+					"code": {
 						"type": "string"
+					},
+					"details": {
+						"$ref": "#/components/schemas/Record_string.any_"
 					}
 				},
 				"required": [
@@ -1405,130 +1320,27 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_ProductFilterQueryParams.Exclude_keyofProductFilterQueryParams.isActive-or-createdBy-or-updatedBy__": {
-				"properties": {
-					"category": {
-						"type": "string"
-					},
-					"inStock": {
-						"type": "boolean"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string",
-						"enum": [
-							"piece",
-							"kg",
-							"gm",
-							"litre",
-							"ml",
-							"pack",
-							"dozen"
-						]
-					},
-					"page": {
-						"anyOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "number",
-								"format": "double"
-							}
-						]
-					},
-					"limit": {
-						"anyOf": [
-							{
-								"type": "string"
-							},
-							{
-								"type": "number",
-								"format": "double"
-							}
-						]
-					},
-					"sort": {
-						"type": "string"
-					},
-					"sortBy": {
-						"type": "string"
-					},
-					"sortOrder": {
-						"type": "string",
-						"enum": [
-							"asc",
-							"desc"
-						]
-					},
-					"search": {
-						"type": "string"
-					},
-					"q": {
-						"type": "string"
-					},
-					"categoryId": {
-						"type": "string"
-					},
-					"isPublic": {
-						"type": "boolean"
-					},
-					"minPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"maxPrice": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
 			"ProductFilters": {
 				"properties": {
-					"category": {
-						"type": "string"
-					},
-					"inStock": {
-						"type": "boolean"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string",
-						"enum": [
-							"piece",
-							"kg",
-							"gm",
-							"litre",
-							"ml",
-							"pack",
-							"dozen"
-						]
-					},
 					"page": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
 					"limit": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
@@ -1554,7 +1366,16 @@
 					"categoryId": {
 						"type": "string"
 					},
+					"category": {
+						"type": "string"
+					},
 					"isPublic": {
+						"type": "boolean"
+					},
+					"inStock": {
+						"type": "boolean"
+					},
+					"isActive": {
 						"type": "boolean"
 					},
 					"minPrice": {
@@ -1600,46 +1421,25 @@
 			},
 			"SearchProductFilters": {
 				"properties": {
-					"category": {
-						"type": "string"
-					},
-					"inStock": {
-						"type": "boolean"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string",
-						"enum": [
-							"piece",
-							"kg",
-							"gm",
-							"litre",
-							"ml",
-							"pack",
-							"dozen"
-						]
-					},
 					"page": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
 					"limit": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
@@ -1665,7 +1465,16 @@
 					"categoryId": {
 						"type": "string"
 					},
+					"category": {
+						"type": "string"
+					},
 					"isPublic": {
+						"type": "boolean"
+					},
+					"inStock": {
+						"type": "boolean"
+					},
+					"isActive": {
 						"type": "boolean"
 					},
 					"minPrice": {
@@ -1809,46 +1618,25 @@
 			},
 			"SaleProductFilters": {
 				"properties": {
-					"category": {
-						"type": "string"
-					},
-					"inStock": {
-						"type": "boolean"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string",
-						"enum": [
-							"piece",
-							"kg",
-							"gm",
-							"litre",
-							"ml",
-							"pack",
-							"dozen"
-						]
-					},
 					"page": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
 					"limit": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
@@ -1874,7 +1662,16 @@
 					"categoryId": {
 						"type": "string"
 					},
+					"category": {
+						"type": "string"
+					},
 					"isPublic": {
+						"type": "boolean"
+					},
+					"inStock": {
+						"type": "boolean"
+					},
+					"isActive": {
 						"type": "boolean"
 					},
 					"minPrice": {
@@ -1922,46 +1719,25 @@
 			},
 			"PriceRangeFilters": {
 				"properties": {
-					"category": {
-						"type": "string"
-					},
-					"inStock": {
-						"type": "boolean"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string",
-						"enum": [
-							"piece",
-							"kg",
-							"gm",
-							"litre",
-							"ml",
-							"pack",
-							"dozen"
-						]
-					},
 					"page": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
 					"limit": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
@@ -1987,7 +1763,16 @@
 					"categoryId": {
 						"type": "string"
 					},
+					"category": {
+						"type": "string"
+					},
 					"isPublic": {
+						"type": "boolean"
+					},
+					"inStock": {
+						"type": "boolean"
+					},
+					"isActive": {
 						"type": "boolean"
 					},
 					"minPrice": {
@@ -2135,8 +1920,7 @@
 					"pickup"
 				]
 			},
-			"IDeviceInfo": {
-				"description": "Device Information Interface",
+			"DeviceInfo": {
 				"properties": {
 					"platform": {
 						"type": "string",
@@ -2152,6 +1936,12 @@
 					},
 					"deviceId": {
 						"type": "string"
+					},
+					"appVersion": {
+						"type": "string"
+					},
+					"fcmToken": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -2162,8 +1952,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ILocation": {
-				"description": "Location Interface",
+			"Location": {
 				"properties": {
 					"latitude": {
 						"type": "number",
@@ -2179,8 +1968,7 @@
 				},
 				"required": [
 					"latitude",
-					"longitude",
-					"address"
+					"longitude"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2252,10 +2040,10 @@
 						"type": "string"
 					},
 					"deviceInfo": {
-						"$ref": "#/components/schemas/IDeviceInfo"
+						"$ref": "#/components/schemas/DeviceInfo"
 					},
 					"location": {
-						"$ref": "#/components/schemas/ILocation"
+						"$ref": "#/components/schemas/Location"
 					},
 					"lastActivityAt": {
 						"type": "string",
@@ -2324,7 +2112,7 @@
 				"additionalProperties": false
 			},
 			"AddToCartRequest": {
-				"description": "Request/Response Interfaces",
+				"description": "Add To Cart Request",
 				"properties": {
 					"productId": {
 						"type": "string"
@@ -2345,6 +2133,7 @@
 				"additionalProperties": false
 			},
 			"UpdateCartItemRequest": {
+				"description": "Update Cart Item Request",
 				"properties": {
 					"quantity": {
 						"type": "number",
@@ -2361,6 +2150,7 @@
 				"additionalProperties": false
 			},
 			"ClearCartRequest": {
+				"description": "Clear Cart Request",
 				"properties": {
 					"confirmClear": {
 						"type": "boolean"
@@ -2373,6 +2163,7 @@
 				"additionalProperties": false
 			},
 			"ApplyCouponRequest": {
+				"description": "Apply Coupon Request",
 				"properties": {
 					"couponCode": {
 						"type": "string"
@@ -2385,6 +2176,7 @@
 				"additionalProperties": false
 			},
 			"SetDeliveryInfoRequest": {
+				"description": "Set Delivery Info Request",
 				"properties": {
 					"deliveryType": {
 						"type": "string",
@@ -2403,7 +2195,7 @@
 						"format": "date-time"
 					},
 					"location": {
-						"$ref": "#/components/schemas/ILocation"
+						"$ref": "#/components/schemas/Location"
 					}
 				},
 				"required": [
@@ -3155,12 +2947,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"Record_string.any_": {
-				"properties": {},
-				"additionalProperties": {},
-				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
 			},
 			"CreateOrderRequest": {
 				"properties": {
@@ -5558,13 +5344,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pagination": {
+			"PaginatedResponse_IUser_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
-					"total": {
-						"type": "number",
-						"format": "double"
+					"docs": {
+						"items": {
+							"$ref": "#/components/schemas/IUser"
+						},
+						"type": "array"
 					},
-					"page": {
+					"totalDocs": {
 						"type": "number",
 						"format": "double"
 					},
@@ -5572,40 +5361,51 @@
 						"type": "number",
 						"format": "double"
 					},
-					"pages": {
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"hasNextPage": {
+						"type": "boolean"
+					},
+					"hasPrevPage": {
+						"type": "boolean"
+					},
+					"nextPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"prevPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"pagingCounter": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"total",
-					"page",
+					"docs",
+					"totalDocs",
 					"limit",
-					"pages"
+					"page",
+					"totalPages",
+					"hasNextPage",
+					"hasPrevPage",
+					"nextPage",
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PaginatedList_IUser_": {
-				"properties": {
-					"data": {
-						"items": {
-							"$ref": "#/components/schemas/IUser"
-						},
-						"type": "array"
-					},
-					"meta": {
-						"$ref": "#/components/schemas/Pagination"
-					}
-				},
-				"required": [
-					"data",
-					"meta"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_PaginatedList_IUser__": {
+			"SuccessResponse_PaginatedResponse_IUser__": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -5618,7 +5418,7 @@
 						"type": "string"
 					},
 					"result": {
-						"$ref": "#/components/schemas/PaginatedList_IUser_"
+						"$ref": "#/components/schemas/PaginatedResponse_IUser_"
 					}
 				},
 				"required": [
@@ -5682,12 +5482,15 @@
 					},
 					"likedBy": {
 						"items": {
-							"type": "string"
+							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
 						},
 						"type": "array"
 					},
 					"isActive": {
 						"type": "boolean"
+					},
+					"userId": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
 					},
 					"createdAt": {
 						"type": "string",
@@ -5942,22 +5745,22 @@
 					"page": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
 					"limit": {
 						"anyOf": [
 							{
-								"type": "string"
-							},
-							{
 								"type": "number",
 								"format": "double"
+							},
+							{
+								"type": "string"
 							}
 						]
 					},
@@ -5977,11 +5780,23 @@
 					"search": {
 						"type": "string"
 					},
-					"isActive": {
-						"type": "boolean"
+					"q": {
+						"type": "string"
+					},
+					"categoryId": {
+						"type": "string"
 					},
 					"category": {
 						"type": "string"
+					},
+					"isPublic": {
+						"type": "boolean"
+					},
+					"inStock": {
+						"type": "boolean"
+					},
+					"isActive": {
+						"type": "boolean"
 					},
 					"minPrice": {
 						"type": "number",
@@ -5990,33 +5805,6 @@
 					"maxPrice": {
 						"type": "number",
 						"format": "double"
-					},
-					"brand": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string",
-						"enum": [
-							"piece",
-							"kg",
-							"gm",
-							"litre",
-							"ml",
-							"pack",
-							"dozen"
-						]
-					},
-					"q": {
-						"type": "string"
-					},
-					"categoryId": {
-						"type": "string"
-					},
-					"isPublic": {
-						"type": "boolean"
-					},
-					"inStock": {
-						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -6202,59 +5990,68 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IPaginatedDeliveryBoyList": {
-				"description": "Paginated delivery boy list response",
+			"PaginatedResponse_IDeliveryBoy_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
-					"deliveryBoys": {
+					"docs": {
 						"items": {
 							"$ref": "#/components/schemas/IDeliveryBoy"
 						},
 						"type": "array"
 					},
-					"pagination": {
-						"properties": {
-							"hasPrev": {
-								"type": "boolean"
-							},
-							"hasNext": {
-								"type": "boolean"
-							},
-							"totalPages": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"hasPrev",
-							"hasNext",
-							"totalPages",
-							"limit",
-							"page",
-							"total"
-						],
-						"type": "object"
+					"totalDocs": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalPages": {
+						"type": "number",
+						"format": "double"
+					},
+					"hasNextPage": {
+						"type": "boolean"
+					},
+					"hasPrevPage": {
+						"type": "boolean"
+					},
+					"nextPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"prevPage": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"deliveryBoys",
-					"pagination"
+					"docs",
+					"totalDocs",
+					"limit",
+					"page",
+					"totalPages",
+					"hasNextPage",
+					"hasPrevPage",
+					"nextPage",
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SuccessResponse_IPaginatedDeliveryBoyList_": {
+			"SuccessResponse_PaginatedResponse_IDeliveryBoy__": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -6267,7 +6064,7 @@
 						"type": "string"
 					},
 					"result": {
-						"$ref": "#/components/schemas/IPaginatedDeliveryBoyList"
+						"$ref": "#/components/schemas/PaginatedResponse_IDeliveryBoy_"
 					}
 				},
 				"required": [
@@ -7222,56 +7019,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"DeviceInfo": {
-				"properties": {
-					"platform": {
-						"type": "string",
-						"enum": [
-							"ios",
-							"android",
-							"web",
-							"other"
-						]
-					},
-					"version": {
-						"type": "string"
-					},
-					"deviceId": {
-						"type": "string"
-					},
-					"appVersion": {
-						"type": "string"
-					},
-					"fcmToken": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"platform",
-					"version",
-					"deviceId"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Location": {
-				"properties": {
-					"latitude": {
-						"type": "number",
-						"format": "double"
-					},
-					"longitude": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"latitude",
-					"longitude"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"Cart": {
 				"properties": {
 					"id": {
@@ -7418,17 +7165,13 @@
 					},
 					"timestamp": {
 						"type": "string"
-					},
-					"user": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"success",
 					"message",
 					"data",
-					"timestamp",
-					"user"
+					"timestamp"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -7515,17 +7258,13 @@
 					},
 					"timestamp": {
 						"type": "string"
-					},
-					"user": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"success",
 					"message",
 					"data",
-					"timestamp",
-					"user"
+					"timestamp"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -7568,17 +7307,13 @@
 					},
 					"timestamp": {
 						"type": "string"
-					},
-					"user": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"success",
 					"message",
 					"data",
-					"timestamp",
-					"user"
+					"timestamp"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -7715,17 +7450,13 @@
 					},
 					"timestamp": {
 						"type": "string"
-					},
-					"user": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"success",
 					"message",
 					"data",
-					"timestamp",
-					"user"
+					"timestamp"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -7887,91 +7618,6 @@
 				"required": [
 					"email",
 					"password"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PaginatedResponse_IUser_": {
-				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
-				"properties": {
-					"docs": {
-						"items": {
-							"$ref": "#/components/schemas/IUser"
-						},
-						"type": "array"
-					},
-					"totalDocs": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit": {
-						"type": "number",
-						"format": "double"
-					},
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					},
-					"hasNextPage": {
-						"type": "boolean"
-					},
-					"hasPrevPage": {
-						"type": "boolean"
-					},
-					"nextPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"prevPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"pagingCounter": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"docs",
-					"totalDocs",
-					"limit",
-					"page",
-					"totalPages",
-					"hasNextPage",
-					"hasPrevPage",
-					"nextPage",
-					"prevPage",
-					"pagingCounter"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_PaginatedResponse_IUser__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/PaginatedResponse_IUser_"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -8547,96 +8193,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"description": "Send OTP to delivery boy's phone number for login/registration",
@@ -8670,96 +8226,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoyAuthResponse_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
 								}
 							}
 						}
@@ -8799,96 +8265,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"description": "Resend OTP to delivery boy's phone number",
@@ -8922,96 +8298,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse__tokens-any__"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
 								}
 							}
 						}
@@ -9059,96 +8345,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"description": "Get current delivery boy profile",
@@ -9174,96 +8370,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
 								}
 							}
 						}
@@ -9309,96 +8415,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"description": "Update delivery boy location",
@@ -9438,96 +8454,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse_IDeliveryBoy_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
 								}
 							}
 						}
@@ -10144,47 +9070,6 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "category",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "inStock",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "brand",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "unit",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"piece",
-								"kg",
-								"gm",
-								"litre",
-								"ml",
-								"pack",
-								"dozen"
-							]
-						}
-					},
-					{
-						"in": "query",
 						"name": "page",
 						"required": false,
 						"schema": {}
@@ -10249,7 +9134,31 @@
 					},
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "inStock",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
 						"required": false,
 						"schema": {
 							"type": "boolean"
@@ -10393,47 +9302,6 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "category",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "inStock",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "brand",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "unit",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"piece",
-								"kg",
-								"gm",
-								"litre",
-								"ml",
-								"pack",
-								"dozen"
-							]
-						}
-					},
-					{
-						"in": "query",
 						"name": "page",
 						"required": false,
 						"schema": {}
@@ -10498,7 +9366,31 @@
 					},
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "inStock",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
 						"required": false,
 						"schema": {
 							"type": "boolean"
@@ -10659,47 +9551,6 @@
 					},
 					{
 						"in": "query",
-						"name": "category",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "inStock",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "brand",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "unit",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"piece",
-								"kg",
-								"gm",
-								"litre",
-								"ml",
-								"pack",
-								"dozen"
-							]
-						}
-					},
-					{
-						"in": "query",
 						"name": "page",
 						"required": false,
 						"schema": {}
@@ -10764,7 +9615,31 @@
 					},
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "inStock",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
 						"required": false,
 						"schema": {
 							"type": "boolean"
@@ -10845,47 +9720,6 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "category",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "inStock",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "brand",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "unit",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"piece",
-								"kg",
-								"gm",
-								"litre",
-								"ml",
-								"pack",
-								"dozen"
-							]
-						}
-					},
-					{
-						"in": "query",
 						"name": "page",
 						"required": false,
 						"schema": {}
@@ -10950,7 +9784,31 @@
 					},
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "inStock",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
 						"required": false,
 						"schema": {
 							"type": "boolean"
@@ -11113,47 +9971,6 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "category",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "inStock",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "brand",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "unit",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"piece",
-								"kg",
-								"gm",
-								"litre",
-								"ml",
-								"pack",
-								"dozen"
-							]
-						}
-					},
-					{
-						"in": "query",
 						"name": "page",
 						"required": false,
 						"schema": {}
@@ -11218,7 +10035,31 @@
 					},
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "inStock",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
 						"required": false,
 						"schema": {
 							"type": "boolean"
@@ -13277,257 +12118,6 @@
 				]
 			}
 		},
-		"/customer/orders/{id}": {
-			"get": {
-				"operationId": "GetOrderById",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Access Denied"
-					},
-					"404": {
-						"description": "Order Not Found"
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get specific order details",
-				"summary": "Get order details by ID",
-				"tags": [
-					"Customer: Orders"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/customer/orders/track/{orderNumber}": {
-			"get": {
-				"operationId": "TrackOrder",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Order Not Found"
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Track order status",
-				"summary": "Track order by order number",
-				"tags": [
-					"Customer: Orders"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "orderNumber",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/customer/orders/{id}/cancel": {
-			"post": {
-				"operationId": "CancelOrder",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Cannot cancel order in current state"
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					}
-				},
-				"description": "Cancel user's order",
-				"summary": "Cancel my order",
-				"tags": [
-					"Customer: Orders"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"reason": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"reason"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/customer/orders/active": {
 			"get": {
 				"operationId": "GetActiveOrders",
@@ -13690,7 +12280,7 @@
 						}
 					}
 				},
-				"description": "Get order history (delivered orders)",
+				"description": "Get order history (delivered/cancelled orders)",
 				"summary": "Get my order history",
 				"tags": [
 					"Customer: Orders"
@@ -13720,6 +12310,257 @@
 						}
 					}
 				]
+			}
+		},
+		"/customer/orders/track/{orderNumber}": {
+			"get": {
+				"operationId": "TrackOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Order Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Track order status",
+				"summary": "Track order by order number",
+				"tags": [
+					"Customer: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderNumber",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/customer/orders/{id}": {
+			"get": {
+				"operationId": "GetOrderById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Access Denied"
+					},
+					"404": {
+						"description": "Order Not Found"
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get specific order details",
+				"summary": "Get order details by ID",
+				"tags": [
+					"Customer: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/customer/orders/{id}/cancel": {
+			"post": {
+				"operationId": "CancelOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_IOrder_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Cannot cancel order in current state"
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cancel user's order",
+				"summary": "Cancel my order",
+				"tags": [
+					"Customer: Orders"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"reason": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"reason"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/customer/orders/{id}/reorder": {
@@ -14777,9 +13618,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -14797,9 +13642,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -14936,9 +13780,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -14956,9 +13804,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -15660,7 +14507,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_PaginatedList_IUser__"
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IUser__"
 								}
 							}
 						}
@@ -15728,7 +14575,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse____"
+									"$ref": "#/components/schemas/SuccessResponse_null_"
 								}
 							}
 						}
@@ -15778,7 +14625,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IUser"
+									"$ref": "#/components/schemas/SuccessResponse_IUser_"
 								}
 							}
 						}
@@ -15830,19 +14677,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										},
-										"success": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"message",
-										"success"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/SuccessResponse_null_"
 								}
 							}
 						}
@@ -16355,66 +15190,6 @@
 					},
 					"400": {
 						"description": "Validation Failed"
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
 					}
 				},
 				"description": "Create a new product with file uploads.\nNote: When uploading files, data must be sent as form fields.",
@@ -16504,76 +15279,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
 					}
 				},
 				"tags": [
@@ -16631,65 +15336,6 @@
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "category",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "minPrice",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "maxPrice",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "brand",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "unit",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"piece",
-								"kg",
-								"gm",
-								"litre",
-								"ml",
-								"pack",
-								"dozen"
-							]
-						}
-					},
-					{
-						"in": "query",
 						"name": "q",
 						"required": false,
 						"schema": {
@@ -16699,6 +15345,14 @@
 					{
 						"in": "query",
 						"name": "categoryId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "category",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -16719,6 +15373,32 @@
 						"schema": {
 							"type": "boolean"
 						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "maxPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
 					}
 				]
 			}
@@ -16733,76 +15413,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse____"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
 								}
 							}
 						}
@@ -16893,80 +15503,9 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
 					}
 				},
 				"description": "Get a single product by its ID.",
-				"summary": "Authored by MarotiKathoke at 2025-09-01 10:32:19",
 				"tags": [
 					"ADMIN: Products"
 				],
@@ -16994,80 +15533,9 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
 					}
 				},
 				"description": "Delete a product by its ID.",
-				"summary": "Authored by MarotiKathoke at 2025-09-01 10:32:19",
 				"tags": [
 					"ADMIN: Products"
 				],
@@ -17094,76 +15562,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse_IProduct-or-null_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Forbidden",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Conflict",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
 								}
 							}
 						}
@@ -17555,7 +15953,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse____"
+									"$ref": "#/components/schemas/SuccessResponse_null_"
 								}
 							}
 						}
@@ -18737,9 +17135,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -18767,9 +17164,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -18787,9 +17188,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -18831,7 +17231,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_IPaginatedDeliveryBoyList_"
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IDeliveryBoy__"
 								}
 							}
 						}
@@ -18877,9 +17277,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -18907,9 +17306,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -18927,9 +17330,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -19116,9 +17518,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -19146,9 +17547,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -19166,9 +17571,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -19246,9 +17650,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -19276,9 +17679,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -19296,9 +17703,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -19384,9 +17790,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -19414,9 +17819,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -19434,9 +17843,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -19534,9 +17942,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -19564,9 +17971,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -19584,9 +17995,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -19674,9 +18084,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -19704,9 +18113,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -19724,9 +18137,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -19826,9 +18238,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -19856,9 +18267,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -19876,9 +18291,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -19978,9 +18392,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -20008,9 +18421,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -20028,9 +18445,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -20130,9 +18546,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -20160,9 +18575,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -20180,9 +18599,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -20270,9 +18688,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -20300,9 +18717,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -20320,9 +18741,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -20410,9 +18830,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -20440,9 +18859,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -20460,9 +18883,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -20865,9 +19287,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -20885,9 +19311,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -21010,9 +19435,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -21030,9 +19459,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -21167,9 +19595,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -21187,9 +19619,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -21277,9 +19708,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -21297,9 +19732,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -21421,9 +19855,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -21441,9 +19879,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -21537,9 +19974,13 @@
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -21557,9 +19998,8 @@
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -21590,18 +20030,6 @@
 								"schema": {}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request"
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"403": {
-						"description": "Forbidden"
-					},
-					"500": {
-						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get all carts with filters",
@@ -21609,13 +20037,7 @@
 				"tags": [
 					"Admin Cart Management"
 				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -21645,10 +20067,8 @@
 							"type": "string",
 							"enum": [
 								"active",
-								"checkout",
 								"completed",
-								"abandoned",
-								""
+								"abandoned"
 							]
 						}
 					},
@@ -21723,17 +20143,8 @@
 					"400": {
 						"description": "Invalid ID"
 					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"403": {
-						"description": "Forbidden"
-					},
 					"404": {
 						"description": "Cart Not Found"
-					},
-					"500": {
-						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get specific cart by ID",
@@ -21741,13 +20152,7 @@
 				"tags": [
 					"Admin Cart Management"
 				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -21773,15 +20178,6 @@
 								}
 							}
 						}
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"403": {
-						"description": "Forbidden"
-					},
-					"500": {
-						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get cart analytics",
@@ -21789,13 +20185,7 @@
 				"tags": [
 					"Admin Cart Management"
 				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": []
 			}
 		},
@@ -21812,15 +20202,6 @@
 								}
 							}
 						}
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"403": {
-						"description": "Forbidden"
-					},
-					"500": {
-						"description": "Internal Server Error"
 					}
 				},
 				"description": "Delete abandoned carts",
@@ -21828,13 +20209,7 @@
 				"tags": [
 					"Admin Cart Management"
 				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -21862,15 +20237,6 @@
 								}
 							}
 						}
-					},
-					"401": {
-						"description": "Unauthorized"
-					},
-					"403": {
-						"description": "Forbidden"
-					},
-					"500": {
-						"description": "Internal Server Error"
 					}
 				},
 				"description": "Get cart conversion funnel",
@@ -21878,13 +20244,7 @@
 				"tags": [
 					"Admin Cart Management"
 				],
-				"security": [
-					{
-						"jwt": [
-							"admin"
-						]
-					}
-				],
+				"security": [],
 				"parameters": []
 			}
 		},
@@ -22160,15 +20520,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -22180,15 +20539,19 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -22200,15 +20563,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -22269,15 +20631,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -22289,15 +20650,19 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -22309,15 +20674,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -22375,15 +20739,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -22395,15 +20758,19 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -22415,15 +20782,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -22539,15 +20905,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -22559,15 +20924,19 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -22579,15 +20948,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}
@@ -22632,15 +21000,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
+											"error": "Resource not found",
+											"code": "NOT_FOUND"
 										}
 									}
 								}
@@ -22652,15 +21019,19 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
+											"error": "Validation failed",
 											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
+											"details": {
+												"field": [
+													"Error description"
+												]
+											}
 										}
 									}
 								}
@@ -22672,15 +21043,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
+									"$ref": "#/components/schemas/ErrorResponse"
 								},
 								"examples": {
 									"Example 1": {
 										"value": {
 											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
+											"error": "Internal server error",
+											"code": "INTERNAL_SERVER_ERROR"
 										}
 									}
 								}

@@ -1,6 +1,6 @@
 import { Types, FilterQuery } from "mongoose";
 import { ProductDetails, ProductType, ValidUnit, ProductDocument, IProduct } from "../models/product.model";
-import { IcommonImage, IProductFilter } from "./common.types";
+import { IcommonImage, IProductFilter, IFilter } from "./common.types";
 import { PaginationQuery } from "./pagination.types";
 
 // --- Request DTOs (Data Transfer Objects) ---
@@ -64,7 +64,13 @@ export interface UpdateProductPayload extends Partial<Omit<CreateProductPayload,
 
 // --- Query & Filters ---
 
-export interface ProductFilterQueryParams extends PaginationQuery {
+export interface ProductFilterQueryParams {
+  page?: number | string;
+  limit?: number | string;
+  sort?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  search?: string;
   q?: string;           // Search query alias
   categoryId?: string;  // Category ID alias
   category?: string;    // Direct category ID
@@ -73,7 +79,6 @@ export interface ProductFilterQueryParams extends PaginationQuery {
   isActive?: boolean;
   minPrice?: number;
   maxPrice?: number;
-  sortBy?: 'price' | 'rating' | 'newest';
 }
 
 export interface ProductAvailabilityResponse {

@@ -21,7 +21,7 @@ interface CustomerProductResponse extends Omit<IProduct, 'createdBy' | 'updatedB
   hasDiscount: boolean;
 }
 
-interface ProductFilters extends Omit<ProductFilterQueryParams, 'isActive' | 'createdBy' | 'updatedBy'> {
+interface ProductFilters extends ProductFilterQueryParams {
   // Customer-specific filters only
 }
 
