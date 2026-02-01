@@ -4543,11 +4543,22 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"AuthPlatform": {
+				"type": "string",
+				"enum": [
+					"mobile",
+					"web"
+				],
+				"description": "Platform type for authentication"
+			},
 			"ISendOtpInput": {
 				"description": "Send OTP request input",
 				"properties": {
 					"phone": {
 						"type": "string"
+					},
+					"platform": {
+						"$ref": "#/components/schemas/AuthPlatform"
 					}
 				},
 				"required": [
@@ -4610,6 +4621,9 @@
 					},
 					"deviceId": {
 						"type": "string"
+					},
+					"platform": {
+						"$ref": "#/components/schemas/AuthPlatform"
 					}
 				},
 				"required": [
@@ -13876,6 +13890,7 @@
 						}
 					}
 				},
+				"description": "Verify OTP and login/register\nFor web platform: Sets HTTP-only cookies for access and refresh tokens\nFor mobile platform: Returns tokens in response body",
 				"tags": [
 					"Customer Authentication"
 				],
@@ -13940,7 +13955,7 @@
 						}
 					}
 				},
-				"description": "Refresh authentication tokens",
+				"description": "Refresh authentication tokens\nSupports both body-based (mobile) and cookie-based (web) refresh tokens",
 				"tags": [
 					"Customer Authentication"
 				],
@@ -13952,18 +13967,45 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"platform": {
+										"type": "string",
+										"enum": [
+											"mobile",
+											"web"
+										]
+									},
 									"refreshToken": {
 										"type": "string"
 									}
 								},
-								"required": [
-									"refreshToken"
-								],
 								"type": "object"
 							}
 						}
 					}
 				}
+			}
+		},
+		"/customer/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Logout - Clear authentication cookies (web only)",
+				"tags": [
+					"Customer Authentication"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/customer/coupons/available": {

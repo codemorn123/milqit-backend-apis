@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 // import { INotification } from './../types/notification.types';
 
 
@@ -49,6 +50,9 @@ const notificationSchema: Schema = new Schema<INotificationDocument>({
   timestamps: true, // Adds createdAt and updatedAt timestamps
 });
 
-const NotificationModel = mongoose.model<INotificationDocument>('Notification', notificationSchema);
+// Apply the pagination plugin
+notificationSchema.plugin(mongoosePaginate);
+
+const NotificationModel = mongoose.model<INotificationDocument, PaginateModel<INotificationDocument>>('Notification', notificationSchema);
 
 export default NotificationModel;

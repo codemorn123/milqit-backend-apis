@@ -1552,10 +1552,16 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AuthPlatform": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["mobile"]},{"dataType":"enum","enums":["web"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ISendOtpInput": {
         "dataType": "refObject",
         "properties": {
             "phone": {"dataType":"string","required":true},
+            "platform": {"ref":"AuthPlatform"},
         },
         "additionalProperties": false,
     },
@@ -1586,6 +1592,7 @@ const models: TsoaRoute.Models = {
             "otp": {"dataType":"string","required":true},
             "name": {"dataType":"string"},
             "deviceId": {"dataType":"string"},
+            "platform": {"ref":"AuthPlatform"},
         },
         "additionalProperties": false,
     },
@@ -5081,6 +5088,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsMobileAuthController_verifyOtp: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"IVerifyOtpInput"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         app.post('/customer/auth/verify-otp',
             ...(fetchMiddlewares<RequestHandler>(MobileAuthController)),
@@ -5140,7 +5148,8 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsMobileAuthController_refreshToken: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"refreshToken":{"dataType":"string","required":true}}},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"platform":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["mobile"]},{"dataType":"enum","enums":["web"]}]},"refreshToken":{"dataType":"string"}}},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         app.post('/customer/auth/refresh-token',
             ...(fetchMiddlewares<RequestHandler>(MobileAuthController)),
@@ -5158,6 +5167,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'refreshToken',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsMobileAuthController_logout: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        app.post('/customer/auth/logout',
+            ...(fetchMiddlewares<RequestHandler>(MobileAuthController)),
+            ...(fetchMiddlewares<RequestHandler>(MobileAuthController.prototype.logout)),
+
+            async function MobileAuthController_logout(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsMobileAuthController_logout, request, response });
+
+                const controller = new MobileAuthController();
+
+              await templateService.apiHandler({
+                methodName: 'logout',
                 controller,
                 response,
                 next,

@@ -1,4 +1,5 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, PaginateModel } from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2';
 import { IImage } from "./../types/image.type";
 
 const imageSchema = new Schema(
@@ -40,6 +41,10 @@ imageSchema.index({ filename: 1 });
 imageSchema.index({ key: 1 });
 imageSchema.index({ category: 1 });
 imageSchema.index({ createdAt: -1 });
-const imageModel = mongoose.model<IImage>("Image", imageSchema);
+
+// Apply pagination plugin
+imageSchema.plugin(mongoosePaginate);
+
+const imageModel = mongoose.model<IImage, PaginateModel<IImage>>("Image", imageSchema);
 
 export default imageModel;

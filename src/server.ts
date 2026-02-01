@@ -78,8 +78,8 @@ async function startServer(): Promise<void> {
 
 
     // Initialize Crons
-    initMarketingCron();
-    initLocationCron();
+    // initMarketingCron();
+    // initLocationCron();
 
     // Start the server with proper typing
     const server: http.Server = app.listen(config.port, () => {

@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 import { ISettings } from './../../types/settings.types';
 
 type SettingsDocument = ISettings & Document;
@@ -30,6 +31,9 @@ const settingsSchema: Schema = new Schema<SettingsDocument>({
   timestamps: true,
 });
 
-const SettingsModel = mongoose.model<SettingsDocument>('Setting', settingsSchema);
+// Apply pagination plugin
+settingsSchema.plugin(mongoosePaginate);
+
+const SettingsModel = mongoose.model<SettingsDocument, PaginateModel<SettingsDocument>>('Setting', settingsSchema);
 
 export default SettingsModel;

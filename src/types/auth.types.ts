@@ -79,18 +79,25 @@ export interface SessionToken {
 }
 
 /**
+ * Platform type for authentication
+ */
+export type AuthPlatform = 'mobile' | 'web';
+
+/**
  * Send OTP request input
  */
 export interface ISendOtpInput {
   phone: string;
+  platform?: AuthPlatform; // Optional: defaults to mobile
 }
 
 
 export interface IVerifyOtpInput {
   phone: string;
   otp: string;
-  name?: string; 
+  name?: string;
   deviceId?: string;
+  platform?: AuthPlatform; // Optional: defaults to mobile
 }
 
 /**

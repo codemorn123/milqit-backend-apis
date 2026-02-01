@@ -1,4 +1,5 @@
-import mongoose, { Schema, Model } from 'mongoose';
+import mongoose, { Schema, Model, PaginateModel } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 import { IBaseDocument } from '../types/model.types';
 import { BannerPlacement, BannerPurpose } from '../types/banner.enums';
 import { BannerPlatform, IBanner } from '../types/banner.types';
@@ -12,7 +13,7 @@ export interface BannerDocument extends IBanner, IBaseDocument { }
 /**
  * Banner Model Interface
  */
-export interface BannerModel extends Model<BannerDocument> {
+export interface BannerModel extends Model<BannerDocument>, PaginateModel<BannerDocument> {
   findActiveBanners(placement?: BannerPlacement, platform?: BannerPlatform): Promise<BannerDocument[]>;
 }
 
@@ -50,6 +51,9 @@ bannerSchema.statics.findActiveBanners = function (
   if (platform) query.platform = platform;
   return this.find(query).sort({ createdAt: -1 });
 };
+
+// Apply pagination plugin
+bannerSchema.plugin(mongoosePaginate);
 
 /**
  * Export Banner Model

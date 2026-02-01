@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 export interface IDevice {
     userId: mongoose.Types.ObjectId;
@@ -49,5 +50,8 @@ const DeviceSchema = new Schema<DeviceDocument>(
 // Index to quickly find user's active devices
 DeviceSchema.index({ userId: 1, isActive: 1 });
 
-export const DeviceModel = mongoose.model<DeviceDocument>('Device', DeviceSchema);
+// Apply pagination plugin
+DeviceSchema.plugin(mongoosePaginate);
+
+export const DeviceModel = mongoose.model<DeviceDocument, PaginateModel<DeviceDocument>>('Device', DeviceSchema);
 export default DeviceModel;

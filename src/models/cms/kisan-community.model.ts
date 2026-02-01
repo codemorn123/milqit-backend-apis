@@ -1,7 +1,8 @@
 // src/features/kisan-community/kisan-community.model.ts
 
 import { IKisanCommunity } from './../../types/kisan-community.types';
-import { Document, model, Schema } from 'mongoose';
+import { Document, model, Schema, PaginateModel } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 
 export interface IKisanCommunityDocument extends IKisanCommunity, Document { }
 const kisanCommunitySchema = new Schema<IKisanCommunityDocument>(
@@ -38,6 +39,9 @@ const kisanCommunitySchema = new Schema<IKisanCommunityDocument>(
 
 );
 
-const KisanCommunityModel = model<IKisanCommunityDocument>('KisanCommunity', kisanCommunitySchema);
+// Apply pagination plugin
+kisanCommunitySchema.plugin(mongoosePaginate);
+
+const KisanCommunityModel = model<IKisanCommunityDocument, PaginateModel<IKisanCommunityDocument>>('KisanCommunity', kisanCommunitySchema);
 
 export default KisanCommunityModel;

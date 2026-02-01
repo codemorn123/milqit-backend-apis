@@ -1,4 +1,6 @@
-interface IImage {
+import { Document } from 'mongoose';
+
+export interface IImage extends Document {
   title?: string;
   url?: string;
   key?: string;
@@ -6,9 +8,9 @@ interface IImage {
   updatedAt?: Date;
 }
 
-interface IImageUpdate extends Partial<IImage> {}
+interface IImageUpdate extends Partial<IImage> { }
 
-interface S3MulterFile extends Express.Multer.File {
+export interface S3MulterFile extends Express.Multer.File {
   location: string;
   bucket: string;
   key: string;
@@ -18,4 +20,4 @@ interface S3MulterFile extends Express.Multer.File {
   etag: string;
 }
 
-export { IImage, IImageUpdate, S3MulterFile };
+export { IImageUpdate };
