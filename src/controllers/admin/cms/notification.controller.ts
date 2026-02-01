@@ -1,7 +1,7 @@
 import { validateSchemaMiddleware } from './../../../middleware/common-validate';
 import { INotification } from './../../../models/cms/notification.model';
 import notificationService from './../../../services/admin/cms/notification.service';
-import { IFilter, IPaginated, PaginatedResponse } from './../../../types/common.types';
+import { IFilter, PaginatedResponse } from './../../../types/common.types';
 import { SuccessResponse as SuccessResponseTags } from './../../../utils/SuccessResponse';
 import { createNotificationSchema, filterQuerySchema, idParamSchema, updateNotificationSchema } from './../../../validations/notification.validator';
 import {
@@ -23,9 +23,11 @@ import { success, SuccessResponse as SuccessDataResponse } from './../../../util
 
 
 
+import { BaseController } from '../../base.controller';
+
 @Route("admin/cms/notifications")
 @Tags("Admin Notifications")
-export class AdminNotificationController extends Controller {
+export class AdminNotificationController extends BaseController {
 
   @Post("/")
   @SuccessResponse(201, "Created")

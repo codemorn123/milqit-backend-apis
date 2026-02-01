@@ -1,18 +1,20 @@
 import {
-  Consumes, Controller, Delete, FormField, Get, Middlewares, Path, Post, Put, Queries, Response, Route, Security, SuccessResponse as SuccessResponseTags, Tags, UploadedFile
+  Consumes, Delete, FormField, Get, Middlewares, Path, Post, Put, Queries, Response, Route, Security, SuccessResponse as SuccessResponseTags, Tags, UploadedFile
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { categoryService } from '../../services/category.service';
-import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { SuccessResponse } from '../../utils/SuccessResponse';
 import { IFilter, PaginatedResponse } from '../../types/common.types';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { createCategorySchema, updateCategorySchema } from '../../validations/category-validation-schema';
 import { idParamSchema } from '../../constants/common.validator';
-import { ICategory } from '../../models/category.model';
+import { ICategory } from '../../types/category.types';
 import { ClientErrorInterface } from '../../error/clientErrorHelper';
 import { SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from '../../error/exampleErrors';
-import APIError from '../../error/api-error';
+import { handleValidationError } from '../../utils/error-helpers';
+import { cleanObject } from '../../utils/object.utils';
 import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
+import { BaseController } from '../base.controller';
 
 @Route("admin/categories")
 @Tags("ADMIN: Categories")
@@ -23,7 +25,7 @@ import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 @Response<ClientErrorInterface>(StatusCodes.CONFLICT, 'Conflict')
 @Response<ClientErrorInterface>(StatusCodes.UNPROCESSABLE_ENTITY, 'Validation Error', VALIDATION_ERROR_EXAMPLE)
 @Response<ClientErrorInterface>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error', SERVER_ERROR_EXAMPLE)
-export class AdminCategoryController extends Controller {
+export class AdminCategoryController extends BaseController {
 
   /**
    * Create a new category with image upload
@@ -43,23 +45,12 @@ export class AdminCategoryController extends Controller {
     @FormField() slug?: string,
     @UploadedFile("categoryImage") categoryImage?: Express.Multer.File
   ): Promise<SuccessResponse<ICategory>> {
-    console.log('AdminCategoryController.create called');
-    console.log('categoryImage:', categoryImage ? 'Present' : 'Missing');
-    // Manual validation for multipart/form-data fields since middleware can't easily validate them before TSOA parses them
-    // However, we can construct an object and validate it using Joi
-    const dataToValidate = { name, description, parentId, backgroundColor, textColor, deepLink, slug };
-
-    // Remove undefined keys
-    Object.keys(dataToValidate).forEach(key => (dataToValidate as any)[key] === undefined && delete (dataToValidate as any)[key]);
-
-    const { error, value } = createCategorySchema.validate(dataToValidate);
-    if (error) {
-      throw new APIError(error.details[0].message, StatusCodes.BAD_REQUEST);
-    }
+    const cleanedData = cleanObject({ name, description, parentId, backgroundColor, textColor, deepLink, slug });
+    const { error, value } = createCategorySchema.validate(cleanedData);
+    if (error) handleValidationError(error);
 
     const result = await categoryService.create(value, categoryImage);
-    this.setStatus(StatusCodes.CREATED);
-    return success(result, 'Category created successfully');
+    return this.sendCreated(result, 'Category created successfully');
   }
 
   /**
@@ -70,7 +61,7 @@ export class AdminCategoryController extends Controller {
   @SuccessResponseTags(StatusCodes.OK, "Success")
   public async listCategories(@Queries() filter: IFilter): Promise<SuccessResponse<PaginatedResponse<ICategory>>> {
     const result = await categoryService.getAll(filter);
-    return success(result, "Categories fetched successfully");
+    return this.sendPaginated(result, "Categories fetched successfully");
   }
 
   /**
@@ -82,7 +73,7 @@ export class AdminCategoryController extends Controller {
   @Response(StatusCodes.NOT_FOUND, "Category Not Found")
   public async getCategoryById(@Path() id: string): Promise<SuccessResponse<ICategory>> {
     const category = await categoryService.getOne(id);
-    return success(category);
+    return this.sendSuccess(category);
   }
 
   /**
@@ -105,18 +96,12 @@ export class AdminCategoryController extends Controller {
     @FormField() slug?: string,
     @UploadedFile("categoryImage") categoryImage?: Express.Multer.File
   ): Promise<SuccessResponse<ICategory>> {
-    const dataToValidate = { name, description, parentId, backgroundColor, textColor, deepLink, slug };
-
-    // Remove undefined keys
-    Object.keys(dataToValidate).forEach(key => (dataToValidate as any)[key] === undefined && delete (dataToValidate as any)[key]);
-
-    const { error, value } = updateCategorySchema.validate(dataToValidate);
-    if (error) {
-      throw new APIError(error.details[0].message, StatusCodes.BAD_REQUEST);
-    }
+    const cleanedData = cleanObject({ name, description, parentId, backgroundColor, textColor, deepLink, slug });
+    const { error, value } = updateCategorySchema.validate(cleanedData);
+    if (error) handleValidationError(error);
 
     const updatedCategory = await categoryService.update(id, value, categoryImage);
-    return success(updatedCategory, "Category updated successfully");
+    return this.sendSuccess(updatedCategory, "Category updated successfully");
   }
 
   /**
@@ -126,9 +111,9 @@ export class AdminCategoryController extends Controller {
   @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
   @SuccessResponseTags(StatusCodes.OK, "Success")
   @Response(StatusCodes.NOT_FOUND, "Category Not Found")
-  public async delete(@Path() id: string): Promise<SuccessResponse<{ message: string }>> {
-    const result = await categoryService.delete(id);
-    return success(result as any);
+  public async delete(@Path() id: string): Promise<SuccessResponse<null>> {
+    await categoryService.delete(id);
+    return this.sendResponse('Category deleted successfully');
   }
 
   /**
@@ -139,6 +124,6 @@ export class AdminCategoryController extends Controller {
   @SuccessResponseTags(StatusCodes.OK, "Success")
   public async deleteMultiple(): Promise<SuccessResponse<{ message: string }>> {
     const result = await categoryService.deleteMultipleCategories();
-    return success(result);
+    return this.sendSuccess(result);
   }
 }

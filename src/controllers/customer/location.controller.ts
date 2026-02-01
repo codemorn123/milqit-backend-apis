@@ -20,13 +20,15 @@ import {
   nearbyPartnersSchema
 } from '../../validations/location.validation';
 
+import { BaseController } from '../base.controller';
+
 @Tags('Location Tracking')
 @Route('location')
 @Response<ErrorResponse>(400, "Bad Request")
 @Response<ErrorResponse>(401, "Unauthorized")
 @Response<ErrorResponse>(404, "Not Found")
 @Response<ErrorResponse>(500, "Server Error")
-export class LocationController extends Controller {
+export class LocationController extends BaseController {
   /**
    * Start tracking session (REST API fallback)
    */
@@ -37,8 +39,7 @@ export class LocationController extends Controller {
     @Body() data: IStartTrackingRequest
   ): Promise<SuccessResponse<ILiveLocation>> {
     const tracking = await locationService.startTracking(data);
-    this.setStatus(StatusCodes.CREATED);
-    return success(tracking, 'Tracking started successfully.');
+    return this.sendCreated(tracking, 'Tracking started successfully.');
   }
 
   /**
@@ -50,7 +51,7 @@ export class LocationController extends Controller {
     @Body() data: IUpdateLocationRequest
   ): Promise<SuccessResponse<ILiveLocation>> {
     const tracking = await locationService.updateLocation(data);
-    return success(tracking, 'Location updated successfully.');
+    return this.sendSuccess(tracking, 'Location updated successfully.');
   }
 
   /**
@@ -63,7 +64,7 @@ export class LocationController extends Controller {
     @Query() orderId?: string
   ): Promise<SuccessResponse<ILiveLocation | null>> {
     const location = await locationService.getCurrentLocation(userId, orderId);
-    return success(location, 'Current location fetched successfully.');
+    return this.sendSuccess(location, 'Current location fetched successfully.');
   }
 
   /**
@@ -75,7 +76,7 @@ export class LocationController extends Controller {
     @Body() data: { userId: string; sessionId: string; orderId?: string }
   ): Promise<NullSuccessResponse> {
     await locationService.stopTracking(data.userId, data.sessionId, data.orderId);
-    return success(null, 'Tracking stopped successfully.');
+    return this.sendSuccess(null, 'Tracking stopped successfully.');
   }
 
   /**
@@ -93,7 +94,7 @@ export class LocationController extends Controller {
       longitude,
       maxDistance
     );
-    return success(partners, 'Nearby delivery partners fetched successfully.');
+    return this.sendSuccess(partners, 'Nearby delivery partners fetched successfully.');
   }
 
   /**
@@ -106,7 +107,7 @@ export class LocationController extends Controller {
     @Query() orderId?: string
   ): Promise<SuccessResponse<ILiveLocation[]>> {
     const history = await locationService.getLocationHistory(userId, orderId);
-    return success(history, 'Location history fetched successfully.');
+    return this.sendSuccess(history, 'Location history fetched successfully.');
   }
 
   /**
@@ -124,6 +125,6 @@ export class LocationController extends Controller {
       destinationLat,
       destinationLon
     );
-    return success(eta, 'ETA calculated successfully.');
+    return this.sendSuccess(eta, 'ETA calculated successfully.');
   }
 }

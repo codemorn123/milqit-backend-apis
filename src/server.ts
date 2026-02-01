@@ -4,10 +4,13 @@ import { config } from './config';
 import { logger } from './config/logger';
 import http from 'http';
 import chalk from 'chalk';
-import { errorHandler } from './utils/errorHandler';
+
 import { initMarketingCron } from './cron/marketing.cron';
 import { initLocationCron } from './cron/location.cron';
 
+
+
+let isShuttingDown = false;
 
 async function connectToDatabase(): Promise<void> {
   try {
@@ -29,8 +32,11 @@ async function connectToDatabase(): Promise<void> {
     });
 
     mongoose.connection.on('disconnected', () => {
-      logger.warn('MongoDB disconnected. Attempting to reconnect...');
+      if (!isShuttingDown) {
+        logger.warn('MongoDB disconnected. Attempting to reconnect...');
+      }
     });
+
 
     mongoose.connection.on('reconnected', () => {
       logger.info('MongoDB reconnected successfully');
@@ -69,18 +75,7 @@ async function startServer(): Promise<void> {
       throw error;
     }
 
-    // 404 handler - after all routes are registered
-    app.use((_req, res) => {
-      res.status(404).json({
-        error: {
-          code: 'NOT_FOUND',
-          message: 'Resource not found'
-        }
-      });
-    });
 
-    // Global error handler - must be last
-    app.use(errorHandler);
 
     // Initialize Crons
     initMarketingCron();
@@ -108,6 +103,9 @@ async function startServer(): Promise<void> {
 
     // Define types for shutdown handlers
     const gracefulShutdown = (signal: string): void => {
+      if (isShuttingDown) return;
+      isShuttingDown = true;
+
       logger.info(`${signal} received, shutting down gracefully`);
       server.close(() => {
         logger.info('HTTP server closed');

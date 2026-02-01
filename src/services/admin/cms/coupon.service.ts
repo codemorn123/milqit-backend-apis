@@ -1,22 +1,17 @@
 
-// import APIError from "@/error/api-error";
-// import CouponModel from "@/models/cms/coupon.model";
-// import logger from "@/services/logger";
-// import { IFilter, IPaginated } from "@/types/common.types";
-// import { ICoupon } from "@/types/coupon.types";
-import APIError from "./../../../error/api-error";
-import CouponModel from "./../../../models/cms/coupon.model";
-import logger from "./../../../services/logger";
-import { ICoupon } from "./../../../types/coupon.types";
+import APIError from "../../../error/api-error";
+import CouponModel from "../../../models/cms/coupon.model";
+import logger from "../../logger";
+import { ICoupon, ICouponDocument } from "../../../types/coupon.types";
 import { BaseService } from "../../base.service";
 
-class CouponService extends BaseService<ICoupon> {
+class CouponService extends BaseService<ICouponDocument> {
   constructor() {
-    super(CouponModel as any, ['code']);
+    super(CouponModel as any, ['code']); // Retention of 'as any' might be safe for now, but imports are cleaned.
   }
 
   // ADMIN METHODS
-  public async create(data: Partial<ICoupon>): Promise<ICoupon> {
+  public async create(data: Partial<ICouponDocument>): Promise<ICouponDocument> {
     const existingCoupon = await CouponModel.findOne({ code: data.code });
     if (existingCoupon) {
       throw new APIError(`Coupon code '${data.code}' already exists.`, 409);
@@ -84,7 +79,7 @@ class CouponService extends BaseService<ICoupon> {
     // In a real application, you would save the coupon usage to the user's order
     // and increment the coupon's `timesUsed` count only *after* successful payment.
     // For this validation endpoint, we just return the calculated values.
-    logger.info(`User ${userId} successfully validated coupon ${code}`);
+    logger.info(`User ${userId} successfully validated coupon ${code} `);
 
     return {
       message: 'Coupon applied successfully!',

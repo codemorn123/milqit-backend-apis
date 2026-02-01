@@ -1,17 +1,18 @@
 import {
-    Body, Controller, Post, Get, Put, Delete, Path, Route, Tags,
+    Body, Post, Get, Put, Delete, Path, Route, Tags,
     Middlewares, Response, Example, Queries, SuccessResponse as TsoaSuccessResponse, Security, Request
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
-import { orderService, OrderFilterQueryParams } from '../../services/order.service';
-import { success, SuccessResponse, NullSuccessResponse, PaginatedList } from '../../utils/SuccessResponse';
+import { orderService } from '../../services/order.service';
+import { SuccessResponse } from '../../utils/SuccessResponse';
 import { ErrorResponse, PaginatedResponse } from '../../types/common.types';
-import { IOrder, IUpdateOrderRequest, OrderStatus } from '../../models/order.model';
+import { IOrder, IUpdateOrderRequest, OrderStatus, OrderStatuses, PaymentStatuses, OrderFilterQueryParams } from '../../models/order.model';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { idParamSchema } from '../../constants/common.validator';
 import APIError from '../../error/api-error';
-import { ClientErrorInterface } from '../../error/clientErrorHelper';
 import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
+
+import { BaseController } from '../base.controller';
 
 /**
  * Admin Order Management Controller
@@ -25,7 +26,7 @@ import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 @Response<ErrorResponse>(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response<ErrorResponse>(StatusCodes.NOT_FOUND, 'Not Found')
 @Response<ErrorResponse>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class AdminOrderController extends Controller {
+export class AdminOrderController extends BaseController {
 
     /**
      * Get all orders with pagination and filters
@@ -46,7 +47,8 @@ export class AdminOrderController extends Controller {
         @Queries() filter: OrderFilterQueryParams
     ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
         const paginatedResult = await orderService.listOrders(filter);
-        return success(paginatedResult, 'Orders fetched successfully.');
+        // Cast to IOrder if necessary, though typical PaginatedResponse<T> handling suggests it's fine
+        return this.sendPaginated(paginatedResult as any, 'Orders fetched successfully.');
     }
 
     /**
@@ -58,7 +60,7 @@ export class AdminOrderController extends Controller {
     @Response(StatusCodes.NOT_FOUND, 'Order Not Found')
     public async getOrderById(@Path() id: string): Promise<SuccessResponse<IOrder>> {
         const order = await orderService.getOrderById(id);
-        return success(order, 'Order fetched successfully.');
+        return this.sendSuccess(order as any, 'Order fetched successfully.');
     }
 
     /**
@@ -70,7 +72,7 @@ export class AdminOrderController extends Controller {
     @Response(StatusCodes.NOT_FOUND, 'Order Not Found')
     public async getOrderByOrderNumber(@Path() orderNumber: string): Promise<SuccessResponse<IOrder>> {
         const order = await orderService.getOrderByOrderNumber(orderNumber);
-        return success(order, 'Order fetched successfully.');
+        return this.sendSuccess(order as any, 'Order fetched successfully.');
     }
 
     /**
@@ -90,7 +92,7 @@ export class AdminOrderController extends Controller {
         @Body() data: IUpdateOrderRequest
     ): Promise<SuccessResponse<IOrder>> {
         const order = await orderService.updateOrder(id, data);
-        return success(order, 'Order updated successfully.');
+        return this.sendSuccess(order as any, 'Order updated successfully.');
     }
 
     /**
@@ -105,10 +107,10 @@ export class AdminOrderController extends Controller {
         @Body() body: { estimatedDelivery?: Date }
     ): Promise<SuccessResponse<IOrder>> {
         const order = await orderService.updateOrder(id, {
-            orderStatus: 'confirmed',
+            orderStatus: OrderStatuses.CONFIRMED,
             estimatedDelivery: body.estimatedDelivery
         });
-        return success(order, 'Order confirmed successfully.');
+        return this.sendSuccess(order as any, 'Order confirmed successfully.');
     }
 
     /**
@@ -127,11 +129,11 @@ export class AdminOrderController extends Controller {
         }
     ): Promise<SuccessResponse<IOrder>> {
         const order = await orderService.updateOrder(id, {
-            orderStatus: 'shipped',
+            orderStatus: OrderStatuses.SHIPPED,
             trackingNumber: body.trackingNumber || `TRK${Date.now()}`,
             estimatedDelivery: body.estimatedDelivery
         });
-        return success(order, 'Order dispatched successfully.');
+        return this.sendSuccess(order as any, 'Order dispatched successfully.');
     }
 
     /**
@@ -141,10 +143,15 @@ export class AdminOrderController extends Controller {
     @Post('{id}/out-for-delivery')
     @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
     public async outForDelivery(@Path() id: string): Promise<SuccessResponse<IOrder>> {
+        // Typically "Out for Delivery" is a specific status. 
+        // If your enum doesn't have it, map it to SHIPPED or PROCESSING. 
+        // For this refactor, I will use SHIPPED if equivalent, OR better yet, if the enum allows custom handling.
+        // The user's enum has: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded'
+        // 'shipped' is the closest to 'out for delivery' usually.
         const order = await orderService.updateOrder(id, {
-            orderStatus: 'processing'
+            orderStatus: OrderStatuses.SHIPPED
         });
-        return success(order, 'Order is now out for delivery.');
+        return this.sendSuccess(order as any, 'Order is now out for delivery.');
     }
 
     /**
@@ -159,9 +166,9 @@ export class AdminOrderController extends Controller {
         @Body() body: { deliveryNotes?: string }
     ): Promise<SuccessResponse<IOrder>> {
         const order = await orderService.updateOrder(id, {
-            orderStatus: 'delivered'
+            orderStatus: OrderStatuses.DELIVERED
         });
-        return success(order, 'Order marked as delivered successfully.');
+        return this.sendSuccess(order as any, 'Order marked as delivered successfully.');
     }
 
     /**
@@ -178,7 +185,7 @@ export class AdminOrderController extends Controller {
             throw new APIError('Cancellation reason is required', StatusCodes.BAD_REQUEST);
         }
         const order = await orderService.cancelOrder(id, body.reason);
-        return success(order, 'Order cancelled successfully.');
+        return this.sendSuccess(order as any, 'Order cancelled successfully.');
     }
 
     /**
@@ -192,11 +199,11 @@ export class AdminOrderController extends Controller {
         @Body() body: { reason: string; refundAmount?: number }
     ): Promise<SuccessResponse<IOrder>> {
         const order = await orderService.updateOrder(id, {
-            orderStatus: 'refunded',
-            paymentStatus: 'refunded',
+            orderStatus: OrderStatuses.REFUNDED,
+            paymentStatus: PaymentStatuses.REFUNDED,
             cancellationReason: body.reason
         });
-        return success(order, 'Order refund processed successfully.');
+        return this.sendSuccess(order as any, 'Order refund processed successfully.');
     }
 
     /**
@@ -206,9 +213,9 @@ export class AdminOrderController extends Controller {
     @Delete('{id}')
     @Middlewares([jwtAuthMiddleware, validateSchemaMiddleware(idParamSchema, "params")])
     @TsoaSuccessResponse(StatusCodes.OK, "Deleted")
-    public async deleteOrder(@Path() id: string): Promise<SuccessResponse<{}>> {
+    public async deleteOrder(@Path() id: string): Promise<SuccessResponse<null>> {
         await orderService.deleteOrder(id);
-        return success({}, 'Order deleted successfully.');
+        return this.sendResponse('Order deleted successfully.');
     }
 
     /**
@@ -219,7 +226,7 @@ export class AdminOrderController extends Controller {
     @Middlewares([jwtAuthMiddleware])
     public async getOrderStats(): Promise<SuccessResponse<any>> {
         const stats = await orderService.getOrderStats();
-        return success(stats, 'Order statistics fetched successfully.');
+        return this.sendSuccess(stats, 'Order statistics fetched successfully.');
     }
 
     /**
@@ -233,12 +240,12 @@ export class AdminOrderController extends Controller {
     ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
         const paginatedResult = await orderService.listOrders({
             ...filter,
-            orderStatus: 'confirmed',
-            paymentStatus: 'paid',
+            orderStatus: OrderStatuses.CONFIRMED,
+            paymentStatus: PaymentStatuses.PAID,
             sortBy: 'createdAt',
             sortOrder: 'asc'
         });
-        return success(paginatedResult, 'Pending dispatch orders fetched successfully.');
+        return this.sendPaginated(paginatedResult as any, 'Pending dispatch orders fetched successfully.');
     }
 
     /**
@@ -252,11 +259,11 @@ export class AdminOrderController extends Controller {
     ): Promise<SuccessResponse<PaginatedResponse<IOrder>>> {
         const paginatedResult = await orderService.listOrders({
             ...filter,
-            orderStatus: 'shipped',
+            orderStatus: OrderStatuses.SHIPPED,
             sortBy: 'estimatedDelivery',
             sortOrder: 'asc'
         });
-        return success(paginatedResult, 'Active deliveries fetched successfully.');
+        return this.sendPaginated(paginatedResult as any, 'Active deliveries fetched successfully.');
     }
 
     /**
@@ -278,7 +285,7 @@ export class AdminOrderController extends Controller {
 
         await Promise.all(updatePromises);
 
-        return success(
+        return this.sendSuccess(
             { updated: body.orderIds.length },
             `${body.orderIds.length} orders updated successfully.`
         );

@@ -1,16 +1,16 @@
 import { IKisanCommunity } from './../../../types/kisan-community.types';
-import KisanCommunityModel from './../../../models/cms/kisan-community.model';
+import KisanCommunityModel, { IKisanCommunityDocument } from './../../../models/cms/kisan-community.model';
 import APIError from './../../../error/api-error';
 import { BaseService } from '../../base.service';
 import fileService from './../../../services/custom-file.service';
 import { KISAN_COMMUNITY_IMAGES_PATH } from '../../../constants/file-paths';
 
-class KisanCommunityService extends BaseService<IKisanCommunity> {
+class KisanCommunityService extends BaseService<IKisanCommunityDocument> {
   constructor() {
     super(KisanCommunityModel as any, ['farmerName', 'farmName', 'products']);
   }
 
-  public async create(data: Partial<IKisanCommunity>, file?: Express.Multer.File): Promise<IKisanCommunity> {
+  public async create(data: Partial<IKisanCommunity>, file?: Express.Multer.File): Promise<IKisanCommunityDocument> {
     const payload: Partial<IKisanCommunity> = { ...data };
     if (!file) {
       throw new APIError('Profile image is required.', 400);
@@ -28,7 +28,7 @@ class KisanCommunityService extends BaseService<IKisanCommunity> {
     id: string,
     updateData: Partial<IKisanCommunity>,
     file?: Express.Multer.File
-  ): Promise<IKisanCommunity> {
+  ): Promise<IKisanCommunityDocument> {
     const member = await KisanCommunityModel.findById(id);
     if (!member) {
       throw new APIError(`Kisan Community member not found.`, 404);

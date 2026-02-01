@@ -1,8 +1,9 @@
-import { Document, Types } from 'mongoose';
+import { IBaseDocument } from '../types/model.types';
 
-interface IBase extends Document {
-  _id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
-export { IBase };
+/**
+ * @deprecated Use IBaseDocument from model.types instead
+ * Kept for backwards compatibility
+ */
+export interface IBase extends IBaseDocument { }
+
+export { IBaseDocument };

@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export interface IReel {
     _id: string;
     title: string;
@@ -7,8 +9,9 @@ export interface IReel {
     thumbnailUrl?: string;
     thumbnailKey?: string;
     likes: number;
-    likedBy: string[];
+    likedBy: mongoose.Types.ObjectId[];
     isActive: boolean;
+    userId?: mongoose.Types.ObjectId; // Added for better querying
     createdAt: Date;
     updatedAt: Date;
 }

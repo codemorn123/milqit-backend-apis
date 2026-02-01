@@ -1,140 +1,98 @@
 import mongoose, { Schema, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { IBase } from './base';
 import slugify from 'slugify';
+import { ICategoryDocument } from '../types/category.types';
+import { CommonEnums } from '../enums/common.enums';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
-export interface ICategory {
-  name: string;
-  description?: string;
-  slug: string;
-  isActive: boolean;
-  parentId?: mongoose.Types.ObjectId | null;
-  icon?: string;
-
-  backgroundColor?: string;
-  deepLink?: string;
-
-  bannerImage?: {
-    url: string;
-    key: string;
-  };
-
-  categoryImage?: {
-    url: string;
-    key: string;
-  };
-}
-
-
-export interface ICategoryDocument extends  IBase  {
-  name: string;
-  description?: string;
-  slug: string;
-  isActive: boolean;
-  displayOrder: number;
-  parentId?: mongoose.Types.ObjectId | null;
-  icon?: string;
-  backgroundColor?: string;
-  textColor?: string;
-  deepLink?: string;
-  categoryImage?: {
-    url: string;
-    key: string;
-  };
-
-  bannerImage?: {
-    url: string;
-    key: string;
-  };
-
-}
-
-
-export interface CategoryModel extends PaginateModel<ICategoryDocument> {}
-
-// Create category schema
 const CategorySchema = new Schema<ICategoryDocument>(
   {
-    name: { 
-      type: String, 
-      required: true, 
+    name: {
+      type: String,
+      required: true,
       trim: true,
-      index: true
+      index: true,
     },
-    description: { 
-      type: String, 
-      trim: true
+    description: {
+      type: String,
+      trim: true,
     },
-   
-    categoryImage: {
-      url: { type: String },
-      key: { type: String },
-  
-    },
-    slug: { 
-      type: String, 
-      required: true, 
+    slug: {
+      type: String,
       unique: true,
       trim: true,
       lowercase: true,
-      index: true
+      index: true,
     },
     isActive: {
       type: Boolean,
       default: true,
-      index: true
+      index: true,
     },
-  
+    status: {
+      type: String,
+      enum: [CommonEnums.status.ACTIVE, CommonEnums.status.INACTIVE, CommonEnums.status.DEACTIVE],
+      default: CommonEnums.status.ACTIVE,
+      index: true,
+    },
+    displayOrder: {
+      type: Number,
+      default: 0,
+    },
     parentId: {
       type: Schema.Types.ObjectId,
       ref: 'Category',
       default: null,
-      index: true
+      index: true,
     },
-
     icon: {
-      type: String
+      type: String,
     },
-   bannerImage: {
-     url: { type: String },
-     key: { type: String },
-   },
     backgroundColor: {
       type: String,
-      default: "#FFFFFF"
+      default: '#FFFFFF',
     },
     textColor: {
       type: String,
-      default: "#000000"
+      default: '#000000',
     },
     deepLink: {
-      type: String
+      type: String,
     },
-    
+    categoryImage: {
+      url: { type: String },
+      key: { type: String },
+    },
+    bannerImage: {
+      url: { type: String },
+      key: { type: String },
+    },
   },
-  { 
-    timestamps: true ,
-    toJSON: {
-      virtuals: true,
-      transform: (_, ret: any) => {
-        delete ret._id;
-        delete ret.__v;
-        
-      },
-    },
-  }
+  createSchemaOptions()
 );
 
-
-CategorySchema.pre('save', function(next) {
-  // Only generate a new slug if the name has changed or if it's a new document
+// Pre-save hook to handle slug generation and status synchronization
+CategorySchema.pre('save', function (next) {
+  // Slug generation
   if (this.isModified('name') || this.isNew) {
-    this.slug = slugify(this.name, {
-      lower: true,    // convert to lower case
-      strict: true,   // remove special characters
-      trim: true      // trim leading/trailing spaces
-    });
+    if (!this.slug || this.isModified('name')) { // Only regenerate if slug is missing or name changed
+      this.slug = slugify(this.name, {
+        lower: true,
+        strict: true,
+        trim: true,
+      });
+    }
   }
+
+  // Sync isActive with status if status is modified
+  if (this.isModified('status')) {
+    this.isActive = this.status === CommonEnums.status.ACTIVE;
+  }
+  // Sync status with isActive if isActive is modified (and status wasn't)
+  else if (this.isModified('isActive')) {
+    this.status = this.isActive ? CommonEnums.status.ACTIVE : CommonEnums.status.INACTIVE;
+  }
+
   next();
 });
 
@@ -145,5 +103,9 @@ CategorySchema.index(
 
 CategorySchema.plugin(mongoosePaginate);
 
+export const CategoryModel = mongoose.model<ICategoryDocument, PaginateModel<ICategoryDocument>>(
+  'Category',
+  CategorySchema
+);
 
-export const CategoryModel = mongoose.model<ICategoryDocument, CategoryModel>('Category', CategorySchema);
+export default CategoryModel;

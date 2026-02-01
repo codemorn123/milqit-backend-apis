@@ -1,6 +1,6 @@
 import {
-    Route, Tags, Controller, Post, Body, Middlewares,
-    SuccessResponse, Response, Security, Request, Get, Queries, Put, Path
+    Route, Tags, Body, Middlewares,
+    SuccessResponse, Security, Request, Get, Queries, Put, Path
 } from 'tsoa';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { success, SuccessResponse as SuccessDataResponse } from '../../utils/SuccessResponse';
@@ -14,10 +14,12 @@ import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { IRefundFilter, PaginatedResponse } from '../../types/common.types';
 import { IRefund } from '../../models/refund.model';
 
+import { BaseController } from '../base.controller';
+
 @Route("admin/refunds")
 @Tags("ADMIN: Refunds")
 @Security("jwt")
-export class AdminRefundController extends Controller {
+export class AdminRefundController extends BaseController {
 
     /**
      * List all refunds

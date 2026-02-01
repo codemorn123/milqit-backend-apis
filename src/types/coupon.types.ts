@@ -16,4 +16,6 @@ export interface ICoupon {
   isActive: boolean;
 }
 
+export interface ICouponDocument extends ICoupon, Document { }
+
 export type ICouponCreateRequest = Omit<ICoupon, 'timesUsed' | 'usedBy'>;

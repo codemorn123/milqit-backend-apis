@@ -17,9 +17,11 @@ import { validateSchemaMiddleware } from './../../middleware/common-validate';
 import { bannerFilterSchema } from './../../validations/banner-validation-schemas';
 import { StatusCodes } from 'http-status-codes';
 
+import { BaseController } from '../base.controller';
+
 @Route("customer/banners")
 @Tags("Customer Banners")
-export class CustomerBannerController extends Controller {
+export class CustomerBannerController extends BaseController {
 
     /**
      * Retrieve a list of active banners.
@@ -49,6 +51,6 @@ export class CustomerBannerController extends Controller {
         }
 
         const result = await bannerService.getAll(filters);
-        return success(result, 'Banners fetched successfully');
+        return this.sendPaginated(result, 'Banners fetched successfully');
     }
 }

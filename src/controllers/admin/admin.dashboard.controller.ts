@@ -9,7 +9,7 @@ import {
     Middlewares,
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
-import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { SuccessResponse } from '../../utils/SuccessResponse';
 import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { OrderModel } from '../../models/order.model';
 import { UserModel } from '../../models/UserModel';
@@ -78,13 +78,15 @@ interface CustomerInsights {
     }>;
 }
 
+import { BaseController } from '../base.controller';
+
 @Route('admin/dashboard')
 @Tags('ADMIN: Dashboard')
 @Security('jwt')
 @Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class AdminDashboardController extends Controller {
+export class AdminDashboardController extends BaseController {
 
     /**
      * Get dashboard overview statistics
@@ -153,7 +155,7 @@ export class AdminDashboardController extends Controller {
             }
         };
 
-        return success(stats, 'Dashboard statistics retrieved successfully');
+        return this.sendSuccess(stats, 'Dashboard statistics retrieved successfully');
     }
 
     /**
@@ -227,7 +229,7 @@ export class AdminDashboardController extends Controller {
             totalOrders
         };
 
-        return success(overview, 'Sales overview retrieved successfully');
+        return this.sendSuccess(overview, 'Sales overview retrieved successfully');
     }
 
     /**
@@ -256,7 +258,7 @@ export class AdminDashboardController extends Controller {
             createdAt: order.createdAt || new Date()
         }));
 
-        return success(recentOrders, 'Recent orders retrieved successfully');
+        return this.sendSuccess(recentOrders, 'Recent orders retrieved successfully');
     }
 
     /**
@@ -294,7 +296,7 @@ export class AdminDashboardController extends Controller {
             orderCount: p.orderCount
         }));
 
-        return success(products, 'Top products retrieved successfully');
+        return this.sendSuccess(products, 'Top products retrieved successfully');
     }
 
     /**
@@ -351,7 +353,7 @@ export class AdminDashboardController extends Controller {
             topCustomers
         };
 
-        return success(insights, 'Customer insights retrieved successfully');
+        return this.sendSuccess(insights, 'Customer insights retrieved successfully');
     }
 
     /**
@@ -380,7 +382,7 @@ export class AdminDashboardController extends Controller {
             return acc;
         }, {} as any);
 
-        return success(statusData, 'Order status distribution retrieved successfully');
+        return this.sendSuccess(statusData, 'Order status distribution retrieved successfully');
     }
 
     /**
@@ -410,6 +412,6 @@ export class AdminDashboardController extends Controller {
             return acc;
         }, {} as any);
 
-        return success(methodData, 'Revenue by payment method retrieved successfully');
+        return this.sendSuccess(methodData, 'Revenue by payment method retrieved successfully');
     }
 }

@@ -99,26 +99,20 @@
 				"additionalProperties": false
 			},
 			"ErrorDetail": {
-				"anyOf": [
-					{
+				"properties": {
+					"code": {
 						"type": "string"
 					},
-					{
-						"properties": {
-							"details": {},
-							"message": {
-								"type": "string"
-							},
-							"code": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"message"
-						],
-						"type": "object"
-					}
-				]
+					"message": {
+						"type": "string"
+					},
+					"details": {}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"ErrorResponse": {
 				"properties": {
@@ -1327,6 +1321,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_CustomerProductResponse_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -1365,6 +1360,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -1376,7 +1375,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1407,12 +1407,11 @@
 			},
 			"Pick_ProductFilterQueryParams.Exclude_keyofProductFilterQueryParams.isActive-or-createdBy-or-updatedBy__": {
 				"properties": {
+					"category": {
+						"type": "string"
+					},
 					"inStock": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
 					},
 					"brand": {
 						"type": "string"
@@ -1429,43 +1428,33 @@
 							"dozen"
 						]
 					},
-					"q": {
-						"type": "string"
-					},
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"search": {
+					"sort": {
 						"type": "string"
-					},
-					"categoryId": {
-						"type": "string"
-					},
-					"minPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"maxPrice": {
-						"type": "number",
-						"format": "double"
 					},
 					"sortBy": {
-						"type": "string",
-						"enum": [
-							"name",
-							"quantity",
-							"unit",
-							"createdAt",
-							"price",
-							"popularity",
-							"rating",
-							"relevance"
-						]
+						"type": "string"
 					},
 					"sortOrder": {
 						"type": "string",
@@ -1474,12 +1463,25 @@
 							"desc"
 						]
 					},
+					"search": {
+						"type": "string"
+					},
+					"q": {
+						"type": "string"
+					},
+					"categoryId": {
+						"type": "string"
+					},
 					"isPublic": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
+					},
+					"minPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxPrice": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"type": "object",
@@ -1487,12 +1489,11 @@
 			},
 			"ProductFilters": {
 				"properties": {
+					"category": {
+						"type": "string"
+					},
 					"inStock": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
 					},
 					"brand": {
 						"type": "string"
@@ -1509,43 +1510,33 @@
 							"dozen"
 						]
 					},
-					"q": {
-						"type": "string"
-					},
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"search": {
+					"sort": {
 						"type": "string"
-					},
-					"categoryId": {
-						"type": "string"
-					},
-					"minPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"maxPrice": {
-						"type": "number",
-						"format": "double"
 					},
 					"sortBy": {
-						"type": "string",
-						"enum": [
-							"name",
-							"quantity",
-							"unit",
-							"createdAt",
-							"price",
-							"popularity",
-							"rating",
-							"relevance"
-						]
+						"type": "string"
 					},
 					"sortOrder": {
 						"type": "string",
@@ -1554,12 +1545,25 @@
 							"desc"
 						]
 					},
+					"search": {
+						"type": "string"
+					},
+					"q": {
+						"type": "string"
+					},
+					"categoryId": {
+						"type": "string"
+					},
 					"isPublic": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
+					},
+					"minPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxPrice": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"type": "object",
@@ -1596,12 +1600,11 @@
 			},
 			"SearchProductFilters": {
 				"properties": {
+					"category": {
+						"type": "string"
+					},
 					"inStock": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
 					},
 					"brand": {
 						"type": "string"
@@ -1618,43 +1621,33 @@
 							"dozen"
 						]
 					},
-					"q": {
-						"type": "string"
-					},
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"search": {
+					"sort": {
 						"type": "string"
-					},
-					"categoryId": {
-						"type": "string"
-					},
-					"minPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"maxPrice": {
-						"type": "number",
-						"format": "double"
 					},
 					"sortBy": {
-						"type": "string",
-						"enum": [
-							"name",
-							"quantity",
-							"unit",
-							"createdAt",
-							"price",
-							"popularity",
-							"rating",
-							"relevance"
-						]
+						"type": "string"
 					},
 					"sortOrder": {
 						"type": "string",
@@ -1663,12 +1656,25 @@
 							"desc"
 						]
 					},
+					"search": {
+						"type": "string"
+					},
+					"q": {
+						"type": "string"
+					},
+					"categoryId": {
+						"type": "string"
+					},
 					"isPublic": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
+					},
+					"minPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxPrice": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -1803,12 +1809,11 @@
 			},
 			"SaleProductFilters": {
 				"properties": {
+					"category": {
+						"type": "string"
+					},
 					"inStock": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
 					},
 					"brand": {
 						"type": "string"
@@ -1825,43 +1830,33 @@
 							"dozen"
 						]
 					},
-					"q": {
-						"type": "string"
-					},
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"search": {
+					"sort": {
 						"type": "string"
-					},
-					"categoryId": {
-						"type": "string"
-					},
-					"minPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"maxPrice": {
-						"type": "number",
-						"format": "double"
 					},
 					"sortBy": {
-						"type": "string",
-						"enum": [
-							"name",
-							"quantity",
-							"unit",
-							"createdAt",
-							"price",
-							"popularity",
-							"rating",
-							"relevance"
-						]
+						"type": "string"
 					},
 					"sortOrder": {
 						"type": "string",
@@ -1870,12 +1865,25 @@
 							"desc"
 						]
 					},
+					"search": {
+						"type": "string"
+					},
+					"q": {
+						"type": "string"
+					},
+					"categoryId": {
+						"type": "string"
+					},
 					"isPublic": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
+					},
+					"minPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxPrice": {
+						"type": "number",
+						"format": "double"
 					},
 					"minDiscount": {
 						"type": "number",
@@ -1914,12 +1922,11 @@
 			},
 			"PriceRangeFilters": {
 				"properties": {
+					"category": {
+						"type": "string"
+					},
 					"inStock": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
 					},
 					"brand": {
 						"type": "string"
@@ -1936,43 +1943,33 @@
 							"dozen"
 						]
 					},
-					"q": {
-						"type": "string"
-					},
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"search": {
+					"sort": {
 						"type": "string"
-					},
-					"categoryId": {
-						"type": "string"
-					},
-					"minPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"maxPrice": {
-						"type": "number",
-						"format": "double"
 					},
 					"sortBy": {
-						"type": "string",
-						"enum": [
-							"name",
-							"quantity",
-							"unit",
-							"createdAt",
-							"price",
-							"popularity",
-							"rating",
-							"relevance"
-						]
+						"type": "string"
 					},
 					"sortOrder": {
 						"type": "string",
@@ -1981,12 +1978,25 @@
 							"desc"
 						]
 					},
+					"search": {
+						"type": "string"
+					},
+					"q": {
+						"type": "string"
+					},
+					"categoryId": {
+						"type": "string"
+					},
 					"isPublic": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
+					},
+					"minPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"maxPrice": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -2847,6 +2857,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IReelResponse_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -2885,6 +2896,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -2896,7 +2911,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -2925,20 +2941,31 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"IFilter": {
+			"Pick_PaginationQuery.Exclude_keyofPaginationQuery.populate-or-select__": {
 				"properties": {
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"search": {
+					"sort": {
 						"type": "string"
 					},
 					"sortBy": {
@@ -2950,6 +2977,56 @@
 							"asc",
 							"desc"
 						]
+					},
+					"search": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"IFilter": {
+				"properties": {
+					"page": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"limit": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"sort": {
+						"type": "string"
+					},
+					"sortBy": {
+						"type": "string"
+					},
+					"sortOrder": {
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						]
+					},
+					"search": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -2997,6 +3074,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_any_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {},
@@ -3033,6 +3111,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -3044,7 +3126,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3263,6 +3346,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IPayment_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -3301,6 +3385,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -3312,7 +3400,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3646,6 +3735,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IOrder_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -3684,6 +3774,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -3695,7 +3789,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -3777,6 +3872,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_INotification_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -3815,6 +3911,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -3826,7 +3926,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -4323,6 +4424,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IKisanCommunity_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -4361,6 +4463,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -4372,7 +4478,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -4439,6 +4546,9 @@
 					"isActive": {
 						"type": "boolean"
 					},
+					"status": {
+						"type": "string"
+					},
 					"parentId": {
 						"allOf": [
 							{
@@ -4453,8 +4563,15 @@
 					"backgroundColor": {
 						"type": "string"
 					},
+					"textColor": {
+						"type": "string"
+					},
 					"deepLink": {
 						"type": "string"
+					},
+					"displayOrder": {
+						"type": "number",
+						"format": "double"
 					},
 					"bannerImage": {
 						"properties": {
@@ -4496,6 +4613,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_ICategory_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -4534,6 +4652,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -4545,7 +4667,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -4706,6 +4829,38 @@
 				"required": [
 					"phone",
 					"otp"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse__tokens-AuthTokens__": {
+				"properties": {
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string"
+					},
+					"result": {
+						"properties": {
+							"tokens": {
+								"$ref": "#/components/schemas/AuthTokens"
+							}
+						},
+						"required": [
+							"tokens"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"result"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -4940,6 +5095,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IBanner_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -4978,6 +5134,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -4989,7 +5149,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -5022,17 +5183,28 @@
 				"description": "Defines the available query parameters for filtering banners.",
 				"properties": {
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"search": {
+					"sort": {
 						"type": "string"
 					},
 					"sortBy": {
@@ -5044,6 +5216,12 @@
 							"asc",
 							"desc"
 						]
+					},
+					"search": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
 					},
 					"placement": {
 						"$ref": "#/components/schemas/BannerPlacement"
@@ -5059,6 +5237,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IRefund_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -5097,6 +5276,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -5108,7 +5291,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -5140,17 +5324,28 @@
 			"IRefundFilter": {
 				"properties": {
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"search": {
+					"sort": {
 						"type": "string"
 					},
 					"sortBy": {
@@ -5162,6 +5357,12 @@
 							"asc",
 							"desc"
 						]
+					},
+					"search": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
 					},
 					"status": {
 						"type": "string",
@@ -5273,6 +5474,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IMarketingCampaign_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -5311,6 +5513,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -5322,7 +5528,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -5341,108 +5548,6 @@
 					},
 					"result": {
 						"$ref": "#/components/schemas/PaginatedResponse_IMarketingCampaign_"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IImage": {
-				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"url": {
-						"type": "string"
-					},
-					"key": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PaginatedResponse_IImage_": {
-				"properties": {
-					"docs": {
-						"items": {
-							"$ref": "#/components/schemas/IImage"
-						},
-						"type": "array"
-					},
-					"totalDocs": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit": {
-						"type": "number",
-						"format": "double"
-					},
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					},
-					"hasNextPage": {
-						"type": "boolean"
-					},
-					"hasPrevPage": {
-						"type": "boolean"
-					},
-					"nextPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"prevPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					}
-				},
-				"required": [
-					"docs",
-					"totalDocs",
-					"limit",
-					"page",
-					"totalPages",
-					"hasNextPage",
-					"hasPrevPage",
-					"nextPage",
-					"prevPage"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessDataResponse_PaginatedResponse_IImage__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/PaginatedResponse_IImage_"
 					}
 				},
 				"required": [
@@ -5607,6 +5712,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IReel_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -5645,6 +5751,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -5656,7 +5766,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -5741,32 +5852,8 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CustomSuccessResponse____": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"properties": {},
-						"type": "object"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"PaginatedResponse_IProduct_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -5805,6 +5892,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -5816,12 +5907,13 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CustomSuccessResponse_PaginatedResponse_IProduct__": {
+			"SuccessResponse_PaginatedResponse_IProduct__": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -5847,21 +5939,48 @@
 			},
 			"ProductFilterQueryParams": {
 				"properties": {
-					"q": {
-						"type": "string"
-					},
 					"page": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
 					},
 					"limit": {
-						"type": "number",
-						"format": "double"
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"sort": {
+						"type": "string"
+					},
+					"sortBy": {
+						"type": "string"
+					},
+					"sortOrder": {
+						"type": "string",
+						"enum": [
+							"asc",
+							"desc"
+						]
 					},
 					"search": {
 						"type": "string"
 					},
-					"categoryId": {
+					"isActive": {
+						"type": "boolean"
+					},
+					"category": {
 						"type": "string"
 					},
 					"minPrice": {
@@ -5887,52 +6006,23 @@
 							"dozen"
 						]
 					},
-					"sortBy": {
-						"type": "string",
-						"enum": [
-							"name",
-							"price",
-							"createdAt",
-							"popularity",
-							"rating",
-							"quantity",
-							"unit",
-							"relevance"
-						]
+					"q": {
+						"type": "string"
 					},
-					"sortOrder": {
-						"type": "string",
-						"enum": [
-							"asc",
-							"desc"
-						]
-					},
-					"isActive": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+					"categoryId": {
+						"type": "string"
 					},
 					"isPublic": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
 					},
 					"inStock": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
+						"type": "boolean"
 					}
 				},
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CustomSuccessResponse_IProduct_": {
+			"SuccessResponse_IProduct_": {
 				"properties": {
 					"success": {
 						"type": "boolean",
@@ -5946,35 +6036,6 @@
 					},
 					"result": {
 						"$ref": "#/components/schemas/IProduct"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CustomSuccessResponse_IProduct-or-null_": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/IProduct"
-							}
-						],
-						"nullable": true
 					}
 				},
 				"required": [
@@ -7058,85 +7119,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PaginatedResponse_ICart_": {
-				"properties": {
-					"docs": {
-						"items": {
-							"$ref": "#/components/schemas/ICart"
-						},
-						"type": "array"
-					},
-					"totalDocs": {
-						"type": "number",
-						"format": "double"
-					},
-					"limit": {
-						"type": "number",
-						"format": "double"
-					},
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					},
-					"hasNextPage": {
-						"type": "boolean"
-					},
-					"hasPrevPage": {
-						"type": "boolean"
-					},
-					"nextPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"prevPage": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					}
-				},
-				"required": [
-					"docs",
-					"totalDocs",
-					"limit",
-					"page",
-					"totalPages",
-					"hasNextPage",
-					"hasPrevPage",
-					"nextPage",
-					"prevPage"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse_PaginatedResponse_ICart__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"$ref": "#/components/schemas/PaginatedResponse_ICart_"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"UserInfo": {
 				"properties": {
 					"id": {
@@ -7910,6 +7892,7 @@
 				"additionalProperties": false
 			},
 			"PaginatedResponse_IUser_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -7948,6 +7931,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -7959,7 +7946,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -8005,38 +7993,6 @@
 							"$ref": "#/components/schemas/UserProfile"
 						},
 						"type": "array"
-					}
-				},
-				"required": [
-					"success",
-					"message",
-					"result"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SuccessResponse__tokens-AuthTokens__": {
-				"properties": {
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string"
-					},
-					"result": {
-						"properties": {
-							"tokens": {
-								"$ref": "#/components/schemas/AuthTokens"
-							}
-						},
-						"required": [
-							"tokens"
-						],
-						"type": "object"
 					}
 				},
 				"required": [
@@ -8357,6 +8313,7 @@
 				"$ref": "#/components/schemas/Omit_ICoupon.timesUsed-or-usedBy_"
 			},
 			"PaginatedResponse_ICoupon_": {
+				"description": "Generic Paginated Response\nMatches mongoose-paginate-v2 structure but with cleaner property names",
 				"properties": {
 					"docs": {
 						"items": {
@@ -8395,6 +8352,10 @@
 						"type": "number",
 						"format": "double",
 						"nullable": true
+					},
+					"pagingCounter": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -8406,7 +8367,8 @@
 					"hasNextPage",
 					"hasPrevPage",
 					"nextPage",
-					"prevPage"
+					"prevPage",
+					"pagingCounter"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -10182,13 +10144,18 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "inStock",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "boolean"
 						}
 					},
 					{
@@ -10218,7 +10185,19 @@
 					},
 					{
 						"in": "query",
-						"name": "q",
+						"name": "page",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -10226,20 +10205,22 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "limit",
+						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					},
 					{
@@ -10252,10 +10233,26 @@
 					},
 					{
 						"in": "query",
+						"name": "q",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "categoryId",
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -10274,47 +10271,6 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"name",
-								"quantity",
-								"unit",
-								"createdAt",
-								"price",
-								"popularity",
-								"rating",
-								"relevance"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "isPublic",
-						"required": false,
-						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
 						}
 					}
 				]
@@ -10437,13 +10393,18 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "inStock",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "boolean"
 						}
 					},
 					{
@@ -10473,7 +10434,19 @@
 					},
 					{
 						"in": "query",
-						"name": "q",
+						"name": "page",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -10481,20 +10454,22 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "limit",
+						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					},
 					{
@@ -10507,10 +10482,26 @@
 					},
 					{
 						"in": "query",
+						"name": "q",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "categoryId",
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -10529,47 +10520,6 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"name",
-								"quantity",
-								"unit",
-								"createdAt",
-								"price",
-								"popularity",
-								"rating",
-								"relevance"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "isPublic",
-						"required": false,
-						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
 						}
 					},
 					{
@@ -10709,13 +10659,18 @@
 					},
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "inStock",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "boolean"
 						}
 					},
 					{
@@ -10745,7 +10700,19 @@
 					},
 					{
 						"in": "query",
-						"name": "q",
+						"name": "page",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -10753,20 +10720,22 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "limit",
+						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					},
 					{
@@ -10779,10 +10748,26 @@
 					},
 					{
 						"in": "query",
+						"name": "q",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "categoryId",
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -10801,47 +10786,6 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"name",
-								"quantity",
-								"unit",
-								"createdAt",
-								"price",
-								"popularity",
-								"rating",
-								"relevance"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "isPublic",
-						"required": false,
-						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
 						}
 					}
 				]
@@ -10901,13 +10845,18 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "inStock",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "boolean"
 						}
 					},
 					{
@@ -10937,7 +10886,19 @@
 					},
 					{
 						"in": "query",
-						"name": "q",
+						"name": "page",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -10945,20 +10906,22 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "limit",
+						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					},
 					{
@@ -10971,10 +10934,26 @@
 					},
 					{
 						"in": "query",
+						"name": "q",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "categoryId",
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -10993,47 +10972,6 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"name",
-								"quantity",
-								"unit",
-								"createdAt",
-								"price",
-								"popularity",
-								"rating",
-								"relevance"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "isPublic",
-						"required": false,
-						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
 						}
 					},
 					{
@@ -11175,13 +11113,18 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "category",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "inStock",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "boolean"
 						}
 					},
 					{
@@ -11211,7 +11154,19 @@
 					},
 					{
 						"in": "query",
-						"name": "q",
+						"name": "page",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -11219,20 +11174,22 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "limit",
+						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					},
 					{
@@ -11245,10 +11202,26 @@
 					},
 					{
 						"in": "query",
+						"name": "q",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "categoryId",
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isPublic",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -11267,47 +11240,6 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortBy",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"name",
-								"quantity",
-								"unit",
-								"createdAt",
-								"price",
-								"popularity",
-								"rating",
-								"relevance"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "isPublic",
-						"required": false,
-						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
 						}
 					},
 					{
@@ -12561,31 +12493,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -12609,6 +12527,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -12655,31 +12589,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -12703,6 +12623,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -12874,31 +12810,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -12922,6 +12844,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -13911,31 +13849,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -13959,6 +13883,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -14678,31 +14618,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -14726,6 +14652,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -14874,31 +14816,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -14922,6 +14850,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -15051,86 +14995,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"tags": [
@@ -15160,86 +15024,6 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SuccessResponse_IAuthResponse_"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
 								}
 							}
 						}
@@ -15275,86 +15059,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"tags": [
@@ -15383,87 +15087,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse__tokens-any__"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "NOT_FOUND",
-											"status": 404,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "VALIDATION_ERROR",
-											"status": 422,
-											"message": "string"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ClientErrorInterface"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"code": "SERVER_ERROR",
-											"status": 500,
-											"message": "string"
-										}
-									}
+									"$ref": "#/components/schemas/SuccessResponse__tokens-AuthTokens__"
 								}
 							}
 						}
@@ -15619,31 +15243,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -15667,6 +15277,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -15733,31 +15359,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -15781,6 +15393,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -15968,31 +15596,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -16017,91 +15631,6 @@
 								"desc"
 							]
 						}
-					}
-				]
-			}
-		},
-		"/images": {
-			"post": {
-				"operationId": "UploadImage",
-				"responses": {
-					"201": {
-						"description": "Image uploaded successfully",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"data": {
-											"$ref": "#/components/schemas/IImage"
-										},
-										"message": {
-											"type": "string"
-										},
-										"success": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"data",
-										"message",
-										"success"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Image"
-				],
-				"security": [],
-				"parameters": []
-			},
-			"get": {
-				"operationId": "GetAllImages",
-				"responses": {
-					"200": {
-						"description": "Successfully fetched all address",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessDataResponse_PaginatedResponse_IImage__"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Image"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
 					},
 					{
 						"in": "query",
@@ -16113,134 +15642,10 @@
 					},
 					{
 						"in": "query",
-						"name": "sortBy",
+						"name": "isActive",
 						"required": false,
 						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "sortOrder",
-						"required": false,
-						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					}
-				]
-			}
-		},
-		"/images/{id}": {
-			"get": {
-				"operationId": "GetById",
-				"responses": {
-					"200": {
-						"description": "Successfully fetched address by ID",
-						"content": {
-							"application/json": {
-								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/IImage"
-										}
-									],
-									"nullable": true
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Image"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "Update",
-				"responses": {
-					"200": {
-						"description": "Successfully updated address by ID",
-						"content": {
-							"application/json": {
-								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/IImage"
-										}
-									],
-									"nullable": true
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Image"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"delete": {
-				"operationId": "Delete",
-				"responses": {
-					"200": {
-						"description": "Successfully deleted address by ID",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"status": {
-											"type": "number",
-											"format": "double"
-										},
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"status",
-										"message"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Image"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
+							"type": "boolean"
 						}
 					}
 				]
@@ -16687,31 +16092,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -16735,6 +16126,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -16918,12 +16325,12 @@
 			"post": {
 				"operationId": "CreateProduct",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CustomSuccessResponse____"
+									"$ref": "#/components/schemas/SuccessResponse____"
 								},
 								"examples": {
 									"Example 1": {
@@ -17093,7 +16500,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CustomSuccessResponse_PaginatedResponse_IProduct__"
+									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_IProduct__"
 								}
 							}
 						}
@@ -17176,7 +16583,19 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "q",
+						"name": "page",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -17184,20 +16603,22 @@
 					},
 					{
 						"in": "query",
-						"name": "page",
+						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "limit",
+						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
 						}
 					},
 					{
@@ -17210,7 +16631,15 @@
 					},
 					{
 						"in": "query",
-						"name": "categoryId",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "category",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -17261,43 +16690,18 @@
 					},
 					{
 						"in": "query",
-						"name": "sortBy",
+						"name": "q",
 						"required": false,
 						"schema": {
-							"type": "string",
-							"enum": [
-								"name",
-								"price",
-								"createdAt",
-								"popularity",
-								"rating",
-								"quantity",
-								"unit",
-								"relevance"
-							]
+							"type": "string"
 						}
 					},
 					{
 						"in": "query",
-						"name": "sortOrder",
+						"name": "categoryId",
 						"required": false,
 						"schema": {
-							"type": "string",
-							"enum": [
-								"asc",
-								"desc"
-							]
-						}
-					},
-					{
-						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "string"
 						}
 					},
 					{
@@ -17305,10 +16709,7 @@
 						"name": "isPublic",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "boolean"
 						}
 					},
 					{
@@ -17316,10 +16717,7 @@
 						"name": "inStock",
 						"required": false,
 						"schema": {
-							"type": "boolean",
-							"enum": [
-								true
-							]
+							"type": "boolean"
 						}
 					}
 				]
@@ -17330,11 +16728,11 @@
 				"operationId": "UpdateProduct",
 				"responses": {
 					"200": {
-						"description": "Updated",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CustomSuccessResponse____"
+									"$ref": "#/components/schemas/SuccessResponse____"
 								}
 							}
 						}
@@ -17491,7 +16889,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CustomSuccessResponse_IProduct_"
+									"$ref": "#/components/schemas/SuccessResponse_IProduct_"
 								}
 							}
 						}
@@ -17592,7 +16990,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/NullSuccessResponse"
+									"$ref": "#/components/schemas/SuccessResponse_null_"
 								}
 							}
 						}
@@ -17695,7 +17093,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CustomSuccessResponse_IProduct-or-null_"
+									"$ref": "#/components/schemas/SuccessResponse_IProduct-or-null_"
 								}
 							}
 						}
@@ -21656,31 +21054,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -21704,6 +21088,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -21972,7 +21372,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse__message-string__"
+									"$ref": "#/components/schemas/SuccessResponse_null_"
 								}
 							}
 						}
@@ -22187,9 +21587,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SuccessResponse_PaginatedResponse_ICart__"
-								}
+								"schema": {}
 							}
 						}
 					},
@@ -22555,31 +21953,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -22603,6 +21987,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					},
 					{
@@ -23045,31 +22445,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -23093,6 +22479,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -23460,31 +22862,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -23508,6 +22896,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -23723,31 +23127,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -23771,6 +23161,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]
@@ -23986,31 +23392,17 @@
 						"in": "query",
 						"name": "page",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
 						"name": "limit",
 						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"schema": {}
 					},
 					{
 						"in": "query",
-						"name": "isActive",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
+						"name": "sort",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -24034,6 +23426,22 @@
 								"asc",
 								"desc"
 							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]

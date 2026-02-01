@@ -1,30 +1,29 @@
-import { StatusCodes } from 'http-status-codes';
-import { ClientErrorInterface } from './clientErrorHelper';
+import { ErrorResponse } from '../types/common.types';
 
-export const VALIDATION_ERROR_EXAMPLE: ClientErrorInterface = {
+export const VALIDATION_ERROR_EXAMPLE: ErrorResponse = {
     success: false,
+    error: 'Validation failed',
     code: 'VALIDATION_ERROR',
-    status: StatusCodes.UNPROCESSABLE_ENTITY,
-    message: 'string'
+    details: {
+        field: ['Error description']
+    }
 };
 
-export const NOT_FOUND_ERROR_EXAMPLE: ClientErrorInterface = {
+export const NOT_FOUND_ERROR_EXAMPLE: ErrorResponse = {
     success: false,
-    code: 'NOT_FOUND',
-    status: StatusCodes.NOT_FOUND,
-    message: 'string'
+    error: 'Resource not found',
+    code: 'NOT_FOUND'
 };
 
-export const SERVER_ERROR_EXAMPLE: ClientErrorInterface = {
+export const SERVER_ERROR_EXAMPLE: ErrorResponse = {
     success: false,
-    code: 'SERVER_ERROR',
-    status: StatusCodes.INTERNAL_SERVER_ERROR,
-    message: 'string'
+    error: 'Internal server error',
+    code: 'INTERNAL_SERVER_ERROR'
 };
 
-export const UNAUTHORIZED_ERROR_EXAMPLE: ClientErrorInterface = {
+export const UNAUTHORIZED_ERROR_EXAMPLE: ErrorResponse = {
     success: false,
-    code: 'UNAUTHORIZED',
-    status: StatusCodes.UNAUTHORIZED,
-    message: 'string'
+    error: 'Authentication required',
+    code: 'UNAUTHORIZED'
 };
+

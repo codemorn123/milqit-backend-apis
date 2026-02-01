@@ -8,7 +8,6 @@ import mongoose from 'mongoose';
 /**
  * Custom Joi extensions for mobile authentication
  * Optimized for React Native apps (RFS, SmartFlow, home_fresh_app, core_mobile_app, shree-react-naive-app)
- * @author MarotiKathoke
  * @created 2025-09-13 14:17:31
  */
 
@@ -45,16 +44,16 @@ export const MOBILE_AUTH_CONFIG = {
   // Session management
   accessTokenExpiry: '15m',
   refreshTokenExpiry: '7d',
-  
+
   // Device management
   maxDevicesPerUser: 5,
   deviceIdMinLength: 10,
-  
+
   // Security
   passwordMinLength: 8,
   maxLoginAttempts: 5,
   lockoutDuration: 15 * 60, // 15 minutes
-  
+
   // Mobile app specific
   supportedCountryCodes: ['+91', '+1', '+44', '+86'], // India, US, UK, China
   allowedNamePattern: /^[a-zA-Z\s\u0900-\u097F]+$/, // English + Devanagari for Indian names
@@ -76,11 +75,11 @@ const phoneSchema = Joi.string()
     // Additional validation for supported country codes
     const supportedCodes = MOBILE_AUTH_CONFIG.supportedCountryCodes;
     const hasValidCountryCode = supportedCodes.some(code => value.startsWith(code));
-    
+
     if (!hasValidCountryCode) {
       return helpers.error('phone.unsupportedCountry');
     }
-    
+
     // India-specific validation (+91)
     if (value.startsWith('+91')) {
       if (value.length !== 13) {
@@ -91,7 +90,7 @@ const phoneSchema = Joi.string()
         return helpers.error('phone.invalidIndianFormat');
       }
     }
-    
+
     return value;
   })
   .messages({
@@ -106,7 +105,7 @@ const phoneSchema = Joi.string()
 
 
 
-  
+
 const otpSchema = Joi.string()
   .trim()
   .pattern(new RegExp(`^\\d{${OTP_CONFIG.length}}$`))
@@ -146,7 +145,7 @@ const nameSchema = Joi.string()
 const emailSchema = Joi.string()
   .trim()
   .lowercase()
-  .email({ 
+  .email({
     minDomainSegments: 2,
     tlds: { allow: ['com', 'in', 'org', 'net', 'edu', 'gov'] }
   })
@@ -165,7 +164,7 @@ const emailSchema = Joi.string()
  */
 const deviceIdSchema = Joi.string()
   .trim()
-  .allow('') 
+  .allow('')
   .min(MOBILE_AUTH_CONFIG.deviceIdMinLength)
   .max(255)
   .optional()
@@ -223,21 +222,21 @@ export const sendOtpSchema = Joi.object({
     .messages({
       'any.only': 'OTP provider must be either sms or whatsapp'
     }),
-  
+
   purpose: Joi.string()
     .valid('login', 'register', 'password_reset', 'phone_verification')
     .default('login')
     .messages({
       'any.only': 'Purpose must be one of: login, register, password_reset, phone_verification'
     }),
-  
+
   // Device info for security
   deviceInfo: Joi.object({
     platform: Joi.string().valid('ios', 'android').optional(),
     version: Joi.string().max(20).optional(),
     model: Joi.string().max(50).optional()
   }).optional()
-  
+
 }).required();
 
 /**
@@ -254,11 +253,11 @@ export const verifyOtpSchema = Joi.object({
     then: Joi.required(),
     otherwise: Joi.optional()
   }),
-  
 
-  
+
+
   deviceId: deviceIdSchema,
-  
+
   // Device information for push notifications
   deviceInfo: Joi.object({
     platform: Joi.string().valid('ios', 'android').required(),
@@ -266,24 +265,24 @@ export const verifyOtpSchema = Joi.object({
     model: Joi.string().max(50).optional(),
     pushToken: Joi.string().max(500).optional()
   }).optional(),
-  
+
   // App-specific data
   appVersion: Joi.string().max(20).optional(),
-  
+
   // Location for delivery apps (home_fresh_app)
   location: Joi.object({
     latitude: Joi.number().min(-90).max(90).optional(),
     longitude: Joi.number().min(-180).max(180).optional(),
     address: Joi.string().max(500).optional()
   }).optional(),
-  
+
   // User preferences
   preferences: Joi.object({
     language: Joi.string().valid('en', 'hi', 'mr', 'gu', 'ta', 'te').default('en'),
     notifications: Joi.boolean().default(true),
     marketing: Joi.boolean().default(false)
   }).optional()
-  
+
 }).required();
 
 /**
@@ -304,9 +303,9 @@ export const resetPasswordSchema = Joi.object({
         'any.only': 'Passwords do not match',
         'any.required': 'Password confirmation is required'
       }),
-    
+
     deviceId: deviceIdSchema
-    
+
   }).required()
 });
 
@@ -326,19 +325,19 @@ export const mobileLoginSchema = Joi.object({
         'string.min': 'Password is required',
         'any.required': 'Password is required'
       }),
-    
+
     deviceId: deviceIdSchema,
-    
+
     // Remember me option for mobile
     rememberMe: Joi.boolean().default(false),
-    
+
     // Device info for security
     deviceInfo: Joi.object({
       platform: Joi.string().valid('ios', 'android').optional(),
       version: Joi.string().max(20).optional(),
       model: Joi.string().max(50).optional()
     }).optional()
-    
+
   }).required()
 });
 
@@ -365,7 +364,7 @@ export const updateProfileSchema = Joi.object({
   body: Joi.object({
     name: nameSchema.optional(),
     email: emailSchema,
-    
+
     // Profile image for mobile apps
     profileImage: Joi.string()
       .uri({ scheme: ['http', 'https'] })
@@ -373,7 +372,7 @@ export const updateProfileSchema = Joi.object({
       .messages({
         'string.uri': 'Profile image must be a valid URL'
       }),
-    
+
     // Location for delivery apps
     location: Joi.object({
       latitude: Joi.number().min(-90).max(90).optional(),
@@ -385,7 +384,7 @@ export const updateProfileSchema = Joi.object({
         'string.pattern.base': 'Pincode must be 6 digits'
       })
     }).optional(),
-    
+
     // User preferences
     preferences: Joi.object({
       language: Joi.string().valid('en', 'hi', 'mr', 'gu', 'ta', 'te').optional(),
@@ -393,9 +392,9 @@ export const updateProfileSchema = Joi.object({
       marketing: Joi.boolean().optional(),
       theme: Joi.string().valid('light', 'dark', 'auto').optional()
     }).optional(),
-    
+
     deviceId: deviceIdSchema
-    
+
   }).min(1).required().messages({
     'object.min': 'At least one field must be provided for update'
   })
@@ -414,9 +413,9 @@ export const changePasswordSchema = Joi.object({
       .messages({
         'any.required': 'Current password is required'
       }),
-    
+
     newPassword: passwordSchema,
-    
+
     confirmPassword: Joi.string()
       .valid(Joi.ref('newPassword'))
       .required()
@@ -424,9 +423,9 @@ export const changePasswordSchema = Joi.object({
         'any.only': 'Passwords do not match',
         'any.required': 'Password confirmation is required'
       }),
-    
+
     deviceId: deviceIdSchema
-    
+
   }).required()
 });
 
@@ -459,7 +458,7 @@ export const deleteAccountSchema = Joi.object({
       .messages({
         'string.max': 'Reason cannot exceed 500 characters'
       }),
-    
+
     confirmDeletion: Joi.boolean()
       .valid(true)
       .required()
@@ -485,21 +484,21 @@ export const socialLoginSchema = Joi.object({
         'any.only': 'Provider must be one of: google, facebook, apple',
         'any.required': 'Social provider is required'
       }),
-    
+
     accessToken: Joi.string()
       .required()
       .messages({
         'any.required': 'Social access token is required'
       }),
-    
+
     deviceId: deviceIdSchema,
-    
+
     deviceInfo: Joi.object({
       platform: Joi.string().valid('ios', 'android').required(),
       version: Joi.string().max(20).required(),
       model: Joi.string().max(50).optional()
     }).optional()
-    
+
   }).required()
 });
 
@@ -531,7 +530,6 @@ export const validateSchema = (schema: Joi.ObjectSchema) => {
         method: req.method,
         errors: validationErrors,
         userAgent: req.get('User-Agent'),
-        user: 'MarotiKathoke',
         timestamp: new Date().toISOString()
       });
 
@@ -540,8 +538,7 @@ export const validateSchema = (schema: Joi.ObjectSchema) => {
         message: 'Validation failed',
         errors: validationErrors,
         errorCode: 'VALIDATION_ERROR',
-        timestamp: new Date().toISOString(),
-        user: 'MarotiKathoke'
+        timestamp: new Date().toISOString()
       });
     }
 
@@ -571,14 +568,14 @@ export default {
   logoutSchema,
   deleteAccountSchema,
   socialLoginSchema,
-  
+
   // Configurations
   OTP_CONFIG,
   MOBILE_AUTH_CONFIG,
-  
+
   // Utilities
   validateSchema,
-  
+
   // Individual field schemas for reuse
   phoneSchema,
   otpSchema,

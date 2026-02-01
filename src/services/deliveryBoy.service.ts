@@ -9,11 +9,14 @@ import {
     IDeliveryBoyAuthResponse,
     IDeliveryBoySendOtpInput,
     IDeliveryBoyVerifyOtpInput,
+    IDeliveryBoyListQuery,
     IUpdateDeliveryBoyLocationInput,
     IUpdateDeliveryBoyProfileInput,
     IUpdateDeliveryBoyAvailabilityInput
 } from '../types/deliveryBoy.types';
 import { AuthTokens, RefreshTokenRequest } from '../types/auth.types';
+import { QueryBuilder } from '../utils/query-builder';
+import { PaginatedResponse, IFilter } from '../types/common.types';
 
 const MAX_OTP_ATTEMPTS = 5;
 
@@ -408,65 +411,25 @@ export class DeliveryBoyService {
     /**
      * Admin: Get delivery boys list with pagination and filters
      */
-    static async adminGetDeliveryBoysList(query: any): Promise<any> {
-        const {
-            page = 1,
-            limit = 10,
-            search,
-            isActive,
-            isAvailable,
-            isDocumentVerified,
-            vehicleType,
-            deliveryZone,
-            sortBy = 'createdAt',
-            sortOrder = 'desc'
-        } = query;
-
-        // Build filter
-        const filter: any = {};
-
-        if (isActive !== undefined) filter.isActive = isActive;
-        if (isAvailable !== undefined) filter.isAvailable = isAvailable;
-        if (isDocumentVerified !== undefined) filter.isDocumentVerified = isDocumentVerified;
-        if (vehicleType) filter.vehicleType = vehicleType;
-        if (deliveryZone) filter.deliveryZone = deliveryZone;
+    /**
+     * Admin: Get delivery boys list with pagination and filters
+     */
+    static async adminGetDeliveryBoysList(query: IDeliveryBoyListQuery): Promise<PaginatedResponse<IDeliveryBoy>> {
+        const builder = new QueryBuilder<IDeliveryBoy>(DeliveryBoyModel as any, query);
 
         // Search filter
-        if (search) {
-            filter.$or = [
-                { name: { $regex: search, $options: 'i' } },
-                { phone: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } }
-            ];
+        if (query.search) {
+            builder.filter(['name', 'phone', 'email']);
         }
 
-        // Count total
-        const total = await DeliveryBoyModel.countDocuments(filter);
+        // Custom filters
+        if (query.isActive !== undefined) builder.addFilter({ isActive: query.isActive });
+        if (query.isAvailable !== undefined) builder.addFilter({ isAvailable: query.isAvailable });
+        if (query.isDocumentVerified !== undefined) builder.addFilter({ isDocumentVerified: query.isDocumentVerified });
+        if (query.vehicleType) builder.addFilter({ vehicleType: query.vehicleType });
+        if (query.deliveryZone) builder.addFilter({ deliveryZone: query.deliveryZone });
 
-        // Build sort
-        const sort: any = {};
-        sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
-
-        // Get delivery boys
-        const deliveryBoys = await DeliveryBoyModel
-            .find(filter)
-            .sort(sort)
-            .skip((page - 1) * limit)
-            .limit(limit);
-
-        const totalPages = Math.ceil(total / limit);
-
-        return {
-            deliveryBoys: deliveryBoys.map(db => db.toJSON() as IDeliveryBoy),
-            pagination: {
-                total,
-                page,
-                limit,
-                totalPages,
-                hasNext: page < totalPages,
-                hasPrev: page > 1
-            }
-        };
+        return await builder.exec();
     }
 
     /**

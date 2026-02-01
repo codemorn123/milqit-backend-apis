@@ -3,12 +3,11 @@ import cron from 'node-cron';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 import { config } from './config';
 import { logger } from './config/logger';
 import pinoHttp from 'pino-http';
-import morgan from 'morgan';
+
 import { RegisterRoutes } from './generated/routes';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middleware/error';
@@ -70,12 +69,8 @@ app.use(cors({
 }));
 
 app.use(compression());
-app.use(bodyParser.urlencoded({ extended: true, limit: '1mb' }));
 
-const stream = {
-  write: (message: string) => logger.info(message.trim() + '\n')
-};
-app.use(morgan('combined', { stream }));
+// morgan removed in favor of pino-http
 
 // Import timeout middleware
 import { requestTimeout, enhancedHealthCheck } from './middleware/timeout';
@@ -87,7 +82,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 
-app.use(pinoHttp({ logger }));
 
 // Enhanced health check with database status
 app.get('/health', enhancedHealthCheck);
@@ -97,7 +91,7 @@ app.get('/health', enhancedHealthCheck);
 // Cron jobs are now initialized in server.ts
 
 const v1Router = express.Router();
-app.use('/uploads', express.static('uploads'));
+
 
 
 
@@ -110,47 +104,7 @@ app.use('/v1', apiRateLimiter, v1Router);
 
 
 
-app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('❌ Global Error Handler:', {
-    error: error.message,
-    stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-    url: req.url,
-    method: req.method,
-    contentType: req.get('Content-Type')
-  });
 
-  // Ensure CORS headers are set on error responses
-  const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-  }
-
-  if (error.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({
-      success: false,
-      message: 'File too large. Maximum size is 10MB.'
-    });
-  }
-
-  if (error.code === 'LIMIT_UNEXPECTED_FILE') {
-    return res.status(400).json({
-      success: false,
-      message: 'Unexpected file field. Expected field name: "file"'
-    });
-  }
-
-  const statusCode = error.statusCode || error.status || 500;
-
-  res.status(statusCode).json({
-    success: false,
-    message: error.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && {
-      stack: error.stack,
-      details: error
-    })
-  });
-});
 
 
 
@@ -176,6 +130,16 @@ app.use('/docs', swaggerUi.serve, async (_req: Request, res: Response) => {
   };
 
   return res.send(swaggerUi.generateHTML(customSwagger));
+});
+
+// 404 handler
+app.use((_req, res) => {
+  res.status(404).json({
+    error: {
+      code: 'NOT_FOUND',
+      message: 'Resource not found'
+    }
+  });
 });
 
 // Error handler should be last

@@ -2,8 +2,11 @@ import { Types } from 'mongoose';
 import { logger } from '../../config/logger';
 import APIError from '../../error/api-error';
 import { ProductModel } from '../../models/product.model';
-import CartModelClass, { ICart, ICartItem, ILocation, ICartDocument } from '../../models/CartModel';
+import CartModelClass, { ICart, ICartItem, ICartDocument } from '../../models/CartModel';
 import { IProductForCart } from '../../types/product.types';
+import { PaginatedResponse, Location } from '../../types/common.types';
+import { ICartSummary, ICartFilterOptions } from '../../types/cart.types';
+import { QueryBuilder } from '../../utils/query-builder';
 
 /**
  * Coupon Configuration Interface
@@ -334,7 +337,7 @@ class CartService {
         logger.info({ userId, productId }, 'Item removed from cart');
       } else {
         this.validateQuantity(quantity);
-        const product = await this.getValidatedProduct(productId, quantity);
+        await this.getValidatedProduct(productId, quantity); // Validate availablity
         this.updateCartItemQuantity(cart.items[itemIndex], quantity);
         logger.info({ userId, productId, quantity }, 'Cart item updated');
       }
@@ -514,7 +517,7 @@ class CartService {
     deliveryType: string,
     deliveryAddress?: string,
     scheduledDelivery?: Date,
-    location?: ILocation
+    location?: Location
   ): Promise<ICart> {
     try {
       this.validateObjectId(userId, 'user ID');
@@ -582,28 +585,7 @@ class CartService {
   /**
    * Get cart summary for checkout
    */
-  public async getCartSummary(userId: string): Promise<{
-    cartId: string;
-    totalItems: number;
-    itemCount: number;
-    subtotal: number;
-    discount: number;
-    deliveryCharges: number;
-    taxes: number;
-    totalAmount: number;
-    savings: number;
-    estimatedDelivery?: Date;
-    appliedCoupons: string[];
-    deliveryType: string;
-    deliveryAddress?: Types.ObjectId;
-    items: Array<{
-      productId: Types.ObjectId;
-      name: string;
-      quantity: number;
-      price: number;
-      subtotal: number;
-    }>;
-  }> {
+  public async getCartSummary(userId: string): Promise<ICartSummary> {
     try {
       this.validateObjectId(userId, 'user ID');
 
@@ -631,7 +613,7 @@ class CartService {
       }
 
       return {
-        cartId: (cart as any)._id?.toString() || '',
+        cartId: (cart as any)._id?.toString() || (cart as any).id || '',
         totalItems: cart.totalItems,
         itemCount: cart.items.length,
         subtotal: cart.subtotal,
@@ -657,7 +639,32 @@ class CartService {
       throw error instanceof APIError ? error : new APIError('Failed to get cart summary', 500);
     }
   }
+
+  /**
+   * Get all carts (Admin)
+   */
+  public async getAllCarts(filters: ICartFilterOptions): Promise<PaginatedResponse<ICart>> {
+    const builder = new QueryBuilder(CartModelClass, filters);
+
+    // Basic filters
+    builder.filter([], ['userId', 'status', 'startDate', 'endDate']);
+
+    if (filters.userId) builder.addFilter({ userId: filters.userId });
+    if (filters.status) builder.addFilter({ status: filters.status });
+
+    if (filters.dateFrom || filters.dateTo) {
+      const dateFilter: any = {};
+      if (filters.dateFrom) dateFilter.$gte = new Date(filters.dateFrom);
+      if (filters.dateTo) dateFilter.$lte = new Date(filters.dateTo);
+      builder.addFilter({ createdAt: dateFilter });
+    }
+
+    return builder.exec([
+      { path: 'userId', select: 'name phone email' },
+      { path: 'items.productId', select: 'name slug price images sku' },
+      { path: 'deliveryAddress', select: 'address city state pincode' }
+    ]);
+  }
 }
 
-export const cartService = new CartService();
-export default cartService;
+export default new CartService();

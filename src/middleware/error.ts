@@ -1,66 +1,95 @@
-
 import { ErrorRequestHandler } from "express";
-import BaseCustomError from "./../error/base-error";
-import { MongoDuplicateKeyError } from "./../error/mongo-error";
+import { StatusCodes } from 'http-status-codes';
 import { ValidateError } from "tsoa";
-import { PresentableError } from "./../error/clientErrorHelper";
+import { APIError, BadRequestError, ConflictError, ValidationError } from "../error/api-error";
 
-const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  if (err instanceof BaseCustomError) {
-    return res.status(err.getStatusCode()).json(err.serializeErrorOutput());
+const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
+  // Log the error
+  console.error('❌ Global Error Handler:', {
+    message: err.message,
+    code: err.code,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.url,
+    method: req.method,
+  });
+
+  // Ensure CORS headers are set on error responses
+  if (req.headers.origin) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
   }
 
+  // --- Handle Specific Error Types ---
+
+  // 1. APIError (Custom standardized errors)
+  if (err instanceof APIError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      error: err.message,
+      code: err.code,
+      details: err.details
+    });
+  }
+
+  // 2. Multer/File Upload Errors
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      error: 'File too large. Maximum size is 10MB.',
+      code: 'LIMIT_FILE_SIZE'
+    });
+  }
+  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      error: 'Unexpected file field. Expected: "file"',
+      code: 'LIMIT_UNEXPECTED_FILE'
+    });
+  }
+
+  // 3. TSOA Validation Errors
   if (err instanceof ValidateError) {
-    const messages = Object.values(err.fields).map(field => field.message);
-    const error = new PresentableError('VALIDATION_ERROR', messages.join(', '));
-    return res.status(error.status).json(error);
-
+    return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+      success: false,
+      error: 'Validation failed',
+      code: 'VALIDATION_ERROR',
+      details: err.fields
+    });
   }
 
-
-
-
-  // ✅ START: New logic for handling Joi Validation Errors
+  // 4. Joi Validation Errors
   if (err.isJoi) {
-    // Joi validation errors have a '.details' array
     const messages = err.details.map((detail: any) => detail.message).join(', ');
-    const error = new PresentableError('VALIDATION_ERROR', messages);
-    return res.status(error.status).json(error);
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      error: messages,
+      code: 'VALIDATION_ERROR',
+      details: err.details
+    });
   }
 
-  // --- Type Guard for MongoDB Duplicate Key Error (E11000) ---
-  // This block checks for the unique properties of the Mongo error.
-  if (
-    err instanceof Error &&    // 1. Is it an Error object?
-    'code' in err &&           // 2. Does it have a 'code' property?
-    err.code === 11000 &&      // 3. Is the code 11000?
-    'keyValue' in err &&       // 4. Does it have a 'keyValue' property?
-    typeof (err as any).keyValue === 'object' && (err as any).keyValue !== null
-  ) {
-    // Inside this block, TypeScript knows err.keyValue is safe to access.
-    const keyValue = (err as any).keyValue as Record<string, string>;
-    const field = Object.keys(keyValue)[0];
-    const value = keyValue[field];
-    
-    const mongoError = new MongoDuplicateKeyError(field, value);
-    return res.status(mongoError.getStatusCode()).json(mongoError.serializeErrorOutput());
+  // 5. MongoDB Duplicate Key Error (E11000)
+  if (err.code === 11000 && err.keyPattern && err.keyValue) {
+    const field = Object.keys(err.keyPattern)[0];
+    const value = err.keyValue[field];
+    return res.status(StatusCodes.CONFLICT).json({
+      success: false,
+      error: `Duplicate value entered for ${field}: ${value}`,
+      code: 'DUPLICATE_KEY_ERROR',
+      details: err.keyValue
+    });
   }
 
+  // 6. Generic/Unknown Errors
+  const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+  const message = err.message || 'Internal Server Error';
 
-  if (err instanceof PresentableError) {
-    return res.status(err.status).json(err);
-  }
-
-  // --- Handle generic JavaScript Errors ---
-  if (err instanceof Error) {
-    const error = new PresentableError('SERVER_ERROR', err.message);
-    return res.status(error.status).json(error);
-  }
-
-  // --- Fallback for any other unknown error type ---
-  const fallbackError = new PresentableError('SERVER_ERROR');
-  return res.status(fallbackError.status).json(fallbackError);
-
+  return res.status(statusCode).json({
+    success: false,
+    error: message,
+    code: 'SERVER_ERROR',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 };
 
 export default errorHandler;

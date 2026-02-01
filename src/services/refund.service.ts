@@ -160,7 +160,8 @@ export class RefundService {
             hasNextPage: page < Math.ceil(totalDocs / limit),
             hasPrevPage: page > 1,
             nextPage: page < Math.ceil(totalDocs / limit) ? page + 1 : null,
-            prevPage: page > 1 ? page - 1 : null
+            prevPage: page > 1 ? page - 1 : null,
+            pagingCounter: (page - 1) * limit + 1
         };
     }
 

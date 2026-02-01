@@ -1,7 +1,6 @@
 import {
     Route,
     Tags,
-    Controller,
     Post,
     Get,
     Body,
@@ -17,10 +16,12 @@ import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { IFilter, PaginatedResponse } from '../../types/common.types';
 import { IMarketingCampaign } from '../../models/marketing.model';
 
+import { BaseController } from '../base.controller';
+
 @Route("admin/marketing")
 @Tags("ADMIN: Marketing")
 @Security("jwt")
-export class AdminMarketingController extends Controller {
+export class AdminMarketingController extends BaseController {
 
     /**
      * Create a new marketing campaign

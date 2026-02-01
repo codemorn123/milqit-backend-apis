@@ -44,6 +44,17 @@ const configSchema = z.object({
   // Firebase (Added)
   FIREBASE_SERVICE_ACCOUNT_KEY: z.string().optional(), // Path to JSON file or JSON string
 
+  // Cloudinary (Added)
+  CLOUDINARY_NAME: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().optional(),
+
+  // Redis (Added)
+  REDIS_HOST: z.string().optional(),
+  REDIS_PORT: z.string().optional(),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_ENABLED: z.string().optional(), // 'true' or 'false'
+
   // Logging
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 
@@ -88,6 +99,12 @@ export interface RazorpayConfig {
   webhookSecret: string;
 }
 
+export interface CloudinaryConfig {
+  cloudName: string;
+  apiKey: string;
+  apiSecret: string;
+}
+
 // Export typed config
 export const config = {
   env: configResult.data.NODE_ENV,
@@ -123,6 +140,19 @@ export const config = {
 
   firebase: {
     serviceAccountKey: configResult.data.FIREBASE_SERVICE_ACCOUNT_KEY
+  },
+
+  cloudinary: {
+    cloudName: configResult.data.CLOUDINARY_NAME || '',
+    apiKey: configResult.data.CLOUDINARY_API_KEY || '',
+    apiSecret: configResult.data.CLOUDINARY_API_SECRET || ''
+  } as CloudinaryConfig,
+
+  redis: {
+    host: configResult.data.REDIS_HOST || 'localhost',
+    port: parseInt(configResult.data.REDIS_PORT || '6379'),
+    password: configResult.data.REDIS_PASSWORD,
+    enabled: configResult.data.REDIS_ENABLED === 'true' || configResult.data.NODE_ENV === 'production'
   },
 
   logging: {

@@ -22,8 +22,11 @@ const AdminSchema = new Schema<IAdminDocument>({
   isActive: { type: Boolean, default: true },
   isEmailVerified: { type: Boolean, default: false },
   isPhoneVerified: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+}, {
+  timestamps: true
 });
 
 export const AdminModel = mongoose.model<IAdminDocument>('Admin', AdminSchema);
+
+// Default export for compatibility
+export default AdminModel;

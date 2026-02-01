@@ -1,5 +1,6 @@
 import kisanCommunityUpload from './../../../utils/kisan-community-upload';
-import APIError from './../../../error/api-error';
+import { handleValidationError } from './../../../utils/error-helpers';
+import { cleanObject } from './../../../utils/object.utils';
 import { validateSchemaMiddleware } from './../../../middleware/common-validate';
 import kisanCommunityService from './../../../services/admin/cms/kisan-community.service';
 import { IFilter, PaginatedResponse } from '../../../types/common.types';
@@ -27,9 +28,11 @@ import { errorSuccess, success, SuccessResponse as SuccessDataResponse } from '.
 
 
 
+import { BaseController } from '../../base.controller';
+
 @Route("admin/cms/kisan-community")
 @Tags("Kisan Community")
-export class KisanCommunityController extends Controller {
+export class KisanCommunityController extends BaseController {
 
   //   @Middlewares(kisanCommunityUpload.single("profileImage"))
   @Post("/")
@@ -41,12 +44,9 @@ export class KisanCommunityController extends Controller {
     @FormField() mobile: string, @FormField() products: string, @FormField() description: string,
     @FormField() email?: string, @UploadedFile("profileImage") profileImage?: Express.Multer.File
   ): Promise<SuccessDataResponse<IKisanCommunity>> {
-    const dataToValidate = { farmerName, farmName, farmLocation, mobile, products, description, email };
-    const { error, value } = createKisanCommunitySchema.validate(dataToValidate);
-    if (error) {
-      errorSuccess(error);
-      throw new APIError(error.details[0].message, 400);
-    }
+    const cleanedData = cleanObject({ farmerName, farmName, farmLocation, mobile, products, description, email });
+    const { error, value } = createKisanCommunitySchema.validate(cleanedData);
+    if (error) handleValidationError(error);
     const result = await kisanCommunityService.create(value, profileImage);
     return success(result, 'Kisan Community created successfully');
   }
@@ -88,14 +88,9 @@ export class KisanCommunityController extends Controller {
     @FormField() description?: string, @FormField() email?: string,
     @UploadedFile("profileImage") profileImage?: Express.Multer.File
   ): Promise<IKisanCommunity> {
-    const dataToValidate = { farmerName, farmName, farmLocation, mobile, products, description, email };
-    Object.keys(dataToValidate).forEach(key => dataToValidate[key] === undefined && delete dataToValidate[key]);
-
-    const { error, value } = updateKisanCommunitySchema.validate(dataToValidate);
-    if (error) {
-      this.setStatus(400);
-      throw new APIError(error.details[0].message, 400);
-    }
+    const cleanedData = cleanObject({ farmerName, farmName, farmLocation, mobile, products, description, email });
+    const { error, value } = updateKisanCommunitySchema.validate(cleanedData);
+    if (error) handleValidationError(error);
     return kisanCommunityService.update(id, value, profileImage);
   }
 

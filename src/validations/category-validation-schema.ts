@@ -3,6 +3,8 @@ import Joi from 'joi';
 
 
 
+import { CommonEnums } from '../enums/common.enums';
+
 export const createCategorySchema = Joi.object({
   name: Joi.string().min(2).max(100).required().messages({
     'string.min': 'Category name must have at least 2 characters.',
@@ -27,6 +29,11 @@ export const createCategorySchema = Joi.object({
     'string.uri': 'Deep link must be a valid web address.',
   }),
   isActive: Joi.boolean().optional().default(true),
+  status: Joi.string().valid(
+    CommonEnums.status.ACTIVE,
+    CommonEnums.status.INACTIVE,
+    CommonEnums.status.DEACTIVE
+  ).optional().default(CommonEnums.status.ACTIVE),
   slug: Joi.string().optional().allow(null, ''),
 });
 

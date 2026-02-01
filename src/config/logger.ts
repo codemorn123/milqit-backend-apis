@@ -1,11 +1,18 @@
 import pino from 'pino';
 import { config } from './index';
-const level = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
+
+const level = config.logging.level || 'info';
+
 // Set up different configurations based on environment
 const pinoConfig: pino.LoggerOptions = {
-  level: config.logging.level,
-  
-  // Format logs in development
+  level,
+  timestamp: pino.stdTimeFunctions.isoTime,
+  formatters: {
+    level: (label) => {
+      return { level: label };
+    },
+  },
+  // Format logs in development using pino-pretty
   ...(config.env === 'development' && {
     transport: {
       target: 'pino-pretty',
@@ -18,14 +25,4 @@ const pinoConfig: pino.LoggerOptions = {
   })
 };
 
-// export const logger = pino(pinoConfig);
-
-export const logger = pino({
-  level,
-  timestamp: pino.stdTimeFunctions.isoTime,
-  formatters: {
-    level: (label) => {
-      return { level: label };
-    },
-  },
-});
+export const logger = pino(pinoConfig);

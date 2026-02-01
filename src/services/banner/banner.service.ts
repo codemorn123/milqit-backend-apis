@@ -1,25 +1,23 @@
 import APIError from './../../error/api-error';
-import Banner from './../../models/banner.model';
-import { IBanner, IBannerCreatePayload } from './../../types/banner.types';
+import Banner, { BannerDocument } from './../../models/banner.model';
 import { BaseService } from '../base.service';
 import fs from 'fs/promises';
 import path from 'path';
 
-class BannerService extends BaseService<IBanner> {
+class BannerService extends BaseService<BannerDocument> {
   constructor() {
     super(Banner as any, ['title']);
   }
 
   public async create(
-    payload: IBannerCreatePayload, // This payload now includes 'platform'
+    payload: Partial<BannerDocument>,
     file?: Express.Multer.File
-  ): Promise<IBanner> {
+  ): Promise<BannerDocument> {
     if (!file) {
       throw new APIError('Banner image is required.', 400);
     }
     const imageUrl = `/uploads/banners/${file.filename}`;
-    // @ts-ignore
-    return super.create({ ...payload, imageUrl });
+    return super.create({ ...payload, imageUrl } as Partial<BannerDocument>);
   }
 
   // getAll is now handled by BaseService

@@ -1,7 +1,6 @@
 import {
   Route,
   Tags,
-  Controller,
   Post,
   Middlewares,
   Get,
@@ -14,8 +13,7 @@ import {
 } from 'tsoa';
 
 
-import { bannerFilterSchema, createBannerSchema } from './../../validations/banner-validation-schemas';
-import { BannerPlacement, BannerPurpose } from './../../types/banner.enums';
+import { createBannerSchema } from './../../validations/banner-validation-schemas';
 import { BannerPlatform, IBanner, IBannerFilter } from './../../types/banner.types';
 import { validateSchemaMiddleware } from './../../middleware/common-validate';
 import bannerService from './../../services/banner/banner.service';
@@ -27,9 +25,11 @@ import APIError from './../../error/api-error';
 //   import { createBannerSchema, bannerFilterSchema } from './../constants/banner.validator';
 import express from 'express';
 
+import { BaseController } from '../base.controller';
+
 @Route('admin/banners')
 @Tags('Admin Banner Management')
-export class BannerController extends Controller {
+export class BannerController extends BaseController {
   /**
    * Upload a new banner. The form fields are validated before the file is processed.
    * @param image The banner image file.

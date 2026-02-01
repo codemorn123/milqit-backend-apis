@@ -1,7 +1,9 @@
 
 
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 import { Address } from './../types/location.types';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export interface IUser {
   id: string;
@@ -26,7 +28,7 @@ export interface IUser {
   lastLocationUpdate?: Date;
 }
 
-type IUserDocument = IUser & Document;
+export type IUserDocument = IUser & Document;
 
 const UserSchema = new Schema<IUserDocument>(
   {
@@ -92,23 +94,23 @@ const UserSchema = new Schema<IUserDocument>(
     },
     lastLocationUpdate: { type: Date }
   },
-  {
-    timestamps: true,
+  createSchemaOptions({
     toJSON: {
       virtuals: true,
-      transform: (_, ret: any) => {
+      transform: (_: any, ret: any) => {
         delete ret._id;
         delete ret.__v;
         delete ret.passwordHash;
+        return ret;
       },
     },
-    toObject: { virtuals: true },
-  }
+  })
 );
 
+// Apply the pagination plugin
+UserSchema.plugin(mongoosePaginate);
 
+export const UserModel = mongoose.model<IUserDocument, PaginateModel<IUserDocument>>('User', UserSchema);
 
-
-
-
-export const UserModel = mongoose.model<IUserDocument>('User', UserSchema);
+// Default export for compatibility
+export default UserModel;

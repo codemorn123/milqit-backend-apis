@@ -1,7 +1,7 @@
 
 
 // import { IUserDocument, UserModel } from '../models/UserModel';
-import { CreateUserInput } from '@/schemas/userSchemas';
+import { CreateUserInput } from '../schemas/userSchemas';
 import { PresentableError } from '../error/clientErrorHelper';
 import bcrypt from 'bcrypt';
 import { logger } from '../config/logger';

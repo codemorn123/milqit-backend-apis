@@ -23,12 +23,14 @@ interface VerifyPaymentRequest {
     razorpaySignature: string;
 }
 
+import { BaseController } from '../base.controller';
+
 @Tags('Payment')
 @Route('payment')
 @Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class PaymentController extends Controller {
+export class PaymentController extends BaseController {
 
     /**
      * Create a Razorpay order
@@ -46,8 +48,7 @@ export class PaymentController extends Controller {
             body.receipt,
             body.notes
         );
-        this.setStatus(StatusCodes.CREATED);
-        return success(order, 'Payment order created successfully');
+        return this.sendCreated(order, 'Payment order created successfully');
     }
 
     /**
@@ -68,7 +69,7 @@ export class PaymentController extends Controller {
             throw new APIError('Payment verification failed', StatusCodes.BAD_REQUEST);
         }
 
-        return success({ verified }, 'Payment verified successfully');
+        return this.sendSuccess({ verified }, 'Payment verified successfully');
     }
 
     /**
@@ -85,7 +86,7 @@ export class PaymentController extends Controller {
             query.page || 1,
             query.limit || 10
         );
-        return success(history, 'Payment history fetched successfully');
+        return this.sendPaginated(history, 'Payment history fetched successfully');
     }
 
     /**
@@ -113,6 +114,6 @@ export class PaymentController extends Controller {
 
         // To do this correctly with TSOA, we should use `request` object.
 
-        return success(null, 'Webhook processed');
+        return this.sendSuccess(null, 'Webhook processed');
     }
 }

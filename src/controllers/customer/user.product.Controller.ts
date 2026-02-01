@@ -1,10 +1,10 @@
 import {
-  Controller, Get, Path, Route, Tags, Queries, Response, Middlewares
+  Get, Path, Route, Tags, Queries, Response, Middlewares
 } from 'tsoa';
 import { productService } from '../../services/product.service';
-import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { SuccessResponse } from '../../utils/SuccessResponse';
 import { ErrorResponse, PaginatedResponse } from '../../types/common.types';
-import { IProduct, ProductDocument } from '../../models/product.model';
+import { IProduct } from '../../models/product.model';
 import { ProductFilterQueryParams } from '../../types/product.types';
 import APIError from '../../error/api-error';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
@@ -38,12 +38,14 @@ interface PriceRangeFilters extends ProductFilters {
   maxPrice: number;
 }
 
+import { BaseController } from '../base.controller';
+
 @Tags('CUSTOMER: Products')
 @Route('customer/products')
 @Response<ErrorResponse>(StatusCodes.BAD_REQUEST, "Bad Request")
 @Response<ErrorResponse>(StatusCodes.NOT_FOUND, "Not Found")
 @Response<ErrorResponse>(StatusCodes.INTERNAL_SERVER_ERROR, "Server Error")
-export class CustomerProductController extends Controller {
+export class CustomerProductController extends BaseController {
 
   /**
    * Get all available products for customers
@@ -85,7 +87,7 @@ export class CustomerProductController extends Controller {
         docs: transformedDocs
       };
 
-      return success(result, 'Products fetched successfully.');
+      return this.sendPaginated(result, 'Products fetched successfully.');
     } catch (error: any) {
       throw new APIError(`Error fetching products: ${error.message}`, 500);
     }
@@ -104,7 +106,7 @@ export class CustomerProductController extends Controller {
       const product = await productService.getProductBySlug(slug, true);
 
       if (!product) {
-        return success(null, 'Product not found or unavailable.');
+        return this.sendSuccess(null, 'Product not found or unavailable.');
       }
 
       const discountPercentage = product.mrp > 0
@@ -118,7 +120,7 @@ export class CustomerProductController extends Controller {
         hasDiscount: product.sellingPrice < product.mrp
       } as CustomerProductResponse;
 
-      return success(customerProduct, 'Product details fetched successfully.');
+      return this.sendSuccess(customerProduct, 'Product details fetched successfully.');
     } catch (error: any) {
       throw new APIError(`Error fetching product: ${error.message}`, 500);
     }
@@ -162,7 +164,7 @@ export class CustomerProductController extends Controller {
         docs: transformedDocs
       };
 
-      return success(result, 'Product search completed successfully.');
+      return this.sendPaginated(result, 'Product search completed successfully.');
     } catch (error: any) {
       if (error instanceof APIError) {
         throw error;
@@ -197,7 +199,7 @@ export class CustomerProductController extends Controller {
         } as CustomerProductResponse;
       });
 
-      return success(transformedProducts, 'Featured products fetched successfully.');
+      return this.sendSuccess(transformedProducts, 'Featured products fetched successfully.');
     } catch (error: any) {
       throw new APIError(`Error fetching featured products: ${error.message}`, 500);
     }
@@ -238,7 +240,7 @@ export class CustomerProductController extends Controller {
         docs: transformedDocs
       };
 
-      return success(result, 'Products fetched by category successfully.');
+      return this.sendPaginated(result, 'Products fetched by category successfully.');
     } catch (error: any) {
       throw new APIError(`Error fetching products by category: ${error.message}`, 500);
     }
@@ -262,7 +264,7 @@ export class CustomerProductController extends Controller {
       // You could also add this logic to your service layer
       const results = await productService.findForUsers({
         ...otherFilters,
-        sortBy: 'createdAt',
+        sortBy: 'price',
         sortOrder: 'desc'
       });
 
@@ -292,7 +294,7 @@ export class CustomerProductController extends Controller {
         totalDocs: transformedDocs.length
       };
 
-      return success(result, 'Sale products fetched successfully.');
+      return this.sendPaginated(result, 'Sale products fetched successfully.');
     } catch (error: any) {
       throw new APIError(`Error fetching sale products: ${error.message}`, 500);
     }
@@ -315,7 +317,7 @@ export class CustomerProductController extends Controller {
       cutoffDate.setDate(cutoffDate.getDate() - days);
 
       const results = await productService.findForUsers({
-        sortBy: 'createdAt',
+        sortBy: 'price',
         sortOrder: 'desc',
         limit,
         page: 1
@@ -339,7 +341,7 @@ export class CustomerProductController extends Controller {
         } as CustomerProductResponse;
       });
 
-      return success(transformedProducts, 'New arrivals fetched successfully.');
+      return this.sendSuccess(transformedProducts, 'New arrivals fetched successfully.');
     } catch (error: any) {
       throw new APIError(`Error fetching new arrivals: ${error.message}`, 500);
     }
@@ -374,7 +376,7 @@ export class CustomerProductController extends Controller {
         ...filters,
         minPrice,
         maxPrice,
-        sortBy: 'createdAt',
+        sortBy: 'price',
         sortOrder: 'asc'
       });
 
@@ -396,7 +398,7 @@ export class CustomerProductController extends Controller {
         docs: transformedDocs
       };
 
-      return success(result, 'Products fetched by price range successfully.');
+      return this.sendPaginated(result, 'Products fetched by price range successfully.');
     } catch (error: any) {
       if (error instanceof APIError) {
         throw error;
@@ -433,7 +435,7 @@ export class CustomerProductController extends Controller {
         } as CustomerProductResponse;
       });
 
-      return success(transformedProducts, 'Related products fetched successfully.');
+      return this.sendSuccess(transformedProducts, 'Related products fetched successfully.');
     } catch (error: any) {
       throw new APIError(`Error fetching related products: ${error.message}`, 500);
     }
@@ -453,10 +455,10 @@ export class CustomerProductController extends Controller {
       const product = await productService.findByIdForUsers(id);
 
       if (!product) {
-        return success(null, 'Product not found or unavailable.');
+        return this.sendSuccess(null, 'Product not found or unavailable.');
       }
 
-      return success(product, 'Product details fetched successfully.');
+      return this.sendSuccess(product, 'Product details fetched successfully.');
     } catch (error: any) {
       if (error instanceof APIError) {
         throw error;

@@ -15,10 +15,12 @@ import { success, SuccessResponse as SuccessDataResponse } from '../../../utils/
 import { IFilter, PaginatedResponse } from '../../../types/common.types';
 import { jwtAuthMiddleware } from '../../../middleware/jwt-auth';
 
+import { BaseController } from '../../base.controller';
+
 @Route("admin/coupons")
 @Tags("ADMIN: Coupons")
 @Security("jwt")
-export class AdminCouponController extends Controller {
+export class AdminCouponController extends BaseController {
 
   /**
    * Create a new coupon

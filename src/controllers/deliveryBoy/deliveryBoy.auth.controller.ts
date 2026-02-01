@@ -18,25 +18,18 @@ import {
     updateDeliveryBoyAvailabilitySchema,
     deliveryBoyRefreshTokenSchema
 } from '../../validations/deliveryBoy.validation';
-import { ErrorResponse } from '../../types/common.types';
-import { ClientErrorInterface } from '../../error/clientErrorHelper';
-import { NOT_FOUND_ERROR_EXAMPLE, SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from '../../error/exampleErrors';
 import { success, SuccessResponse } from '../../utils/SuccessResponse';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { IDeliveryBoy } from '../../models/DeliveryBoyModel';
+
+import { BaseController } from '../base.controller';
 
 /**
  * Controller for delivery boy authentication and profile management
  */
 @Route('delivery-boy/auth')
 @Tags('Delivery Boy Authentication')
-@Response<ClientErrorInterface>(StatusCodes.UNPROCESSABLE_ENTITY, 'Validation Error', VALIDATION_ERROR_EXAMPLE)
-@Response<ClientErrorInterface>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error', SERVER_ERROR_EXAMPLE)
-@Response<ClientErrorInterface>(StatusCodes.NOT_FOUND, 'Not Found', NOT_FOUND_ERROR_EXAMPLE)
-@Response<ErrorResponse>(StatusCodes.BAD_REQUEST, 'Bad Request')
-@Response<ErrorResponse>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
-@Response<ErrorResponse>(StatusCodes.FORBIDDEN, 'Forbidden')
-export class DeliveryBoyAuthController extends Controller {
+export class DeliveryBoyAuthController extends BaseController {
     /**
      * Send OTP to delivery boy's phone number for login/registration
      * @summary Send OTP for delivery boy authentication

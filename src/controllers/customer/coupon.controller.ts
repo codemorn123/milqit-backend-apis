@@ -1,5 +1,5 @@
 import {
-  Route, Tags, Controller, Post, Get, Body, Middlewares, SuccessResponse, Response, Request, Security
+  Route, Tags, Post, Get, Body, Middlewares, SuccessResponse, Response, Request, Security
 } from 'tsoa';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { success, SuccessResponse as SuccessDataResponse } from '../../utils/SuccessResponse';
@@ -10,9 +10,11 @@ import { IRequest } from '../../types/request.types';
 import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import APIError from '../../error/api-error';
 
+import { BaseController } from '../base.controller';
+
 @Route("customer/coupons")
 @Tags("CUSTOMER: Coupons")
-export class CustomerCouponController extends Controller {
+export class CustomerCouponController extends BaseController {
 
   /**
    * Get all available coupons for the authenticated user.
@@ -30,7 +32,7 @@ export class CustomerCouponController extends Controller {
     // But since we use jwtAuthMiddleware, userId should be present.
 
     const result = await couponService.getAvailableCoupons(userId);
-    return success(result, 'Available coupons fetched successfully');
+    return this.sendSuccess(result, 'Available coupons fetched successfully');
   }
 
   /**
@@ -60,6 +62,6 @@ export class CustomerCouponController extends Controller {
     }
 
     const result = await couponService.applyCoupon(body.code, body.orderTotal, userId);
-    return success(result, 'Coupon applied successfully');
+    return this.sendSuccess(result, 'Coupon applied successfully');
   }
 }

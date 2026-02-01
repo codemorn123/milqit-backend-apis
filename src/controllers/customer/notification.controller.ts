@@ -14,11 +14,11 @@ import {
 } from 'tsoa';
 import { validateSchemaMiddleware } from './../../middleware/common-validate';
 import { INotification } from './../../models/cms/notification.model';
-import { IFilter, IPaginated, PaginatedResponse } from './../../types/common.types';
+import { IFilter, PaginatedResponse } from './../../types/common.types';
 import notificationService from './../../services/admin/cms/notification.service';
 import { filterQuerySchema } from './../../validations/notification.validator';
 import { fcmService } from './../../services/fcm.service';
-import { success, SuccessResponse as SuccessDataResponse } from './../../utils/SuccessResponse';
+import { SuccessResponse as SuccessDataResponse } from './../../utils/SuccessResponse';
 import Joi from 'joi';
 import { StatusCodes } from 'http-status-codes';
 
@@ -41,12 +41,14 @@ interface DeviceRemovalRequest {
   deviceToken: string;
 }
 
+import { BaseController } from '../base.controller';
+
 @Route("customer/notifications")
 @Tags("Customer Notifications")
 @Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class CustomerNotificationController extends Controller {
+export class CustomerNotificationController extends BaseController {
 
   @Get("/")
   @Security('jwt')
@@ -57,7 +59,7 @@ export class CustomerNotificationController extends Controller {
     @Queries() queryParams: IFilter
   ): Promise<SuccessDataResponse<PaginatedResponse<INotification>>> {
     const result = await notificationService.getAllForCustomer(queryParams);
-    return success(result);
+    return this.sendPaginated(result);
   }
 
   /**
@@ -74,7 +76,7 @@ export class CustomerNotificationController extends Controller {
   ): Promise<SuccessDataResponse<{ success: boolean }>> {
     const userId = req.user.userId;
     await fcmService.registerDevice(userId, body.deviceToken, body.platform);
-    return success({ success: true }, 'Device registered successfully');
+    return this.sendSuccess({ success: true }, 'Device registered successfully');
   }
 
   /**
@@ -89,7 +91,7 @@ export class CustomerNotificationController extends Controller {
     @Body() body: DeviceRemovalRequest
   ): Promise<SuccessDataResponse<{ success: boolean }>> {
     await fcmService.removeDevice(body.deviceToken);
-    return success({ success: true }, 'Device removed successfully');
+    return this.sendSuccess({ success: true }, 'Device removed successfully');
   }
 
 }

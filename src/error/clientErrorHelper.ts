@@ -1,69 +1,58 @@
-
-
-
-
 import { StatusCodes } from 'http-status-codes';
+import { APIError } from './api-error';
 
 // Defines the shape of our standard API error response
+// Kept for backward compatibility
 export interface ClientErrorInterface {
-    success: false;
-    status: StatusCodes;
-    message: string;
-    code: string;
+    success: boolean;
+    error: string;
+    code?: string;
+    details?: any;
 }
 
-// A dictionary of predefined error types for consistency
-export const customErrors = {
-    VALIDATION_ERROR: {
-        status: StatusCodes.UNPROCESSABLE_ENTITY, // 422 is more specific for validation
-        message: 'The request was invalid. Please check the provided data.',
-    },
-    CONFLICT: {
-        status: StatusCodes.CONFLICT, // 409
-        message: 'The resource already exists.',
-    },
-    NOT_FOUND: {
-        status: StatusCodes.NOT_FOUND, // 404
-        message: 'The requested resource could not be found.',
-    },
-    SERVER_ERROR: {
-        status: StatusCodes.INTERNAL_SERVER_ERROR, // 500
-        message: 'An unexpected error occurred on the server.',
-    },
-	UNAUTHORIZED: {
-		status: StatusCodes.UNAUTHORIZED, // 401
-		message: 'You are not authorized to perform this action.',
-	},
-	FORBIDDEN: {
-		status: StatusCodes.FORBIDDEN, // 403
-		message: 'You do not have permission to perform this action.',
-	},
-	TOO_MANY_REQUESTS: {
-		status: StatusCodes.TOO_MANY_REQUESTS, // 429
-		message: 'Too many requests. Please try again later.',
-	},
-	BAD_REQUEST: {
-		status: StatusCodes.BAD_REQUEST, // 400
-		message: 'The request was invalid. Please check the provided data.',
-	},
+export type CustomErrorCode =
+    | 'VALIDATION_ERROR'
+    | 'CONFLICT'
+    | 'NOT_FOUND'
+    | 'SERVER_ERROR'
+    | 'UNAUTHORIZED'
+    | 'FORBIDDEN'
+    | 'BAD_REQUEST'
+    | 'TOO_MANY_REQUESTS';
 
+const codeToStatusMap: Record<string, number> = {
+    'VALIDATION_ERROR': StatusCodes.UNPROCESSABLE_ENTITY,
+    'CONFLICT': StatusCodes.CONFLICT,
+    'NOT_FOUND': StatusCodes.NOT_FOUND,
+    'SERVER_ERROR': StatusCodes.INTERNAL_SERVER_ERROR,
+    'UNAUTHORIZED': StatusCodes.UNAUTHORIZED,
+    'FORBIDDEN': StatusCodes.FORBIDDEN,
+    'BAD_REQUEST': StatusCodes.BAD_REQUEST,
+    'TOO_MANY_REQUESTS': StatusCodes.TOO_MANY_REQUESTS
 };
 
-// Type to ensure we only use defined error codes
-export type CustomErrorCode = keyof typeof customErrors;
-
 /**
- * A custom error class for creating consistent, client-facing error responses.
+ * @deprecated Use specific error classes from ./api-error.ts (e.g. NotFoundError, BadRequestError)
  */
-export class PresentableError extends Error implements ClientErrorInterface {
-    public readonly success = false;
-    public readonly status: StatusCodes;
-    public readonly code: CustomErrorCode;
+export class PresentableError extends APIError {
+    public readonly status: number; // Backward compatibility alias for statusCode
 
-    constructor(code: CustomErrorCode = 'SERVER_ERROR', message?: string) {
-        // Use the provided message or the default message from our dictionary
-        super(message || customErrors[code].message);
-        this.status = customErrors[code].status;
-        this.code = code;
+    constructor(code: CustomErrorCode | string = 'SERVER_ERROR', message?: string) {
+        const status = codeToStatusMap[code] || StatusCodes.INTERNAL_SERVER_ERROR;
+        const msg = message || 'An unexpected error occurred';
+        super(msg, status, code);
+        this.status = status;
     }
 }
+
+// Keep customErrors for compatibility if used elsewhere (constants)
+export const customErrors = {
+    VALIDATION_ERROR: { status: StatusCodes.UNPROCESSABLE_ENTITY, message: 'Validation failed' },
+    CONFLICT: { status: StatusCodes.CONFLICT, message: 'Resource conflict' },
+    NOT_FOUND: { status: StatusCodes.NOT_FOUND, message: 'Not found' },
+    SERVER_ERROR: { status: StatusCodes.INTERNAL_SERVER_ERROR, message: 'Server error' },
+    UNAUTHORIZED: { status: StatusCodes.UNAUTHORIZED, message: 'Unauthorized' },
+    FORBIDDEN: { status: StatusCodes.FORBIDDEN, message: 'Forbidden' },
+    TOO_MANY_REQUESTS: { status: StatusCodes.TOO_MANY_REQUESTS, message: 'Too many requests' },
+    BAD_REQUEST: { status: StatusCodes.BAD_REQUEST, message: 'Bad request' }
+};

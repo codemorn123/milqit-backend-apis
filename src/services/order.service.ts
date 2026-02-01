@@ -1,49 +1,31 @@
-import { OrderModel, IOrder, ICreateOrderRequest, IUpdateOrderRequest, OrderStatus, PaymentStatus } from '../models/order.model';
+import { OrderModel, OrderDocument, IOrder, ICreateOrderRequest, IUpdateOrderRequest, OrderStatus, PaymentStatus, OrderStatuses, PaymentStatuses, OrderFilterQueryParams } from '../models/order.model';
 import { ProductModel } from '../models/product.model';
 import APIError from '../error/api-error';
 import { StatusCodes } from 'http-status-codes';
-import { PaginatedResponse } from '../types/common.types';
-import mongoose from 'mongoose';
+import { PaginatedResponse } from '../types/pagination.types';
+import { BaseService } from './base.service';
+import mongoose, { FilterQuery } from 'mongoose';
 
-export interface OrderFilterQueryParams {
-  page?: number;
-  limit?: number;
-  orderStatus?: OrderStatus;
-  paymentStatus?: PaymentStatus;
-  user?: string;
-  orderNumber?: string;
-  startDate?: string;
-  endDate?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-}
+class OrderService extends BaseService<OrderDocument, ICreateOrderRequest, IUpdateOrderRequest> {
+  constructor() {
+    super(OrderModel, ['orderNumber', 'notes']);
+  }
 
-class OrderService {
   /**
    * Create a new order
    */
-  async createOrder(data: ICreateOrderRequest): Promise<IOrder> {
-      const session = await mongoose.startSession();
-      session.startTransaction();
-      try {
-        // Validate and fetch product details
-        const orderItems: Array<{
-          product: mongoose.Types.ObjectId;
-          productName: string;
-          productImage?: string;
-          quantity: number;
-          unit: string; // Adjust this type if ValidUnit is a specific type
-          mrp: number;
-          sellingPrice: number;
-          totalPrice: number;
-          discount: number;
-        }> = [];;
+  async createOrder(data: ICreateOrderRequest): Promise<OrderDocument> {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      // Validate and fetch product details
+      const orderItems: any[] = [];
       let subtotal = 0;
       let totalDiscount = 0;
 
       for (const item of data.items) {
         const product = await ProductModel.findById(item.product).session(session);
-        
+
         if (!product) {
           throw new APIError(`Product not found: ${item.product}`, StatusCodes.NOT_FOUND);
         }
@@ -88,8 +70,8 @@ class OrderService {
       const totalAmount = subtotal + deliveryCharge;
 
       // Create order
-      const order = new OrderModel({
-        user: data.user,
+      const orderData = {
+        user: new mongoose.Types.ObjectId(data.user),
         items: orderItems,
         shippingAddress: data.shippingAddress,
         subtotal,
@@ -97,15 +79,15 @@ class OrderService {
         deliveryCharge,
         totalAmount,
         paymentMethod: data.paymentMethod,
-        orderStatus: 'pending',
-        paymentStatus: data.paymentMethod === 'cod' ? 'pending' : 'pending',
+        orderStatus: OrderStatuses.PENDING,
+        paymentStatus: PaymentStatuses.PENDING,
         notes: data.notes,
-      });
+      };
 
-      await order.save({ session });
+      const order = await this.model.create([orderData], { session });
       await session.commitTransaction();
 
-      return order.toJSON() as IOrder;
+      return order[0];
     } catch (error) {
       await session.abortTransaction();
       throw error;
@@ -115,114 +97,69 @@ class OrderService {
   }
 
   /**
-   * Get order by ID
+   * Get order by ID with population
    */
-  async getOrderById(id: string): Promise<IOrder> {
-    const order = await OrderModel.findById(id)
+  async getOrderById(id: string): Promise<OrderDocument> {
+    const order = await this.model.findById(id)
       .populate('user', 'name email phone')
-      .populate('items.product', 'name slug images');
+      .populate('items.product', 'name slug images')
+      .lean<OrderDocument>();
 
     if (!order) {
       throw new APIError('Order not found', StatusCodes.NOT_FOUND);
     }
 
-    return order.toJSON() as IOrder;
+    return order;
   }
 
   /**
    * Get order by order number
    */
-  async getOrderByOrderNumber(orderNumber: string): Promise<IOrder> {
-    const order = await OrderModel.findOne({ orderNumber })
+  async getOrderByOrderNumber(orderNumber: string): Promise<OrderDocument> {
+    const order = await this.model.findOne({ orderNumber })
       .populate('user', 'name email phone')
-      .populate('items.product', 'name slug images');
+      .populate('items.product', 'name slug images')
+      .lean<OrderDocument>();
 
     if (!order) {
       throw new APIError('Order not found', StatusCodes.NOT_FOUND);
     }
 
-    return order.toJSON() as IOrder;
+    return order;
   }
 
   /**
    * List orders with pagination and filters
    */
-  async listOrders(filter: OrderFilterQueryParams): Promise<PaginatedResponse<IOrder>> {
-    const {
-      page = 1,
-      limit = 10,
-      orderStatus,
-      paymentStatus,
-      user,
-      orderNumber,
-      startDate,
-      endDate,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-    } = filter || {};
+  async listOrders(query: OrderFilterQueryParams): Promise<PaginatedResponse<OrderDocument>> {
+    const filter: FilterQuery<OrderDocument> = {};
 
-    const query: any = {};
+    if (query.orderStatus) filter.orderStatus = query.orderStatus;
+    if (query.paymentStatus) filter.paymentStatus = query.paymentStatus;
+    if (query.user) filter.user = new mongoose.Types.ObjectId(query.user);
+    if (query.orderNumber) filter.orderNumber = { $regex: query.orderNumber, $options: 'i' };
 
-    if (orderStatus) {
-      query.orderStatus = orderStatus;
-    }
-
-    if (paymentStatus) {
-      query.paymentStatus = paymentStatus;
-    }
-
-    if (user) {
-      query.user = user;
-    }
-
-    if (orderNumber) {
-      query.orderNumber = { $regex: orderNumber, $options: 'i' };
-    }
-
-    if (startDate || endDate) {
-      query.createdAt = {};
-      if (startDate) {
-        query.createdAt.$gte = new Date(startDate);
-      }
-      if (endDate) {
-        query.createdAt.$lte = new Date(endDate);
-      }
+    if (query.startDate || query.endDate) {
+      filter.createdAt = {};
+      if (query.startDate) filter.createdAt.$gte = new Date(query.startDate);
+      if (query.endDate) filter.createdAt.$lte = new Date(query.endDate);
     }
 
     const options = {
-      page: parseInt(page?.toString() || '1'), // Provide a default value of 1 if page is undefined
-      limit: parseInt(limit.toString()),
-      sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 },
       populate: [
         { path: 'user', select: 'name email phone' },
         { path: 'items.product', select: 'name slug images' }
-      ],
+      ]
     };
 
-    const result = await OrderModel.paginate(query, options);
-
-    return {
-        docs: result.docs.map(doc => doc.toJSON()) as IOrder[],
-        totalDocs: result.totalDocs,
-        limit: result.limit,
-        page: result.page || 1,
-        totalPages: result.totalPages,
-        hasNextPage: result.hasNextPage,
-        hasPrevPage: result.hasPrevPage,
-        nextPage: result.hasNextPage ? (result.page ?? 1) + 1 : null,
-        prevPage: result.hasPrevPage ? (result.page ?? 1) - 1 : null
-
-
-
-    
-    };
+    return this.getAll(query as any, filter, options as any);
   }
 
   /**
    * Update order
    */
-  async updateOrder(id: string, data: IUpdateOrderRequest): Promise<IOrder> {
-    const order = await OrderModel.findById(id);
+  async updateOrder(id: string, data: IUpdateOrderRequest): Promise<OrderDocument> {
+    const order = await this.model.findById(id);
 
     if (!order) {
       throw new APIError('Order not found', StatusCodes.NOT_FOUND);
@@ -230,7 +167,7 @@ class OrderService {
 
     // Validate status transitions
     if (data.orderStatus) {
-      if (order.orderStatus === 'cancelled' || order.orderStatus === 'delivered') {
+      if (order.orderStatus === OrderStatuses.CANCELLED || order.orderStatus === OrderStatuses.DELIVERED) {
         throw new APIError(
           `Cannot update order in ${order.orderStatus} status`,
           StatusCodes.BAD_REQUEST
@@ -253,33 +190,33 @@ class OrderService {
 
     if (data.cancellationReason) {
       order.cancellationReason = data.cancellationReason;
-      order.orderStatus = 'cancelled';
+      order.orderStatus = OrderStatuses.CANCELLED;
     }
 
     await order.save();
 
-    return order.toJSON() as IOrder;
+    return order;
   }
 
   /**
    * Cancel order
    */
-  async cancelOrder(id: string, reason: string): Promise<IOrder> {
+  async cancelOrder(id: string, reason: string): Promise<OrderDocument> {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const order = await OrderModel.findById(id).session(session);
+      const order = await this.model.findById(id).session(session);
 
       if (!order) {
         throw new APIError('Order not found', StatusCodes.NOT_FOUND);
       }
 
-      if (order.orderStatus === 'cancelled') {
+      if (order.orderStatus === OrderStatuses.CANCELLED) {
         throw new APIError('Order is already cancelled', StatusCodes.BAD_REQUEST);
       }
 
-      if (order.orderStatus === 'delivered') {
+      if (order.orderStatus === OrderStatuses.DELIVERED) {
         throw new APIError('Cannot cancel delivered order', StatusCodes.BAD_REQUEST);
       }
 
@@ -293,14 +230,14 @@ class OrderService {
         }
       }
 
-      order.orderStatus = 'cancelled';
+      order.orderStatus = OrderStatuses.CANCELLED;
       order.cancellationReason = reason;
       order.cancelledAt = new Date();
 
       await order.save({ session });
       await session.commitTransaction();
 
-      return order.toJSON() as IOrder;
+      return order;
     } catch (error) {
       await session.abortTransaction();
       throw error;
@@ -310,22 +247,16 @@ class OrderService {
   }
 
   /**
-   * Delete order (soft delete or hard delete based on requirements)
+   * Delete order
    */
-  async deleteOrder(id: string): Promise<void> {
-    const order = await OrderModel.findById(id);
-
-    if (!order) {
-      throw new APIError('Order not found', StatusCodes.NOT_FOUND);
-    }
-
-    await OrderModel.findByIdAndDelete(id);
+  async deleteOrder(id: string): Promise<{ message: string; status: number }> {
+    return super.delete(id);
   }
 
   /**
    * Get user orders
    */
-  async getUserOrders(userId: string, filter: OrderFilterQueryParams): Promise<PaginatedResponse<IOrder>> {
+  async getUserOrders(userId: string, filter: OrderFilterQueryParams): Promise<PaginatedResponse<OrderDocument>> {
     return this.listOrders({ ...filter, user: userId });
   }
 
@@ -338,7 +269,7 @@ class OrderService {
       matchStage.user = new mongoose.Types.ObjectId(userId);
     }
 
-    const stats = await OrderModel.aggregate([
+    const stats = await this.model.aggregate([
       { $match: matchStage },
       {
         $group: {
@@ -346,16 +277,16 @@ class OrderService {
           totalOrders: { $sum: 1 },
           totalRevenue: { $sum: '$totalAmount' },
           pendingOrders: {
-            $sum: { $cond: [{ $eq: ['$orderStatus', 'pending'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$orderStatus', OrderStatuses.PENDING] }, 1, 0] }
           },
           confirmedOrders: {
-            $sum: { $cond: [{ $eq: ['$orderStatus', 'confirmed'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$orderStatus', OrderStatuses.CONFIRMED] }, 1, 0] }
           },
           deliveredOrders: {
-            $sum: { $cond: [{ $eq: ['$orderStatus', 'delivered'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$orderStatus', OrderStatuses.DELIVERED] }, 1, 0] }
           },
           cancelledOrders: {
-            $sum: { $cond: [{ $eq: ['$orderStatus', 'cancelled'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$orderStatus', OrderStatuses.CANCELLED] }, 1, 0] }
           },
         }
       }

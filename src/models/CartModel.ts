@@ -1,35 +1,17 @@
 
 
 
-
 import mongoose, { Schema, Document, Types, Model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { ValidUnit } from './product.model';
-import { IcommonImage } from '../types/common.types';
+import { IcommonImage, DeviceInfo, Location } from '../types/common.types';
+import { createSchemaOptions, DeviceInfoSchema, LocationSchema, NumberField } from '../utils/schema.helpers';
 
 /**
  * Cart Status Types
  */
 export type CartStatus = 'active' | 'completed' | 'expired' | 'abandoned';
 export type DeliveryType = 'standard' | 'express' | 'scheduled' | 'pickup';
-
-/**
- * Device Information Interface
- */
-export interface IDeviceInfo {
-  platform: 'ios' | 'android' | 'web' | 'other';
-  version: string;
-  deviceId: string;
-}
-
-/**
- * Location Interface
- */
-export interface ILocation {
-  latitude: number;
-  longitude: number;
-  address: string;
-}
 
 /**
  * Cart Item Interface
@@ -73,8 +55,8 @@ export interface ICart {
   estimatedDelivery?: Date;
   appliedCoupons: string[];
   notes?: string;
-  deviceInfo?: IDeviceInfo;
-  location?: ILocation;
+  deviceInfo?: DeviceInfo;
+  location?: Location;
   lastActivityAt: Date;
   expiresAt: Date;
   isActive: boolean;
@@ -86,6 +68,7 @@ export interface ICart {
  * Cart Document Interface
  */
 export interface ICartDocument extends ICart, Document {
+  id: string; // Add id property
   _id: Types.ObjectId;
   calculateTotals(): void;
   updateActivity(): Promise<void>;
@@ -133,15 +116,8 @@ const CartSchema = new Schema<ICartDocument>(
           required: [true, 'Product slug is required'],
           maxlength: [250, 'Product slug cannot exceed 250 characters']
         },
-        price: {
-          type: Number,
-          required: [true, 'Product price is required'],
-          min: [0, 'Price cannot be negative']
-        },
-        compareAtPrice: {
-          type: Number,
-          min: [0, 'Compare at price cannot be negative']
-        },
+        price: NumberField.positiveRequired(),
+        compareAtPrice: NumberField.positiveOptional(),
         quantity: {
           type: Number,
           required: [true, 'Quantity is required'],
@@ -184,26 +160,10 @@ const CartSchema = new Schema<ICartDocument>(
           type: Boolean,
           default: true
         },
-        maxQuantity: {
-          type: Number,
-          required: [true, 'Max quantity is required'],
-          min: [0, 'Max quantity cannot be negative']
-        },
-        subtotal: {
-          type: Number,
-          required: [true, 'Subtotal is required'],
-          min: [0, 'Subtotal cannot be negative']
-        },
-        discount: {
-          type: Number,
-          default: 0,
-          min: [0, 'Discount cannot be negative']
-        },
-        finalPrice: {
-          type: Number,
-          required: [true, 'Final price is required'],
-          min: [0, 'Final price cannot be negative']
-        }
+        maxQuantity: NumberField.positiveRequired(),
+        subtotal: NumberField.positiveRequired(),
+        discount: NumberField.positiveOptional(),
+        finalPrice: NumberField.positiveRequired()
       }
     ],
 
@@ -217,41 +177,12 @@ const CartSchema = new Schema<ICartDocument>(
       }
     },
 
-    subtotal: {
-      type: Number,
-      default: 0,
-      min: [0, 'Subtotal cannot be negative']
-    },
-
-    discount: {
-      type: Number,
-      default: 0,
-      min: [0, 'Discount cannot be negative']
-    },
-
-    deliveryCharges: {
-      type: Number,
-      default: 0,
-      min: [0, 'Delivery charges cannot be negative']
-    },
-
-    taxes: {
-      type: Number,
-      default: 0,
-      min: [0, 'Taxes cannot be negative']
-    },
-
-    totalAmount: {
-      type: Number,
-      default: 0,
-      min: [0, 'Total amount cannot be negative']
-    },
-
-    savings: {
-      type: Number,
-      default: 0,
-      min: [0, 'Savings cannot be negative']
-    },
+    subtotal: NumberField.positiveOptional(),
+    discount: NumberField.positiveOptional(),
+    deliveryCharges: NumberField.positiveOptional(),
+    taxes: NumberField.positiveOptional(),
+    totalAmount: NumberField.positiveOptional(),
+    savings: NumberField.positiveOptional(),
 
     status: {
       type: String,
@@ -307,38 +238,13 @@ const CartSchema = new Schema<ICartDocument>(
     },
 
     deviceInfo: {
-      platform: {
-        type: String,
-        enum: {
-          values: ['ios', 'android'],
-          message: 'Platform must be either ios or android'
-        }
-      },
-      version: {
-        type: String,
-        maxlength: [20, 'Version cannot exceed 20 characters']
-      },
-      deviceId: {
-        type: String,
-        maxlength: [255, 'Device ID cannot exceed 255 characters']
-      }
+      type: DeviceInfoSchema,
+      default: undefined
     },
 
     location: {
-      latitude: {
-        type: Number,
-        min: [-90, 'Latitude must be between -90 and 90'],
-        max: [90, 'Latitude must be between -90 and 90']
-      },
-      longitude: {
-        type: Number,
-        min: [-180, 'Longitude must be between -180 and 180'],
-        max: [180, 'Longitude must be between -180 and 180']
-      },
-      address: {
-        type: String,
-        maxlength: [500, 'Address cannot exceed 500 characters']
-      }
+      type: LocationSchema,
+      default: undefined
     },
 
     lastActivityAt: {
@@ -361,22 +267,7 @@ const CartSchema = new Schema<ICartDocument>(
       index: true
     }
   },
-  {
-    timestamps: true,
-    versionKey: false,
-    toJSON: {
-      virtuals: true,
-      transform: function (doc: ICartDocument, ret: any) {
-        delete ret._id;
-        delete ret.__v;
-        ret.id = doc._id?.toString();
-        return ret;
-      }
-    },
-    toObject: {
-      virtuals: true
-    }
-  }
+  createSchemaOptions()
 );
 
 // ===== INDEXES FOR PERFORMANCE =====
@@ -573,5 +464,3 @@ CartSchema.plugin(mongoosePaginate);
 export const CartModelClass = mongoose.model<ICartDocument, ICartModel>('Cart', CartSchema);
 
 export default CartModelClass;
-
-console.log(`✅ CartModel initialized successfully by MarotiKathoke at ${new Date().toISOString()}`);

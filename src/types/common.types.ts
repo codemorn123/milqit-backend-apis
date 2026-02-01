@@ -1,54 +1,27 @@
-export interface PaginationOptions {
-  page: number;
-  limit: number;
-  sort?: string;
+export * from './pagination.types';
+import { PaginationQuery } from './pagination.types';
+
+export interface ErrorDetail {
+  code?: string;
+  message: string;
+  details?: unknown;
 }
 
-export interface PaginatedResponse<T> {
-  docs: T[];
-  totalDocs: number;
-  limit: number;
-  page: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-  nextPage: number | null;
-  prevPage: number | null;
-}
-
-export type ErrorDetail =
-  | string
-  | {
-    code?: string;
-    message: string;
-    details?: unknown;
-  };
+export type ErrorDetailType = string | ErrorDetail;
 
 
 export interface ErrorResponse {
-  success: false;
-  error: ErrorDetail;
-  timestamp?: string;
-  developer?: string;
+  success: boolean;
+  error: string;
+  code?: string;
+  details?: Record<string, any>;
 }
 
-
-
-
-export interface IPaginated {
-  page: number;
-  limit: number;
-  totalRecord: number;
-  totalPage: number;
-}
-
-export interface IFilter {
-  page?: number;
-  limit?: number;
+// Consolidate generic filter interface
+// Omit 'populate' and 'select' to avoid TSOA union type errors and prevent security risks 
+// (clients shouldn't control population/selection directly in most cases)
+export interface IFilter extends Omit<PaginationQuery, 'populate' | 'select'> {
   isActive?: boolean;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
 }
 
 export interface IRefundFilter extends IFilter {
@@ -57,15 +30,7 @@ export interface IRefundFilter extends IFilter {
   userId?: string;
 }
 
-
-
-export interface IProductFilter {
-  page?: number;
-  limit?: number;
-  isActive?: boolean;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+export interface IProductFilter extends IFilter {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -90,6 +55,7 @@ export interface DeviceInfo {
 export interface Location {
   latitude: number;
   longitude: number;
+  address?: string;
 }
 
 

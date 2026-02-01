@@ -1,3 +1,3 @@
-import Logger from "./logger";
+import { logger } from "../../config/logger";
 
-export default new Logger().createLogger();
+export default logger;

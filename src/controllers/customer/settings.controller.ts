@@ -11,9 +11,11 @@ import { ISettings } from './../../types/settings.types';
 import { success, SuccessResponse as SuccessDataResponse } from './../../utils/SuccessResponse';
 import { StatusCodes } from 'http-status-codes';
 
+import { BaseController } from '../base.controller';
+
 @Route("customer/settings")
 @Tags("Customer Settings")
-export class CustomerSettingsController extends Controller {
+export class CustomerSettingsController extends BaseController {
 
     /**
      * Retrieve application settings (splash screen, maintenance mode, etc.)
@@ -23,6 +25,6 @@ export class CustomerSettingsController extends Controller {
     @Response(StatusCodes.INTERNAL_SERVER_ERROR, "Internal Server Error")
     public async getSettings(): Promise<SuccessDataResponse<Partial<ISettings>>> {
         const result = await settingsService.getSettings();
-        return success(result, 'Settings fetched successfully');
+        return this.sendSuccess(result, 'Settings fetched successfully');
     }
 }

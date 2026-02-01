@@ -7,6 +7,7 @@ import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { IBase } from './base';
 import slugify from 'slugify';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export type ValidUnit = 'piece' | 'kg' | 'gm' | 'litre' | 'ml' | 'pack' | 'dozen';
 export type ProductType = 'Food' | 'Electronics' | 'Apparel' | 'General';
@@ -226,17 +227,7 @@ const ProductSchema = new Schema<ProductDocument>(
       enum: ['piece', 'kg', 'gm', 'litre', 'ml', 'pack', 'dozen']
     },
   },
-  {
-    timestamps: true,
-    versionKey: false,
-    toJSON: {
-      virtuals: true,
-      transform: (_, ret: any) => {
-        delete ret._id;
-        delete ret.__v;
-      },
-    },
-  }
+  createSchemaOptions()
 );
 
 // Virtual fields for discount calculations (Blinkit style)

@@ -1,26 +1,25 @@
-import { FilterQuery, Model, Query } from 'mongoose';
+import { FilterQuery, Model, PopulateOptions } from 'mongoose';
 import { IFilter, PaginatedResponse } from '../types/common.types';
 
-export class QueryBuilder<T> {
+export class QueryBuilder<T, F extends IFilter = IFilter> {
     public model: Model<T>;
     public query: FilterQuery<T>;
-    public queryParams: IFilter;
+    public queryParams: F;
 
-    constructor(model: Model<T>, queryParams: IFilter) {
+    constructor(model: Model<T>, queryParams: F) {
         this.model = model;
         this.queryParams = queryParams;
         this.query = {};
     }
 
-    filter(searchFields: string[] = []): this {
+    /**
+     * Standard filter that removes pagination fields and applies remaining as direct matches.
+     * Also handles 'search' if searchFields are provided.
+     */
+    filter(searchFields: string[] = [], extraExcludedFields: string[] = []): this {
         const queryObj = { ...this.queryParams };
-        const excludedFields = ['page', 'sort', 'limit', 'fields', 'search', 'sortBy', 'sortOrder'];
+        const excludedFields = ['page', 'sort', 'limit', 'fields', 'search', 'sortBy', 'sortOrder', ...extraExcludedFields];
         excludedFields.forEach((el) => delete queryObj[el as keyof IFilter]);
-
-        // Handle specific filters like isActive if present in queryParams
-        if (this.queryParams.isActive !== undefined) {
-            (this.query as any).isActive = this.queryParams.isActive;
-        }
 
         // Handle search
         if (this.queryParams.search && searchFields.length > 0) {
@@ -30,27 +29,44 @@ export class QueryBuilder<T> {
             })) as FilterQuery<T>['$or'];
         }
 
-        // Merge other filters
+        // Merge other direct filters from query params
         this.query = { ...this.query, ...queryObj };
 
         return this;
     }
 
-    sort(): { sort: any } {
+    /**
+     * generic filter method to add custom conditions
+     */
+    addFilter(filter: FilterQuery<T>): this {
+        this.query = { ...this.query, ...filter };
+        return this;
+    }
+
+    /**
+     * Helper to add a specific field sort
+     */
+    sort(): { sort: { [key: string]: 1 | -1 } } {
         const sortBy = this.queryParams.sortBy || 'createdAt';
         const sortOrder = this.queryParams.sortOrder === 'asc' ? 1 : -1;
         return { sort: { [sortBy]: sortOrder } };
     }
 
-    async exec(): Promise<PaginatedResponse<T>> {
-        const page = Number(this.queryParams.page) || 1;
-        const limit = Number(this.queryParams.limit) || 10;
+    async exec(populateOptions?: PopulateOptions | (string | PopulateOptions)[]): Promise<PaginatedResponse<T>> {
+        const page = Math.max(1, Number(this.queryParams.page) || 1);
+        const limit = Math.max(1, Number(this.queryParams.limit) || 10);
         const skip = (page - 1) * limit;
 
         const sortOptions = this.sort().sort;
 
+        let query = this.model.find(this.query).sort(sortOptions).skip(skip).limit(limit);
+
+        if (populateOptions) {
+            query = query.populate(populateOptions);
+        }
+
         const [docs, totalDocs] = await Promise.all([
-            this.model.find(this.query).sort(sortOptions).skip(skip).limit(limit).lean<T[]>(),
+            query.lean<T[]>(),
             this.model.countDocuments(this.query),
         ]);
 
@@ -66,6 +82,7 @@ export class QueryBuilder<T> {
             hasPrevPage: page > 1,
             nextPage: page < totalPages ? page + 1 : null,
             prevPage: page > 1 ? page - 1 : null,
+            pagingCounter: (page - 1) * limit + 1,
         };
     }
 }

@@ -1,83 +1,53 @@
-import { PresentableError } from "./../../error/clientErrorHelper";
-import { IUser, UserModel } from "./../../models/UserModel";
+import { IUser, UserModel, IUserDocument } from '../../models/UserModel';
+import { PaginatedResponse, PaginationQuery } from '../../types/common.types';
+import { BaseService } from '../base.service';
 
-export class AdminUserService {
+export class AdminUserService extends BaseService<IUserDocument> {
+  constructor() {
+    // Provide search fields for BaseService's getAll pagination logic
+    super(UserModel, ['name', 'email', 'phone']);
+  }
 
+  /**
+   * Soft delete a user (set isActive to false)
+   */
   public async deleteUser(userId: string): Promise<boolean> {
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      // Throw a specific error that the controller can catch and turn into a 404 response.
-      throw new PresentableError('NOT_FOUND', 'User not found');
-    }
+    const user = await this.update(userId, { isActive: false } as any);
+    return !!user;
+  }
 
-    if (!user.isActive) {
-      return true;
-    }
-
-    user.isActive = false;
-    await user.save();
-
+  /**
+   * Hard delete a user (permanently remove from DB)
+   */
+  public async hardDeleteUser(userId: string): Promise<boolean> {
+    await super.delete(userId);
     return true;
   }
 
   /**
-   * Retrieves a single user by their ID.
-   * @param userId The ID of the user to retrieve.
-   * @returns The user document or null if not found.
+   * Get users with pagination and filtering
    */
-  public async getUserById(userId: string): Promise<IUser | null> {
-    return UserModel.findById(userId);
-  }
-
-
-  public async hardDeleteUser(userId: string): Promise<boolean> {
-    const deleteResult = await UserModel.findByIdAndDelete(userId);
-
-    if (!deleteResult) {
-      // If no document was found and deleted, throw an error.
-      throw new PresentableError('NOT_FOUND', 'User not found');
+  public async getUsersPaginated(query: PaginationQuery & { isActive?: any }): Promise<PaginatedResponse<IUserDocument>> {
+    // BaseService getAll handles pagination and common filtering (search)
+    // We can pass additional filters if needed
+    const filter: any = {};
+    if (query.isActive !== undefined) {
+      // Handle both boolean and string "true"/"false" from query params
+      filter.isActive = query.isActive === 'true' || query.isActive === true;
     }
-
-    return true;
-  }
-  public async getUsersPaginated(
-    page: number,
-    limit: number,
-    status?: 'active' | 'inactive'
-  ): Promise<{ users: IUser[], total: number, page: number, limit: number, totalPages: number }> {
-    const query: any = {};
-    if (status === 'active') {
-      query.isActive = true;
-    } else if (status === 'inactive') {
-      query.isActive = false;
-    }
-
-    const skip = (page - 1) * limit;
-
-    const [users, total] = await Promise.all([
-      UserModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
-      UserModel.countDocuments(query)
-    ]);
-
-    return {
-      users,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    };
+    return this.getAll(query, filter);
   }
 
-  public async getAllUsers(): Promise<IUser[]> {
-    return UserModel.find();
+  public async getAllUsers(): Promise<IUserDocument[]> {
+    return UserModel.find().lean<IUserDocument[]>();
   }
 
-  public async getAllActiveUsers(): Promise<IUser[]> {
-    return UserModel.find({ isActive: true });
+  public async getAllActiveUsers(): Promise<IUserDocument[]> {
+    return UserModel.find({ isActive: true }).lean<IUserDocument[]>();
   }
 
-  public async getAllInactiveUsers(): Promise<IUser[]> {
-    return UserModel.find({ isActive: false });
+  public async getAllInactiveUsers(): Promise<IUserDocument[]> {
+    return UserModel.find({ isActive: false }).lean<IUserDocument[]>();
   }
 
   public async hardDeleteAllUsers(): Promise<boolean> {
@@ -85,55 +55,31 @@ export class AdminUserService {
     return deleteResult.deletedCount > 0;
   }
 
-
-  public async updateUser(userId: string, updateData: Partial<IUser>): Promise<IUser | null> {
-    const user = await UserModel.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
-    if (!user) {
-      throw new PresentableError('NOT_FOUND', 'User not found');
-    }
-
-    return user;
+  /**
+   * Update user details
+   */
+  public async updateUser(userId: string, updateData: Partial<IUser>): Promise<IUserDocument> {
+    return this.update(userId, updateData);
   }
 
   /**
-   * Activate a user account (set isActive to true).
-   * @param userId The ID of the user to activate.
-   * @returns The updated user document.
+   * Activate a user account
    */
-  public async activateUser(userId: string): Promise<IUser> {
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new PresentableError('NOT_FOUND', 'User not found');
-    }
-
-    if (user.isActive) {
-      return user; // Already active, no change needed
-    }
-
-    user.isActive = true;
-    await user.save();
-
-    return user;
+  public async activateUser(userId: string): Promise<IUserDocument> {
+    return this.update(userId, { isActive: true } as any);
   }
 
   /**
-   * Deactivate a user account (set isActive to false).
-   * @param userId The ID of the user to deactivate.
-   * @returns The updated user document.
+   * Deactivate a user account
    */
-  public async deactivateUser(userId: string): Promise<IUser> {
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new PresentableError('NOT_FOUND', 'User not found');
-    }
+  public async deactivateUser(userId: string): Promise<IUserDocument> {
+    return this.update(userId, { isActive: false } as any);
+  }
 
-    if (!user.isActive) {
-      return user; // Already inactive, no change needed
-    }
-
-    user.isActive = false;
-    await user.save();
-
-    return user;
+  // Helper alias for backward compatibility or convenience
+  public async getUserById(userId: string): Promise<IUserDocument> {
+    return this.getOne(userId);
   }
 }
+
+export const adminUserService = new AdminUserService();

@@ -1,5 +1,5 @@
 import {
-    Controller, Get, Middlewares, Path, Post, Queries, Route, Security, SuccessResponse as SuccessResponseTags, Tags, Request, Response
+    Get, Middlewares, Path, Post, Queries, Route, Security, SuccessResponse as SuccessResponseTags, Tags, Request, Response
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { reelService } from '../../services/reel.service';
@@ -9,18 +9,19 @@ import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { idParamSchema } from '../../constants/common.validator';
 import { reelQuerySchema, addCommentSchema, commentQuerySchema } from '../../validations/reel.validation';
 import { Body } from 'tsoa';
-import { IReelDocument } from '../../models/reel.model';
 import { IReelResponse } from '../../types/reel.types';
 import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { IRequest } from '../../types/request.types';
 import APIError from '../../error/api-error';
+
+import { BaseController } from '../base.controller';
 
 @Route("customer/reels")
 @Tags("CUSTOMER: Reels")
 @Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class CustomerReelController extends Controller {
+export class CustomerReelController extends BaseController {
 
     /**
      * Get all reels (Instagram-like feed)
@@ -33,25 +34,8 @@ export class CustomerReelController extends Controller {
         @Request() req: IRequest,
         @Queries() query: IFilter
     ): Promise<SuccessResponse<PaginatedResponse<IReelResponse>>> {
-        // Try to get userId from token if available, but don't enforce it for viewing (unless required)
-        // If you want to support "guest" viewing without like status, we can check header manually or use a lenient middleware.
-        // For now, let's assume we want to show like status if logged in.
-        // Since `jwtAuthMiddleware` throws if not valid, we might need a "tryAuth" or just rely on client sending token if they want personalized data.
-        // For simplicity, let's assume this endpoint is public but can parse token if present. 
-        // However, TSOA @Security usually enforces it. 
-        // Let's make it public for now, but if we want `isLiked`, we need auth.
-        // User asked for "customer route", usually implies auth. Let's add optional auth logic or just require auth.
-        // "Instagram" usually requires login. Let's require login for full experience.
 
-        // Actually, let's make it protected to be safe and consistent with "customer" routes.
-
-        // Wait, I can't easily do "optional" auth with standard jwt middleware if it throws.
-        // I'll stick to protected for now as it's safer.
-
-        // If I want to allow public access, I'd need to remove @Security and handle token manually.
-        // Let's assume protected for now.
-
-        return success(await reelService.getReels(query));
+        return this.sendPaginated(await reelService.getReels(query));
     }
 
     /**
@@ -68,7 +52,7 @@ export class CustomerReelController extends Controller {
     ): Promise<SuccessResponse<PaginatedResponse<IReelResponse>>> {
         const userId = req.user?.userId;
         const result = await reelService.getReels(query, userId);
-        return success(result, "Reels fetched successfully");
+        return this.sendPaginated(result, "Reels fetched successfully");
     }
 
     /**
@@ -89,7 +73,7 @@ export class CustomerReelController extends Controller {
             throw new APIError("Unauthorized", StatusCodes.UNAUTHORIZED);
         }
         const result = await reelService.toggleLike(id, userId);
-        return success(result);
+        return this.sendSuccess(result);
     }
 
     /**
@@ -115,8 +99,7 @@ export class CustomerReelController extends Controller {
             throw new APIError("Unauthorized", StatusCodes.UNAUTHORIZED);
         }
         const result = await reelService.addComment(id, userId, body.content);
-        this.setStatus(StatusCodes.CREATED);
-        return success(result, "Comment added successfully");
+        return this.sendCreated(result, "Comment added successfully");
     }
 
     /**
@@ -135,6 +118,6 @@ export class CustomerReelController extends Controller {
         @Queries() query: IFilter
     ): Promise<SuccessResponse<PaginatedResponse<any>>> {
         const result = await reelService.getComments(id, query);
-        return success(result, "Comments fetched successfully");
+        return this.sendPaginated(result, "Comments fetched successfully");
     }
 }

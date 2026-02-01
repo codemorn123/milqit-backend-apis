@@ -1,5 +1,6 @@
 import { IDeliveryBoy } from '../models/DeliveryBoyModel';
 import { AuthTokens } from './auth.types';
+import { PaginationQuery } from './pagination.types';
 
 /**
  * Delivery Boy Profile - safe data to return to clients
@@ -82,9 +83,21 @@ export interface IUpdateDeliveryBoyLocationInput {
     longitude: number;
 }
 
+
 /**
  * Update delivery boy availability
  */
 export interface IUpdateDeliveryBoyAvailabilityInput {
     isAvailable: boolean;
+}
+
+/**
+ * Filter query for listing delivery boys
+ */
+export interface IDeliveryBoyListQuery extends PaginationQuery {
+    isActive?: boolean;
+    isAvailable?: boolean;
+    isDocumentVerified?: boolean;
+    vehicleType?: 'bike' | 'scooter' | 'bicycle' | 'car';
+    deliveryZone?: string;
 }

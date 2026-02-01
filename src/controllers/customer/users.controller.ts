@@ -35,13 +35,15 @@ interface IUpdateProfileRequest {
   email?: string;
 }
 
+import { BaseController } from '../base.controller';
+
 @Route('customer/user')
 @Tags('Mobile User')
 @Response<ClientErrorInterface>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response<ClientErrorInterface>(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response<ClientErrorInterface>(StatusCodes.NOT_FOUND, 'Not Found')
 @Response<ClientErrorInterface>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class MobileUserController extends Controller {
+export class MobileUserController extends BaseController {
   /**
    * Get the current user's profile based on their authentication token.
    */
@@ -56,7 +58,7 @@ export class MobileUserController extends Controller {
   ): Promise<SuccessResponse<IUser>> {
     const userId = req.user.userId;
     const user = await UserService.getAndValidateUser(userId);
-    return success(user, 'User profile retrieved successfully');
+    return this.sendSuccess(user, 'User profile retrieved successfully');
   }
 
   /**
@@ -93,7 +95,7 @@ export class MobileUserController extends Controller {
   ): Promise<SuccessResponse<{ success: boolean }>> {
     const userId = req.user.userId;
     await UserService.deactivateUser(userId);
-    return success({ success: true }, 'Profile deleted successfully');
+    return this.sendSuccess({ success: true }, 'Profile deleted successfully');
   }
 
   /**
@@ -113,7 +115,7 @@ export class MobileUserController extends Controller {
     if (!user) {
       throw new PresentableError('NOT_FOUND', 'User not found');
     }
-    return success(user.addresses || [], 'Addresses retrieved successfully');
+    return this.sendSuccess(user.addresses || [], 'Addresses retrieved successfully');
   }
 
   /**
@@ -133,8 +135,7 @@ export class MobileUserController extends Controller {
     const userId = req.user.userId;
     const updatedUser = await UserService.addUserAddress(userId, address);
     const newAddress = updatedUser?.addresses?.slice(-1)[0];
-    this.setStatus(StatusCodes.CREATED);
-    return success(newAddress, 'Address added successfully');
+    return this.sendCreated(newAddress, 'Address added successfully');
   }
 
   /**
@@ -155,7 +156,7 @@ export class MobileUserController extends Controller {
   ): Promise<SuccessResponse<{ success: boolean }>> {
     const userId = req.user.userId;
     await UserService.setPrimaryAddress(userId, body.addressId);
-    return success({ success: true }, 'Primary address set successfully');
+    return this.sendSuccess({ success: true }, 'Primary address set successfully');
   }
 
   /**
@@ -176,6 +177,6 @@ export class MobileUserController extends Controller {
   ): Promise<SuccessResponse<{ success: boolean }>> {
     const userId = req.user.userId;
     await UserService.removeUserAddress(userId, body.addressId);
-    return success({ success: true }, 'Address removed successfully');
+    return this.sendSuccess({ success: true }, 'Address removed successfully');
   }
 }

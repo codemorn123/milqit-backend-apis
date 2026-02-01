@@ -2,13 +2,15 @@ import { ClientErrorInterface } from "./../../error/clientErrorHelper";
 import { Controller, Get, Middlewares, NoSecurity, Path, Queries, Response, Route, Tags } from "tsoa";
 import { StatusCodes } from 'http-status-codes';
 import { SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from "../../error/exampleErrors";
-import { ICategory } from "./../../models/category.model";
+import { ICategory } from "./../../types/category.types";
 import { success, SuccessResponse } from "./../../utils/SuccessResponse";
 import { categoryService } from "./../../services/category.service";
 import { IFilter, PaginatedResponse } from "./../../types/common.types";
 import { validateSchemaMiddleware } from "./../../middleware/common-validate";
 import { idParamSchema } from "./../../constants/common.validator";
 
+
+import { BaseController } from '../base.controller';
 
 @Route("customer/categories")
 @Tags("Customer - Categories")
@@ -19,14 +21,14 @@ import { idParamSchema } from "./../../constants/common.validator";
 @Response<ClientErrorInterface>(StatusCodes.CONFLICT, 'Conflict')
 @Response<ClientErrorInterface>(StatusCodes.UNPROCESSABLE_ENTITY, 'Validation Error', VALIDATION_ERROR_EXAMPLE)
 @Response<ClientErrorInterface>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error', SERVER_ERROR_EXAMPLE)
-export class CustomerCategoryController extends Controller {
+export class CustomerCategoryController extends BaseController {
 
 
   @Get("/")
   @NoSecurity()
   public async getCategories(@Queries() fillter: IFilter): Promise<SuccessResponse<PaginatedResponse<ICategory>>> {
     const result = await categoryService.getAll(fillter);
-    return success(result, "Categories fetched successfully");
+    return this.sendPaginated(result, "Categories fetched successfully");
   }
 
 
@@ -35,7 +37,7 @@ export class CustomerCategoryController extends Controller {
   @NoSecurity()
   public async getOne(@Path() id: string): Promise<SuccessResponse<ICategory>> {
     const category = await categoryService.getOne(id);
-    return success(category);
+    return this.sendSuccess(category);
   }
 
 

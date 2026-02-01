@@ -1,7 +1,8 @@
-import { success, SuccessResponse, PaginatedList } from './../../utils/SuccessResponse';
+import { SuccessResponse } from './../../utils/SuccessResponse';
 import { IUser } from './../../models/UserModel';
 import { AdminUserService } from './../../services/admin/admin.users.service';
 import { errorSuccess } from '../../utils/SuccessResponse';
+import { PaginatedResponse, IFilter } from '../../types/common.types';
 import {
   Route,
   Tags,
@@ -20,13 +21,15 @@ import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { idParamSchema, userIdParamSchema } from '../../constants/common.validator';
 
 
+import { BaseController } from '../base.controller';
+
 @Route("admin/users")
 @Tags("Admin - Users")
 @Security("jwt")
 @Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class AdminUsersController extends Controller {
+export class AdminUsersController extends BaseController {
 
   private adminUserService = new AdminUserService();
 
@@ -37,18 +40,14 @@ export class AdminUsersController extends Controller {
     @Query() page: number = 1,
     @Query() limit: number = 10,
     @Query() status?: 'active' | 'inactive'
-  ): Promise<SuccessResponse<PaginatedList<IUser>>> {
-    const { users, total, totalPages } = await this.adminUserService.getUsersPaginated(page, limit, status);
+  ): Promise<SuccessResponse<PaginatedResponse<IUser>>> {
+    const filter: IFilter = { page, limit };
+    if (status === 'active') filter.isActive = true;
+    if (status === 'inactive') filter.isActive = false;
 
-    return success({
-      data: users,
-      meta: {
-        total,
-        page,
-        limit,
-        pages: totalPages
-      }
-    }, "Users retrieved successfully");
+    const result = await this.adminUserService.getUsersPaginated(filter);
+
+    return this.sendPaginated(result, "Users retrieved successfully");
   }
 
   /**
@@ -61,11 +60,10 @@ export class AdminUsersController extends Controller {
   @Response(StatusCodes.NOT_FOUND, "User Not Found")
   @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
   @Middlewares(validateSchemaMiddleware(idParamSchema, 'params'))
-  public async deleteUser(@Path() userId: string): Promise<SuccessResponse<{}>> {
+  public async deleteUser(@Path() userId: string): Promise<SuccessResponse<null>> {
     try {
       await this.adminUserService.deleteUser(userId);
-      return success({}, "User deactivated successfully");
-      // return { success: true, message: "User deactivated successfully" };
+      return this.sendResponse("User deactivated successfully");
     } catch (error: any) {
       if (error.code === 'NOT_FOUND') {
         this.setStatus(404);
@@ -86,10 +84,10 @@ export class AdminUsersController extends Controller {
   @Response(StatusCodes.NOT_FOUND, "User Not Found")
   @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
   @Middlewares(validateSchemaMiddleware(idParamSchema, 'params'))
-  public async hardDeleteUser(@Path() userId: string): Promise<{ success: boolean; message: string }> {
+  public async hardDeleteUser(@Path() userId: string): Promise<SuccessResponse<null>> {
     try {
       await this.adminUserService.hardDeleteUser(userId);
-      return { success: true, message: "User permanently deleted successfully" };
+      return this.sendResponse("User permanently deleted successfully");
     } catch (error: any) {
       if (error.code === 'NOT_FOUND') {
         errorSuccess(error);
@@ -110,13 +108,13 @@ export class AdminUsersController extends Controller {
   @Response(StatusCodes.NOT_FOUND, "User Not Found")
   @Response(StatusCodes.BAD_REQUEST, "Invalid ID")
   @Middlewares(validateSchemaMiddleware(userIdParamSchema, 'params'))
-  public async getUserById(@Path() userId: string): Promise<IUser> {
+  public async getUserById(@Path() userId: string): Promise<SuccessResponse<IUser>> {
     const user = await this.adminUserService.getUserById(userId);
     if (!user) {
       this.setStatus(404);
       throw new Error('User not found.');
     }
-    return user;
+    return this.sendSuccess(user);
   }
 
   /**
@@ -131,7 +129,7 @@ export class AdminUsersController extends Controller {
   @Middlewares(validateSchemaMiddleware(userIdParamSchema, 'params'))
   public async activateUser(@Path() userId: string): Promise<SuccessResponse<IUser>> {
     const user = await this.adminUserService.activateUser(userId);
-    return success(user, "User activated successfully");
+    return this.sendSuccess(user, "User activated successfully");
   }
 
   /**
@@ -146,6 +144,6 @@ export class AdminUsersController extends Controller {
   @Middlewares(validateSchemaMiddleware(userIdParamSchema, 'params'))
   public async deactivateUser(@Path() userId: string): Promise<SuccessResponse<IUser>> {
     const user = await this.adminUserService.deactivateUser(userId);
-    return success(user, "User deactivated successfully");
+    return this.sendSuccess(user, "User deactivated successfully");
   }
 }

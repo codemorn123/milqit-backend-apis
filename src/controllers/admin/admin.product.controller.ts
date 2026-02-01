@@ -1,42 +1,36 @@
 import {
-  Body, Controller, Post, Get, Put, Delete, Path, Route, Tags, Middlewares,
+  Controller, Post, Get, Put, Delete, Path, Route, Tags, Middlewares,
   Response,
   Example,
   Queries,
-  UploadedFile,
   UploadedFiles,
   Consumes,
   FormField,
-  SuccessResponse,
+  SuccessResponse as SuccessResponseTags,
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { productService } from '../../services/product.service';
 import { createProductSchema } from '../../schemas/product.schema';
-import { success, SuccessResponse as CustomSuccessResponse, NullSuccessResponse } from '../../utils/SuccessResponse';
-import { ErrorResponse, IProductFilter, PaginatedResponse } from '../../types/common.types';
+import { SuccessResponse } from '../../utils/SuccessResponse';
+import { ErrorResponse, PaginatedResponse } from '../../types/common.types';
 import { IProduct, ProductType, ValidUnit } from '../../models/product.model';
 import { CreateProductRequest, ProductFilterQueryParams } from '../../types/product.types';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { idParamSchema } from '../../constants/common.validator';
-import APIError from '../../error/api-error';
+import { BaseController } from '../base.controller';
+import { handleValidationError, throwBadRequest } from '../../utils/error-helpers';
+import { cleanObject } from '../../utils/object.utils';
 
 
 
 @Tags('ADMIN: Products')
 @Route('admin/products')
 // @Security('jwt', ['admin'])
-@Response<ErrorResponse>(400, "Bad Request")
-@Response<ErrorResponse>(401, "Unauthorized")
-@Response<ErrorResponse>(403, "Forbidden")
-@Response<ErrorResponse>(404, "Not Found")
-@Response<ErrorResponse>(409, "Conflict")
-@Response<ErrorResponse>(422, "Validation Error")
-@Response<ErrorResponse>(500, "Server Error")
-export class AdminProductController extends Controller {
+export class AdminProductController extends BaseController {
   /**
    * Create a new product with file uploads.
    * Note: When uploading files, data must be sent as form fields.
-
+   *
    */
   @Post('/')
   // @Middlewares(validate(createProductSchema))
@@ -62,7 +56,7 @@ export class AdminProductController extends Controller {
   })
 
   @Consumes("multipart/form-data")
-  @SuccessResponse(StatusCodes.CREATED, "Created")
+  @SuccessResponseTags(StatusCodes.CREATED, "Created")
   @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   // @Middlewares([validateSchemaMiddleware(createProductSchema, "body")])
   public async createProduct(
@@ -81,7 +75,7 @@ export class AdminProductController extends Controller {
     @FormField() productDetails?: string, // JSON string that will be parsed
     @UploadedFiles("images") images?: Express.Multer.File[]
 
-  ): Promise<CustomSuccessResponse<{}>> {
+  ): Promise<SuccessResponse<{}>> {
 
     const dataToValidate = {
       name,
@@ -100,29 +94,22 @@ export class AdminProductController extends Controller {
     };
 
 
-    const { error, value } = createProductSchema.validate(dataToValidate);
-    if (error) {
-      console.warn('Validation error:', error);
-      throw new APIError(error.details[0].message, 400);
-    }
+    const cleanedData = cleanObject(dataToValidate);
+    const { error, value } = createProductSchema.validate(cleanedData);
+    if (error) handleValidationError(error);
 
     // Additional validation: ensure category is a valid MongoDB ObjectId
     if (!value.category || !value.category.match(/^[0-9a-fA-F]{24}$/)) {
-      throw new APIError(
-        'Invalid category ID format. Category must be a valid MongoDB ObjectId, not a category name. Please provide the category ID (e.g., "507f1f77bcf86cd799439011")',
-        400
-      );
+      throwBadRequest('Invalid category ID format. Category must be a valid MongoDB ObjectId.');
     }
 
-    const product = await productService.createProduct(value, images);
-    this.setStatus(StatusCodes.CREATED);
-
-    return success(product, 'Product created successfully.');
+    const product = await productService.create(value, images);
+    return this.sendCreated(product, 'Product created successfully.');
   }
 
   @Put('{id}')
   @Consumes("multipart/form-data")
-  @SuccessResponse(StatusCodes.OK, "Updated")
+  @SuccessResponseTags(StatusCodes.OK, "Updated")
   public async updateProduct(
     @Path() id: string,
     @FormField() name?: string,
@@ -139,7 +126,7 @@ export class AdminProductController extends Controller {
     @FormField() isFeatured?: boolean,
     @FormField() productDetails?: string,
     @UploadedFiles("images") images?: Express.Multer.File[]
-  ): Promise<CustomSuccessResponse<{}>> {
+  ): Promise<SuccessResponse<{}>> {
     const dataToUpdate: any = {
       name, description, mrp, sellingPrice, unit, category, quantity, productType, brand, sku, isActive, isFeatured
     };
@@ -148,59 +135,51 @@ export class AdminProductController extends Controller {
       try {
         dataToUpdate.productDetails = JSON.parse(productDetails);
       } catch (e) {
-        throw new APIError('Invalid productDetails JSON', 400);
+        throwBadRequest('Invalid productDetails JSON');
       }
     }
 
-    // Filter out undefined values
-    Object.keys(dataToUpdate).forEach(key => dataToUpdate[key] === undefined && delete dataToUpdate[key]);
+    const cleanedData = cleanObject(dataToUpdate);
 
-    const product = await productService.update(id, dataToUpdate, images);
-    return success(product, 'Product updated successfully.');
+    const product = await productService.update(id, cleanedData, images);
+    return this.sendSuccess(product, 'Product updated successfully.');
   }
 
 
   @Get('/')
   public async getAllProducts(
     @Queries() filter: ProductFilterQueryParams
-  ): Promise<CustomSuccessResponse<PaginatedResponse<IProduct>>> {
-    const paginatedResult = await productService.listOfProducts(filter);
-    return success(paginatedResult, 'Products fetched successfully.');
+  ): Promise<SuccessResponse<PaginatedResponse<IProduct>>> {
+    const paginatedResult = await productService.getAll(filter);
+    return this.sendPaginated(paginatedResult, 'Products fetched successfully.');
   }
 
   /**
    * Get a single product by its ID.
-   * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
-   */
-  /**
-   * Get a single product by its ID.
-   * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
    */
   @Get('{id}')
   @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-  public async getProductById(@Path() id: string): Promise<CustomSuccessResponse<IProduct>> {
-    const product = await productService.findById(id);
-    return success(product, 'Product fetched successfully.');
+  public async getProductById(@Path() id: string): Promise<SuccessResponse<IProduct>> {
+    const product = await productService.getOne(id);
+    return this.sendSuccess(product, 'Product fetched successfully.');
   }
 
   /**
    * Get a single product by its Slug.
    */
   @Get('slug/{slug}')
-  public async getProductBySlug(@Path() slug: string): Promise<CustomSuccessResponse<IProduct | null>> {
+  public async getProductBySlug(@Path() slug: string): Promise<SuccessResponse<IProduct | null>> {
     const product = await productService.getProductBySlug(slug, false); // false = don't enforce public/active check for admin
-    return success(product, 'Product fetched successfully.');
+    return this.sendSuccess(product, 'Product fetched successfully.');
   }
 
   /**
    * Delete a product by its ID.
-   * @summary Authored by MarotiKathoke at 2025-09-01 10:32:19
    */
   @Delete('{id}')
   @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
-  public async deleteProduct(@Path() id: string): Promise<NullSuccessResponse> {
-    await productService.remove(id);
-    this.setStatus(StatusCodes.NO_CONTENT);
-    return success(null, 'Product deleted successfully.');
+  public async deleteProduct(@Path() id: string): Promise<SuccessResponse<null>> {
+    await productService.delete(id);
+    return this.sendResponse('Product deleted successfully.');
   }
 }

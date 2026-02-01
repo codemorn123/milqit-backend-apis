@@ -1,109 +1,59 @@
-import { Controller, Route, Tags, Get, Delete, Query, Path, Security, Response, Middlewares } from 'tsoa';
+import { Route, Tags, Get, Delete, Query, Path, Security, Response, Middlewares } from 'tsoa';
 import APIError from './../../error/api-error';
-import { CartModelClass, ICart } from './../../models/CartModel';
-import { CartAnalyticsResponse, CartCleanupResponse, CartDetailResponse, CartFunnelResponse, CartListResponse, toCartDTO } from './../../types/cart.types';
-import { success, SuccessResponse } from './../../utils/SuccessResponse';
-import { PaginatedResponse } from './../../types/common.types';
+import { CartModelClass } from './../../models/CartModel';
+import { CartAnalyticsResponse, CartCleanupResponse, CartDetailResponse, CartFunnelResponse, toCartDTO } from './../../types/cart.types';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { idParamSchema } from '../../constants/common.validator';
 import { StatusCodes } from 'http-status-codes';
+import { BaseController } from '../base.controller';
+import cartService from '../../services/cart/cart.service';
 
 /**
  * Admin Cart Controller - Clean and Simple
  * Mobile optimized for grocery delivery apps
- * @author MarotiKathoke
  * @created 2025-09-13 16:44:44
  */
 @Route('admin/carts')
 @Tags('Admin Cart Management')
-@Security('jwt', ['admin'])
-@Response(StatusCodes.UNAUTHORIZED, 'Unauthorized')
-@Response(StatusCodes.FORBIDDEN, 'Forbidden')
-@Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class AdminCartController extends Controller {
+export class AdminCartController extends BaseController {
 
   /**
    * Get all carts with filters
    * @summary Retrieve carts with filtering and pagination
    */
   @Get('/')
-  @Response(StatusCodes.BAD_REQUEST, 'Bad Request')
   public async getCarts(
     @Query() page: number = 1,
     @Query() limit: number = 20,
-    @Query() status?: 'active' | 'checkout' | 'completed' | 'abandoned' | '',
+    @Query() status?: 'active' | 'completed' | 'abandoned',
     @Query() userId?: string,
     @Query() startDate?: string,
     @Query() endDate?: string,
     @Query() sortBy: 'createdAt' | 'totalAmount' | 'totalItems' = 'createdAt',
     @Query() sortOrder: 'asc' | 'desc' = 'desc'
-  ): Promise<SuccessResponse<PaginatedResponse<ICart>>> {
+  ): Promise<any> { // TSOA response type handling is tricky with BaseController return types sometimes, using 'any' or explicit SuccessResponse type if BaseController returns compatible type. BaseController usually returns SuccessResponse<T>.
     try {
-      console.log(`📋 Admin fetching carts - Status: ${status}, Page: ${page} by MarotiKathoke`);
+      console.log(`📋 Admin fetching carts - Status: ${status}, Page: ${page}`);
 
-      const query: any = {};
-
-      // Apply filters
-      if (status) query.status = status;
-      if (userId) query.userId = userId;
-
-      if (startDate || endDate) {
-        query.createdAt = {};
-        if (startDate) query.createdAt.$gte = new Date(startDate);
-        if (endDate) query.createdAt.$lte = new Date(endDate);
-      }
-
-      // Pagination options
-      const options = {
-        page: Math.max(1, page),
-        limit: Math.min(100, Math.max(1, limit)),
-        sort: { [sortBy]: sortOrder === 'asc' ? 1 : -1 },
-        populate: [
-          { path: 'userId', select: 'name phone email' },
-          { path: 'items.productId', select: 'name slug price images sku' },
-          { path: 'deliveryAddress', select: 'address city state pincode' }
-        ],
-        lean: true
-      };
-
-      //   const result = await CartModelClass.paginate(query, options);
-      const [docs, totalDocs] = await Promise.all([
-        CartModelClass.find(query)
-          //   .sort(sort)
-          //   .skip(skip)
-          .limit(limit)
-          .lean()
-          .exec(),
-        CartModelClass.countDocuments(query).exec()
-      ]);
-
-      // Calculate pagination metadata
-      const totalPages = Math.ceil(totalDocs / limit);
-      const hasNextPage = page < totalPages;
-      const hasPrevPage = page > 1;
-      const nextPage = hasNextPage ? page + 1 : null;
-      const prevPage = hasPrevPage ? page - 1 : null;
-
-      //   console.log(`✅ Retrieved ${carts.length} carts for admin dashboard`);
-
-      return success({
-        docs,
-        totalDocs,
-        limit,
+      const result = await cartService.getAllCarts({
         page,
-        totalPages,
-        hasNextPage,
-        hasPrevPage,
-        nextPage,
-        prevPage
-      }, 'Carts fetched successfully');
+        limit,
+        status,
+        userId,
+        dateFrom: startDate ? new Date(startDate) : undefined,
+        dateTo: endDate ? new Date(endDate) : undefined,
+        sortBy,
+        sortOrder
+      });
+
+      return this.sendPaginated(result, 'Carts fetched successfully');
 
     } catch (error: any) {
-      console.error('❌ Error in admin getCarts:', error);
-      this.setStatus(error.statusCode || 500);
-      throw new APIError(error.message || 'Failed to fetch carts', error.statusCode || 500);
+      throw new APIError(error.message, 500);
     }
   }
+
+
 
   /**
    * Get specific cart by ID
@@ -115,7 +65,7 @@ export class AdminCartController extends Controller {
   @Middlewares(validateSchemaMiddleware(idParamSchema, 'params'))
   public async getCartById(@Path() cartId: string): Promise<CartDetailResponse> {
     try {
-      console.log(`🔍 Admin fetching cart: ${cartId} by MarotiKathoke`);
+      console.log(`🔍 Admin fetching cart: ${cartId}`);
 
       const cart = await CartModelClass.findById(cartId)
         .populate('userId', 'name phone email')
@@ -136,8 +86,7 @@ export class AdminCartController extends Controller {
         success: true,
         message: 'Cart retrieved successfully',
         data: { cart: cartDTO },
-        timestamp: new Date().toISOString(),
-        user: 'MarotiKathoke'
+        timestamp: new Date().toISOString()
       };
 
     } catch (error: any) {
@@ -158,7 +107,7 @@ export class AdminCartController extends Controller {
   @Get('/analytics/stats')
   public async getCartAnalytics(): Promise<CartAnalyticsResponse> {
     try {
-      console.log(`📊 Admin fetching cart analytics by MarotiKathoke`);
+      console.log(`📊 Admin fetching cart analytics`);
 
       const [
         totalCarts,
@@ -208,8 +157,7 @@ export class AdminCartController extends Controller {
         success: true,
         message: 'Cart analytics retrieved successfully',
         data: { analytics },
-        timestamp: new Date().toISOString(),
-        user: 'MarotiKathoke'
+        timestamp: new Date().toISOString()
       };
 
     } catch (error: any) {
@@ -226,7 +174,7 @@ export class AdminCartController extends Controller {
   @Delete('/cleanup/abandoned')
   public async cleanupAbandonedCarts(@Query() days: number = 7): Promise<CartCleanupResponse> {
     try {
-      console.log(`🧹 Admin cleaning abandoned carts (${days} days) by MarotiKathoke`);
+      console.log(`🧹 Admin cleaning abandoned carts (${days} days)`);
 
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - days);
@@ -247,8 +195,7 @@ export class AdminCartController extends Controller {
         success: true,
         message: 'Abandoned carts cleaned up successfully',
         data: { result: cleanupResult },
-        timestamp: new Date().toISOString(),
-        user: 'MarotiKathoke'
+        timestamp: new Date().toISOString()
       };
 
     } catch (error: any) {
@@ -265,7 +212,7 @@ export class AdminCartController extends Controller {
   @Get('/analytics/funnel')
   public async getCartFunnel(): Promise<CartFunnelResponse> {
     try {
-      console.log(`📈 Admin fetching conversion funnel by MarotiKathoke`);
+      console.log(`📈 Admin fetching conversion funnel`);
 
       const funnel = await CartModelClass.aggregate([
         {
@@ -309,8 +256,7 @@ export class AdminCartController extends Controller {
         success: true,
         message: 'Cart funnel retrieved successfully',
         data: { funnel: funnelDTO },
-        timestamp: new Date().toISOString(),
-        user: 'MarotiKathoke'
+        timestamp: new Date().toISOString()
       };
 
     } catch (error: any) {

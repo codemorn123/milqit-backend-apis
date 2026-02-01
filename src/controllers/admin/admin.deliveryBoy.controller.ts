@@ -25,7 +25,6 @@ import {
     IDeliveryBoyListQuery,
     IDeliveryBoyStats,
     IDeliveryBoyPerformance,
-    IPaginatedDeliveryBoyList,
     IBulkDeliveryBoyOperation,
     IBulkOperationResponse
 } from '../../types/admin.deliveryBoy.types';
@@ -38,7 +37,7 @@ import {
     deliveryBoyListQuerySchema,
     bulkDeliveryBoyOperationSchema
 } from '../../validations/admin.deliveryBoy.validation';
-import { ErrorResponse } from '../../types/common.types';
+import { ErrorResponse, PaginatedResponse } from '../../types/common.types';
 import { ClientErrorInterface } from '../../error/clientErrorHelper';
 import {
     NOT_FOUND_ERROR_EXAMPLE,
@@ -48,6 +47,8 @@ import {
 import { success, SuccessResponse } from '../../utils/SuccessResponse';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { IDeliveryBoy } from '../../models/DeliveryBoyModel';
+
+import { BaseController } from '../base.controller';
 
 /**
  * Controller for admin delivery boy management operations
@@ -62,7 +63,7 @@ import { IDeliveryBoy } from '../../models/DeliveryBoyModel';
 @Response<ErrorResponse>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response<ErrorResponse>(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response<ErrorResponse>(StatusCodes.CONFLICT, 'Conflict')
-export class AdminDeliveryBoyController extends Controller {
+export class AdminDeliveryBoyController extends BaseController {
     /**
      * Create a new delivery boy account
      * @summary Create delivery boy
@@ -106,7 +107,7 @@ export class AdminDeliveryBoyController extends Controller {
         @Query() deliveryZone?: string,
         @Query() sortBy?: 'name' | 'createdAt' | 'totalDeliveries' | 'averageRating',
         @Query() sortOrder?: 'asc' | 'desc'
-    ): Promise<SuccessResponse<IPaginatedDeliveryBoyList>> {
+    ): Promise<SuccessResponse<PaginatedResponse<IDeliveryBoy>>> {
         const query: IDeliveryBoyListQuery = {
             page,
             limit,
@@ -121,7 +122,7 @@ export class AdminDeliveryBoyController extends Controller {
         };
 
         const result = await deliveryBoyService.adminGetDeliveryBoysList(query);
-        return success(result, 'Delivery boys retrieved successfully');
+        return this.sendPaginated(result, 'Delivery boys retrieved successfully');
     }
 
     /**

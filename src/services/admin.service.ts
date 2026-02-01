@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
-import { AdminModel, IAdminDocument } from '../models/AdminModel';
-import { PresentableError } from '../error/clientErrorHelper';
+import { AdminModel } from '../models/AdminModel';
 import { logger } from '../config/logger';
 import { AuthTokens, CreateAdminRequest, LoginRequest, UserProfile } from '../types/auth.types';
 import { tokenService } from './token.service';
@@ -29,8 +28,8 @@ export const AdminService = {
       }
 
       // Check if admin already exists
-      const existingAdmin = await AdminModel.findOne({ 
-        adminEmail: data.email.toLowerCase() 
+      const existingAdmin = await AdminModel.findOne({
+        adminEmail: data.email.toLowerCase()
       });
 
       if (existingAdmin) {
@@ -47,7 +46,7 @@ export const AdminService = {
 
       // Hash password
       const passwordHash = await bcrypt.hash(data.password, 12);
-      
+
       // Create admin
       const admin = new AdminModel({
         ...data,
@@ -62,31 +61,31 @@ export const AdminService = {
       });
 
       await admin.save();
-      
+
       logger.info(
-        { adminId: admin.id, email: admin.adminEmail }, 
+        { adminId: admin.id, email: admin.adminEmail },
         'Admin created successfully'
       );
-      
+
       return admin as unknown as UserProfile;
     } catch (error: any) {
       logger.error(
-        { adminEmail: data.email, error: error.message, stack: error.stack }, 
+        { adminEmail: data.email, error: error.message, stack: error.stack },
         'Failed to create admin'
       );
-      
+
       // Re-throw APIError instances
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       // Handle MongoDB duplicate key error
       if (error.code === 11000) {
         const field = error.keyPattern ? Object.keys(error.keyPattern)[0] : 'field';
         const fieldName = field === 'adminEmail' ? 'email' : field;
         throw new APIError(`Admin with this ${fieldName} already exists`, 409);
       }
-      
+
       // Handle MongoDB validation errors
       if (error.name === 'ValidationError') {
         const messages = Object.values(error.errors || {})
@@ -94,12 +93,12 @@ export const AdminService = {
           .join(', ');
         throw new APIError(messages || 'Validation failed', 400);
       }
-      
+
       // Handle bcrypt errors
       if (error.message?.includes('bcrypt')) {
         throw new APIError('Password encryption failed', 500);
       }
-      
+
       // Generic error with original message
       throw new APIError(
         error.message || 'Failed to create admin account. Please try again.',
@@ -119,7 +118,7 @@ export const AdminService = {
       }
 
       // Find admin
-      const admin = await AdminModel.findOne({ 
+      const admin = await AdminModel.findOne({
         adminEmail: data.email.toLowerCase().trim()
       });
 
@@ -134,7 +133,7 @@ export const AdminService = {
 
       // Verify password
       const isPasswordValid = await bcrypt.compare(data.password, admin.passwordHash);
-      
+
       if (!isPasswordValid) {
         logger.warn(
           { adminId: admin.id, email: data.email },
@@ -169,22 +168,22 @@ export const AdminService = {
         { adminEmail: data.email, error: error.message, stack: error.stack },
         'Login failed'
       );
-      
+
       // Re-throw APIError instances
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       // Handle bcrypt comparison errors
       if (error.message?.includes('bcrypt')) {
         throw new APIError('Password verification failed', 500);
       }
-      
+
       // Handle database connection errors
       if (error.name === 'MongoNetworkError' || error.name === 'MongoServerError') {
         throw new APIError('Database connection failed. Please try again later.', 503);
       }
-      
+
       // Generic error with original message
       throw new APIError(
         error.message || 'Login failed. Please try again.',
@@ -201,7 +200,7 @@ export const AdminService = {
 
       // Build filter
       const filter: mongoose.FilterQuery<IUser> = {};
-      
+
       if (search) {
         const searchRegex = new RegExp(search, 'i');
         filter.$or = [
@@ -241,24 +240,25 @@ export const AdminService = {
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
         nextPage: page < totalPages ? page + 1 : null,
-        prevPage: page > 1 ? page - 1 : null
+        prevPage: page > 1 ? page - 1 : null,
+        pagingCounter: (page - 1) * limit + 1
       };
     } catch (error: any) {
       logger.error(
         { queryParams, error: error.message, stack: error.stack },
         'Error fetching customer list'
       );
-      
+
       // Re-throw APIError instances
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       // Handle database errors
       if (error.name === 'MongoNetworkError' || error.name === 'MongoServerError') {
         throw new APIError('Database connection failed. Please try again later.', 503);
       }
-      
+
       throw new APIError(
         error.message || 'Failed to fetch customer list',
         500
@@ -282,17 +282,17 @@ export const AdminService = {
         { error: error.message, stack: error.stack },
         'Error fetching admin users'
       );
-      
+
       // Re-throw APIError instances
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       // Handle database errors
       if (error.name === 'MongoNetworkError' || error.name === 'MongoServerError') {
         throw new APIError('Database connection failed. Please try again later.', 503);
       }
-      
+
       throw new APIError(
         error.message || 'Failed to fetch admin users',
         500
@@ -308,7 +308,7 @@ export const AdminService = {
         .sort({ createdAt: -1 })
         .lean<IUser[]>()
         .exec();
-      
+
       logger.info({ count: users.length }, 'All users fetched');
       return users;
     } catch (error: any) {
@@ -316,15 +316,15 @@ export const AdminService = {
         { error: error.message, stack: error.stack },
         'Error fetching all users'
       );
-      
+
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       if (error.name === 'MongoNetworkError' || error.name === 'MongoServerError') {
         throw new APIError('Database connection failed. Please try again later.', 503);
       }
-      
+
       throw new APIError(error.message || 'Failed to fetch users', 500);
     }
   },
@@ -336,7 +336,7 @@ export const AdminService = {
         .sort({ createdAt: -1 })
         .lean<IUser[]>()
         .exec();
-      
+
       logger.info({ count: users.length }, 'Active users fetched');
       return users;
     } catch (error: any) {
@@ -344,15 +344,15 @@ export const AdminService = {
         { error: error.message, stack: error.stack },
         'Error fetching active users'
       );
-      
+
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       if (error.name === 'MongoNetworkError' || error.name === 'MongoServerError') {
         throw new APIError('Database connection failed. Please try again later.', 503);
       }
-      
+
       throw new APIError(error.message || 'Failed to fetch active users', 500);
     }
   },
@@ -364,7 +364,7 @@ export const AdminService = {
         .sort({ createdAt: -1 })
         .lean<IUser[]>()
         .exec();
-      
+
       logger.info({ count: users.length }, 'Inactive users fetched');
       return users;
     } catch (error: any) {
@@ -372,15 +372,15 @@ export const AdminService = {
         { error: error.message, stack: error.stack },
         'Error fetching inactive users'
       );
-      
+
       if (error instanceof APIError) {
         throw error;
       }
-      
+
       if (error.name === 'MongoNetworkError' || error.name === 'MongoServerError') {
         throw new APIError('Database connection failed. Please try again later.', 503);
       }
-      
+
       throw new APIError(error.message || 'Failed to fetch inactive users', 500);
     }
   }

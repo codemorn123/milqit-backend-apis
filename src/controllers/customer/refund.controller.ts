@@ -15,7 +15,7 @@ import {
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { ClientErrorInterface, PresentableError } from '../../error/clientErrorHelper';
-import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { SuccessResponse } from '../../utils/SuccessResponse';
 import { refundService } from '../../services/refund.service';
 import { IRefund } from '../../models/refund.model';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
@@ -30,13 +30,15 @@ interface CreateRefundRequest {
     images?: string[];
 }
 
+import { BaseController } from '../base.controller';
+
 @Route('customer/refunds')
 @Tags('Customer Refunds')
 @Response<ClientErrorInterface>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response<ClientErrorInterface>(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response<ClientErrorInterface>(StatusCodes.NOT_FOUND, 'Not Found')
 @Response<ClientErrorInterface>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class CustomerRefundController extends Controller {
+export class CustomerRefundController extends BaseController {
 
     /**
      * Request a refund for an order
@@ -70,8 +72,7 @@ export class CustomerRefundController extends Controller {
 
         const userId = req.user.id;
         const refund = await refundService.createRefundRequest(userId, body);
-        this.setStatus(StatusCodes.CREATED);
-        return success(refund as unknown as IRefund, 'Refund request submitted successfully');
+        return this.sendCreated(refund as unknown as IRefund, 'Refund request submitted successfully');
     }
 
     /**
@@ -84,7 +85,7 @@ export class CustomerRefundController extends Controller {
     ): Promise<SuccessResponse<IRefund[]>> {
         const userId = req.user.id;
         const refunds = await refundService.getUserRefunds(userId);
-        return success(refunds as unknown as IRefund[], 'Refunds retrieved successfully');
+        return this.sendSuccess(refunds as unknown as IRefund[], 'Refunds retrieved successfully');
     }
 
     /**
@@ -104,6 +105,6 @@ export class CustomerRefundController extends Controller {
             throw new PresentableError('NOT_FOUND', 'Refund not found');
         }
 
-        return success(refund as unknown as IRefund, 'Refund details retrieved successfully');
+        return this.sendSuccess(refund as unknown as IRefund, 'Refund details retrieved successfully');
     }
 }

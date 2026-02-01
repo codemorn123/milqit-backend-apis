@@ -1,6 +1,5 @@
 import {
   Body,
-  Controller,
   Get,
   Post,
   Put,
@@ -15,19 +14,21 @@ import {
 } from 'tsoa';
 import { StatusCodes } from 'http-status-codes';
 import { ClientErrorInterface, PresentableError } from '../../error/clientErrorHelper';
-import { success, SuccessResponse } from '../../utils/SuccessResponse';
+import { SuccessResponse } from '../../utils/SuccessResponse';
 import SubscriptionService from '../../services/subscription.service';
 import { ISubscription } from '../../types/subscription.types';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { idParamSchema } from '../../constants/common.validator';
 
 
+import { BaseController } from '../base.controller';
+
 @Route('customer/subscriptions')
 @Tags('Subscriptions')
 @Response<ClientErrorInterface>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
 @Response<ClientErrorInterface>(StatusCodes.FORBIDDEN, 'Forbidden')
 @Response(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error')
-export class SubscriptionController extends Controller {
+export class SubscriptionController extends BaseController {
   /**
    * Create a new subscription (e.g., Milk, Vegetables).
    */
@@ -37,7 +38,7 @@ export class SubscriptionController extends Controller {
   @Response(StatusCodes.OK, 'Success')
   public async getAllSubscriptions(): Promise<SuccessResponse<ISubscription[]>> {
     const subscriptions = await SubscriptionService.getAllSubscriptions();
-    return success(subscriptions, 'Subscriptions retrieved successfully');
+    return this.sendSuccess(subscriptions, 'Subscriptions retrieved successfully');
   }
   @Post()
   @Security('jwt')
@@ -45,8 +46,7 @@ export class SubscriptionController extends Controller {
   @Response(StatusCodes.BAD_REQUEST, 'Validation Failed')
   public async createSubscription(@Body() body: Partial<ISubscription>): Promise<SuccessResponse<ISubscription>> {
     const subscription = await SubscriptionService.createSubscription(body);
-    this.setStatus(StatusCodes.CREATED);
-    return success(subscription, 'Subscription created successfully');
+    return this.sendCreated(subscription, 'Subscription created successfully');
   }
 
   /**
@@ -59,7 +59,7 @@ export class SubscriptionController extends Controller {
   @Middlewares([validateSchemaMiddleware(idParamSchema, "params")])
   public async getSubscriptions(@Path() userId: string): Promise<SuccessResponse<ISubscription[]>> {
     const subscriptions = await SubscriptionService.getUserSubscriptions(userId);
-    return success(subscriptions, 'Subscriptions retrieved successfully');
+    return this.sendSuccess(subscriptions, 'Subscriptions retrieved successfully');
   }
 
   /**
@@ -73,7 +73,7 @@ export class SubscriptionController extends Controller {
   public async getSubscription(@Path() id: string): Promise<SuccessResponse<ISubscription>> {
     const subscription = await SubscriptionService.getSubscriptionById(id);
     if (!subscription) throw new PresentableError('NOT_FOUND', 'Subscription not found');
-    return success(subscription, 'Subscription retrieved successfully');
+    return this.sendSuccess(subscription, 'Subscription retrieved successfully');
   }
 
   /**
@@ -90,7 +90,7 @@ export class SubscriptionController extends Controller {
   ): Promise<SuccessResponse<ISubscription>> {
     const updated = await SubscriptionService.updateSubscription(id, body);
     if (!updated) throw new PresentableError('NOT_FOUND', 'Subscription not found');
-    return success(updated, 'Subscription updated successfully');
+    return this.sendSuccess(updated, 'Subscription updated successfully');
   }
 
   /**
@@ -104,7 +104,7 @@ export class SubscriptionController extends Controller {
   public async cancelSubscription(@Path() id: string): Promise<SuccessResponse<ISubscription>> {
     const canceled = await SubscriptionService.cancelSubscription(id);
     if (!canceled) throw new PresentableError('NOT_FOUND', 'Subscription not found');
-    return success(canceled, 'Subscription canceled successfully');
+    return this.sendSuccess(canceled, 'Subscription canceled successfully');
   }
 
   /**
@@ -118,6 +118,6 @@ export class SubscriptionController extends Controller {
   public async deleteSubscription(@Path() id: string): Promise<SuccessResponse<{}>> {
     const deleted = await SubscriptionService.deleteSubscription(id);
     if (!deleted) throw new PresentableError('NOT_FOUND', 'Subscription not found');
-    return success({}, 'Subscription deleted successfully');
+    return this.sendSuccess({}, 'Subscription deleted successfully');
   }
 }

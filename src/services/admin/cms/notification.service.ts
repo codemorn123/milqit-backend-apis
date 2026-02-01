@@ -37,36 +37,9 @@ class NotificationService extends BaseService<INotificationDocument> {
 
 
 
-  public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<INotification>> {
-    const page = Number(queryParams.page) || 1;
-    const limit = Number(queryParams.limit) || 10;
-
-    const filter: any = { status: 'sent' };
-
-    const totalDocs = await NotificationModel.countDocuments(filter);
-    const totalPages = Math.ceil(totalDocs / limit);
-
-    const docs = await NotificationModel.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .lean<INotification[]>()
-      .exec();
-
-    const hasNextPage = page < totalPages;
-    const hasPrevPage = page > 1;
-
-    return {
-      docs,
-      totalDocs,
-      limit,
-      page,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      nextPage: hasNextPage ? page + 1 : null,
-      prevPage: hasPrevPage ? page - 1 : null,
-    };
+  public async getAllForCustomer(queryParams: IFilter): Promise<PaginatedResponse<INotificationDocument>> {
+    // Re-use BaseService.getAll which handles pagination, search, and lean correctly
+    return this.getAll(queryParams, { status: 'sent' });
   }
   /**
    * Deletes a notification.

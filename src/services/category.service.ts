@@ -1,17 +1,13 @@
-
-
-
-
-import mongoose from 'mongoose';
 import APIError from '../error/api-error';
-import { CategoryModel, ICategory, ICategoryDocument } from '../models/category.model';
-import { ICategoryCreateParams } from '../types/catergory.types';
-import customFileService from './custom-file.service';
-import { CATEGORY_IMAGES_PATH } from '../constants/file-paths';
+import { CategoryModel } from '../models/category.model';
+import { ICategory, ICategoryDocument } from '../types/category.types';
+import cloudinaryImageService from './cloudinary-image.service';
+import cacheService, { CACHE_PREFIX, CACHE_TTL } from './cache.service';
 import { BaseService } from './base.service';
+import logger from './logger';
 import slugify from 'slugify';
 
-class CategoryService extends BaseService<ICategory> {
+class CategoryService extends BaseService<ICategoryDocument> {
   constructor() {
     super(CategoryModel as any, ['name', 'slug']);
   }
@@ -19,16 +15,14 @@ class CategoryService extends BaseService<ICategory> {
   public async create(
     categoryData: ICategory,
     image?: Express.Multer.File
-  ): Promise<ICategory> {
-    console.log('CategoryService.create called');
+  ): Promise<ICategoryDocument> {
 
     // Sanitize empty strings
-    if ((categoryData.parentId as any) === "") {
+    if (!categoryData.parentId) {
       categoryData.parentId = null;
     }
 
-    if (!categoryData.slug || categoryData.slug === "") {
-      // Auto-generate slug if missing or empty
+    if (!categoryData.slug) {
       categoryData.slug = slugify(categoryData.name, {
         lower: true,
         strict: true,
@@ -37,84 +31,99 @@ class CategoryService extends BaseService<ICategory> {
     }
 
     // Check if slug exists
-    const existingCategory = await CategoryModel.findOne({
-      slug: categoryData.slug,
-    });
+    const existingCategory = await CategoryModel.findOne({ slug: categoryData.slug });
     if (existingCategory) {
       throw new APIError('Category with this slug already exists', 409);
     }
 
     if (!image) {
-      console.error('No file provided');
       throw new APIError('Category image is required.', 400);
     }
 
-    try {
-      console.log('Saving file...');
-      const { url, key } = await customFileService.saveFile(image, CATEGORY_IMAGES_PATH);
-      console.log('File saved:', { url, key });
+    logger.info('Uploading category image to Cloudinary');
+    const uploadedImage = await cloudinaryImageService.uploadSingle(
+      image,
+      'categories',
+      { required: true }
+    );
 
-      categoryData.categoryImage = { url, key };
+    categoryData.categoryImage = uploadedImage;
 
-      console.log('Creating category in DB...', categoryData);
-      return super.create(categoryData);
-    } catch (error) {
-      console.error('Error in CategoryService.create:', error);
-      throw error;
-    }
+    const newCategory = await super.create(categoryData);
+
+    // Invalidate category list caches
+    await cacheService.invalidateAllCategories();
+
+    return newCategory;
   }
 
-  // listCategories (getAll) handled by BaseService. 
-  // Note: Original listCategories had custom search logic (name or slug). BaseService handles this via searchFields.
+  // Override getOne to add caching
+  public async getOne(id: string): Promise<ICategoryDocument> {
+    const cacheKey = `${CACHE_PREFIX.CATEGORY}${id}`;
 
-  // getCategoryById (getOne) handled by BaseService.
+    return await cacheService.getOrSet(
+      cacheKey,
+      () => super.getOne(id),
+      CACHE_TTL.MEDIUM
+    );
+  }
 
   public async update(
     id: string,
     updateData: Partial<ICategory>,
     file?: Express.Multer.File
-  ): Promise<ICategory> {
-    const category = await CategoryModel.findById(id);
-    if (!category) {
-      throw new APIError('Category not found.', 404);
-    }
+  ): Promise<ICategoryDocument> {
+    const category = await this.getOne(id);
 
-    const payload: any = { ...updateData };
+    const payload: Partial<ICategory> = { ...updateData };
 
     if (file) {
-      // If a new file is uploaded, delete the old one first
-      if (category.categoryImage?.key) {
-        await customFileService.deleteFile(category.categoryImage.key, CATEGORY_IMAGES_PATH);
+      // Replace old image with new one
+      const newImage = await cloudinaryImageService.replaceSingle(
+        category.categoryImage,
+        file,
+        'categories'
+      );
+
+      if (newImage) {
+        payload.categoryImage = newImage;
       }
-      // Save the new file
-      const { url, key } = await customFileService.saveFile(file, CATEGORY_IMAGES_PATH);
-      payload.categoryImage = { url, key };
     }
 
-    // Sanitize empty strings
-    if (payload.parentId === '') {
+    // Sanitize
+    if (payload.parentId === undefined) {
       payload.parentId = null;
     }
-    if (payload.slug === '' || !payload.slug) {
-      delete payload.slug; // Let the pre-save hook regenerate it if name changed
+
+    // Handle slug update if name changes, or let user specify.
+    if (!payload.slug) {
+      delete payload.slug;
     }
 
-    return super.update(id, payload);
+    const updatedCategory = await super.update(id, payload);
+
+    // Invalidate caches
+    await cacheService.invalidateCategory(id);
+    await cacheService.invalidateAllCategories();
+
+    return updatedCategory;
   }
 
   public async delete(id: string): Promise<{ message: string; status: number }> {
-    // Find and delete the document in one step
-    const category = await CategoryModel.findById(id);
-    if (!category) {
-      throw new APIError('Category not found.', 404);
+    const category = await this.getOne(id);
+
+    // Delete image from Cloudinary
+    if (category.categoryImage) {
+      await cloudinaryImageService.deleteSingle(category.categoryImage);
     }
 
-    // If the deleted category had an image, delete it from storage
-    if (category.categoryImage?.key) {
-      await customFileService.deleteFile(category.categoryImage.key, CATEGORY_IMAGES_PATH);
-    }
+    const result = await super.delete(id);
 
-    return super.delete(id);
+    // Invalidate caches
+    await cacheService.invalidateCategory(id);
+    await cacheService.invalidateAllCategories();
+
+    return result;
   }
 
   public async deleteMultipleCategories(): Promise<{ message: string }> {
@@ -122,17 +131,20 @@ class CategoryService extends BaseService<ICategory> {
     if (categoriesToDelete.length === 0) {
       throw new APIError('No matching categories found to delete.', 404);
     }
-    const imageKeysToDelete = categoriesToDelete
-      .map(cat => cat.categoryImage?.key)
-      .filter((key): key is string => !!key); // Filter out any null/undefined key
+
+    const categoryImages = categoriesToDelete
+      .map(cat => cat.categoryImage)
+      .filter(img => !!img);
 
     const deleteResult = await CategoryModel.deleteMany();
-    if (imageKeysToDelete.length > 0) {
-      // This looks dangerous deleting the whole directory? 
-      // Original code: customFileService.deleteDirectory( 'categories/images')
-      // I'll keep it as is for now but it seems risky.
-      customFileService.deleteDirectory('categories/images')
+
+    // Delete all images from Cloudinary
+    if (categoryImages.length > 0) {
+      await cloudinaryImageService.deleteMultiple(categoryImages);
     }
+
+    // Invalidate all category caches
+    await cacheService.invalidateAllCategories();
 
     return { message: `${deleteResult.deletedCount} categories deleted successfully.` };
   }

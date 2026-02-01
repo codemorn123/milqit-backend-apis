@@ -1,116 +1,15 @@
-import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
+import mongoose, { Schema, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-import { IBase } from './base';
+import { createSchemaOptions } from '../utils/schema.helpers';
+import {
+  IOrderItem,
+  IOrder,
+  OrderDocument,
+  OrderStatus
+} from '../types/order.types';
 
-export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
-export type PaymentMethod = 'card' | 'upi' | 'netbanking' | 'wallet' | 'cod';
-
-// Order Item Interface
-export interface IOrderItem {
-  product: mongoose.Types.ObjectId;
-  productName: string;
-  productImage?: string;
-  quantity: number;
-  unit: string;
-  mrp: number;
-  sellingPrice: number;
-  totalPrice: number;
-  discount: number;
-}
-
-// Shipping Address Interface
-export interface IShippingAddress {
-  fullName: string;
-  phone: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  pincode: string;
-  landmark?: string;
-}
-
-// Order Interface
-export interface IOrder {
-  _id: mongoose.Types.ObjectId;
-  orderNumber: string;
-  user: mongoose.Types.ObjectId;
-  items: IOrderItem[];
-  shippingAddress: IShippingAddress;
-
-  // Pricing
-  subtotal: number;
-  discount: number;
-  deliveryCharge: number;
-  totalAmount: number;
-
-  // Status
-  orderStatus: OrderStatus;
-  paymentStatus: PaymentStatus;
-  paymentMethod: PaymentMethod;
-
-  // Tracking
-  trackingNumber?: string;
-  estimatedDelivery?: Date;
-  deliveredAt?: Date;
-
-  // Metadata
-  notes?: string;
-  cancellationReason?: string;
-  cancelledAt?: Date;
-
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface OrderDocument extends IBase {
-  orderNumber: string;
-  user: mongoose.Types.ObjectId;
-  items: IOrderItem[];
-  shippingAddress: IShippingAddress;
-
-  subtotal: number;
-  discount: number;
-  deliveryCharge: number;
-  totalAmount: number;
-
-  orderStatus: OrderStatus;
-  paymentStatus: PaymentStatus;
-  paymentMethod: PaymentMethod;
-
-  trackingNumber?: string;
-  estimatedDelivery?: Date;
-  deliveredAt?: Date;
-
-  notes?: string;
-  cancellationReason?: string;
-  cancelledAt?: Date;
-
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Create Order Request Interface for TSOA
-export interface ICreateOrderRequest {
-  user: string;
-  items: Array<{
-    product: string;
-    quantity: number;
-  }>;
-  shippingAddress: IShippingAddress;
-  paymentMethod: PaymentMethod;
-  notes?: string;
-}
-
-// Update Order Request Interface
-export interface IUpdateOrderRequest {
-  orderStatus?: OrderStatus;
-  paymentStatus?: PaymentStatus;
-  trackingNumber?: string;
-  estimatedDelivery?: Date;
-  cancellationReason?: string;
-}
+// Re-export everything from types for backward compatibility and convenience
+export * from '../types/order.types';
 
 const OrderItemSchema = new Schema({
   product: {
@@ -298,17 +197,7 @@ const OrderSchema = new Schema<OrderDocument>(
       type: Date
     }
   },
-  {
-    timestamps: true,
-    versionKey: false,
-    toJSON: {
-      virtuals: true,
-      transform: (_, ret: any) => {
-        delete ret._id;
-        delete ret.__v;
-      },
-    },
-  }
+  createSchemaOptions()
 );
 
 // Indexes

@@ -1,24 +1,8 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { ICoupon } from './../../types/coupon.types';
+import mongoose, { Schema } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
+import { ICouponDocument } from './../../types/coupon.types';
 
-
-export interface CouponDocument extends Document {
-    code: string;
-    description: string;
-    discountType: 'percentage' | 'fixed';
-    discountValue: number;
-    maxDiscountAmount?: number;
-    minOrderValue: number;
-    validFrom: Date;
-    validUntil: Date;
-    totalUsageLimit: number;
-    timesUsed: number;
-    usageLimitPerUser: number;
-    usedBy: string[]; // Array of user IDs
-    isActive: boolean;
-  }
-
-const couponSchema: Schema = new Schema<CouponDocument>({
+const couponSchema: Schema = new Schema<ICouponDocument>({
   code: {
     type: String,
     required: true,
@@ -41,7 +25,7 @@ const couponSchema: Schema = new Schema<CouponDocument>({
   },
   maxDiscountAmount: {
     type: Number,
-    required: function() {
+    required: function () {
       // This field is only required if the discount is a percentage
       return (this as any).discountType === 'percentage';
     },
@@ -84,6 +68,8 @@ const couponSchema: Schema = new Schema<CouponDocument>({
   timestamps: true,
 });
 
-const CouponModel = mongoose.model<CouponDocument>('Coupon', couponSchema);
+couponSchema.plugin(mongoosePaginate);
+
+const CouponModel = mongoose.model<ICouponDocument, mongoose.PaginateModel<ICouponDocument>>('Coupon', couponSchema);
 
 export default CouponModel;
