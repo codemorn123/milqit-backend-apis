@@ -14,6 +14,7 @@ import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { OrderModel } from '../../models/order.model';
 import { UserModel } from '../../models/UserModel';
 import { ProductModel } from '../../models/product.model';
+import cloudinaryImageService from '../../services/cloudinary-image.service';
 
 interface DashboardStats {
     totalRevenue: {
@@ -76,6 +77,16 @@ interface CustomerInsights {
         totalOrders: number;
         totalSpent: number;
     }>;
+}
+
+interface CloudinaryUsage {
+    transformations: number;
+    transformationsLimit: number;
+    storage: number;
+    storageLimit: number;
+    bandwidth: number;
+    bandwidthLimit: number;
+    derivedResources: number;
 }
 
 import { BaseController } from '../base.controller';
@@ -413,5 +424,30 @@ export class AdminDashboardController extends BaseController {
         }, {} as any);
 
         return this.sendSuccess(methodData, 'Revenue by payment method retrieved successfully');
+    }
+
+    /**
+     * Get Cloudinary usage statistics
+     * @summary Get dynamic Cloudinary usage stats
+     */
+    @Get('cloudinary-usage')
+    @Middlewares([jwtAuthMiddleware])
+    @Response(StatusCodes.OK, 'Success')
+    public async getCloudinaryUsageStats(): Promise<SuccessResponse<CloudinaryUsage>> {
+        const usageData = await cloudinaryImageService.getUsageStats();
+
+        // Map Cloudinary response to required format
+        // Checking for different possible response structures from Cloudinary API
+        const stats: CloudinaryUsage = {
+            transformations: usageData.transformations?.usage || 0,
+            transformationsLimit: usageData.transformations?.limit || 0,
+            storage: usageData.storage?.usage || 0,
+            storageLimit: usageData.storage?.limit || 0,
+            bandwidth: usageData.bandwidth?.usage || 0,
+            bandwidthLimit: usageData.bandwidth?.limit || 0,
+            derivedResources: usageData.derived_resources || usageData.objects?.usage || 0
+        };
+
+        return this.sendSuccess(stats, 'Cloudinary usage statistics retrieved successfully');
     }
 }

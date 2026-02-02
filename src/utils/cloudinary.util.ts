@@ -147,6 +147,19 @@ export const extractPublicIdFromUrl = (url: string): string | null => {
     }
 };
 
+/**
+ * Get Cloudinary usage statistics
+ * @returns Promise with usage data
+ */
+export const getCloudinaryUsage = async (): Promise<any> => {
+    try {
+        const result = await cloudinary.api.usage();
+        return result;
+    } catch (error) {
+        throw new APIError(`Error fetching Cloudinary usage: ${(error as Error).message}`, 500);
+    }
+};
+
 export default {
     uploadImage,
     getImageUrl,
@@ -154,4 +167,5 @@ export default {
     deleteMultipleImages,
     deleteFolder,
     extractPublicIdFromUrl,
+    getCloudinaryUsage,
 };

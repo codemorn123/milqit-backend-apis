@@ -25,20 +25,26 @@ export class AdminCartController extends BaseController {
   public async getCarts(
     @Query() page: number = 1,
     @Query() limit: number = 20,
-    @Query() status?: 'active' | 'completed' | 'abandoned',
+    @Query() status?: string,
     @Query() userId?: string,
     @Query() startDate?: string,
     @Query() endDate?: string,
     @Query() sortBy: 'createdAt' | 'totalAmount' | 'totalItems' = 'createdAt',
     @Query() sortOrder: 'asc' | 'desc' = 'desc'
-  ): Promise<any> { // TSOA response type handling is tricky with BaseController return types sometimes, using 'any' or explicit SuccessResponse type if BaseController returns compatible type. BaseController usually returns SuccessResponse<T>.
+  ): Promise<any> {
     try {
       console.log(`📋 Admin fetching carts - Status: ${status}, Page: ${page}`);
+
+      // Handle strict typing for status if it's not empty, otherwise treat as undefined
+      const validStatuses = ['active', 'completed', 'abandoned'];
+      const searchStatus = (status && validStatuses.includes(status))
+        ? status as 'active' | 'completed' | 'abandoned'
+        : undefined;
 
       const result = await cartService.getAllCarts({
         page,
         limit,
-        status,
+        status: searchStatus,
         userId,
         dateFrom: startDate ? new Date(startDate) : undefined,
         dateTo: endDate ? new Date(endDate) : undefined,

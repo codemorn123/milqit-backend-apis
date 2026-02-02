@@ -2339,6 +2339,30 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CloudinaryUsage": {
+        "dataType": "refObject",
+        "properties": {
+            "transformations": {"dataType":"double","required":true},
+            "transformationsLimit": {"dataType":"double","required":true},
+            "storage": {"dataType":"double","required":true},
+            "storageLimit": {"dataType":"double","required":true},
+            "bandwidth": {"dataType":"double","required":true},
+            "bandwidthLimit": {"dataType":"double","required":true},
+            "derivedResources": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_CloudinaryUsage_": {
+        "dataType": "refObject",
+        "properties": {
+            "success": {"dataType":"enum","enums":[true],"required":true},
+            "message": {"dataType":"string","required":true},
+            "result": {"ref":"CloudinaryUsage","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserInfo": {
         "dataType": "refObject",
         "properties": {
@@ -7073,6 +7097,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminDashboardController_getCloudinaryUsageStats: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/admin/dashboard/cloudinary-usage',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AdminDashboardController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminDashboardController.prototype.getCloudinaryUsageStats)),
+
+            async function AdminDashboardController_getCloudinaryUsageStats(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminDashboardController_getCloudinaryUsageStats, request, response });
+
+                const controller = new AdminDashboardController();
+
+              await templateService.apiHandler({
+                methodName: 'getCloudinaryUsageStats',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAdminCategoryController_create: Record<string, TsoaRoute.ParameterSchema> = {
                 name: {"in":"formData","name":"name","required":true,"dataType":"string"},
                 description: {"in":"formData","name":"description","dataType":"string"},
@@ -7288,7 +7342,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAdminCartController_getCarts: Record<string, TsoaRoute.ParameterSchema> = {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
                 limit: {"default":20,"in":"query","name":"limit","dataType":"double"},
-                status: {"in":"query","name":"status","dataType":"union","subSchemas":[{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["completed"]},{"dataType":"enum","enums":["abandoned"]}]},
+                status: {"in":"query","name":"status","dataType":"string"},
                 userId: {"in":"query","name":"userId","dataType":"string"},
                 startDate: {"in":"query","name":"startDate","dataType":"string"},
                 endDate: {"in":"query","name":"endDate","dataType":"string"},

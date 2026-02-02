@@ -1,5 +1,5 @@
 import { UploadApiResponse } from 'cloudinary';
-import { uploadImage, deleteImage, deleteMultipleImages } from '../utils/cloudinary.util';
+import { uploadImage, deleteImage, deleteMultipleImages, getCloudinaryUsage } from '../utils/cloudinary.util';
 import APIError from '../error/api-error';
 import { IcommonImage } from '../types/common.types';
 
@@ -272,6 +272,14 @@ export class CloudinaryImageService {
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    /**
+     * Get Cloudinary usage statistics
+     * @returns Promise with usage data
+     */
+    async getUsageStats(): Promise<any> {
+        return await getCloudinaryUsage();
     }
 }
 
