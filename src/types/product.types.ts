@@ -82,7 +82,7 @@ export interface ProductFilterQueryParams {
 }
 
 export interface ProductAvailabilityResponse {
-  id: string;
+  _id: string;
   name: string;
   isAvailable: boolean;
   quantity: number;

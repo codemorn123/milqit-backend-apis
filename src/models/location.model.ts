@@ -282,24 +282,23 @@ const LiveLocationSchema = new Schema<LiveLocationDocument, LiveLocationModel>(
   {
     timestamps: true,
     versionKey: false,
+    id: false,
     toJSON: {
       virtuals: true,
       transform: (_, ret: any) => {
-        ret.id = ret._id?.toString();
-        delete ret._id;
         delete ret.__v;
 
         // Transform ObjectIds to strings for API responses
-        if (ret.userId) ret.userId = ret.userId.toString();
-        if (ret.orderId) ret.orderId = ret.orderId.toString();
+        if (ret.userId && typeof ret.userId === 'object') ret.userId = ret.userId.toString();
+        if (ret.orderId && typeof ret.orderId === 'object') ret.orderId = ret.orderId.toString();
+        return ret;
       },
     },
     toObject: {
       virtuals: true,
       transform: (_, ret: any) => {
-        ret.id = ret._id?.toString();
-        delete ret._id;
         delete ret.__v;
+        return ret;
       },
     }
   }

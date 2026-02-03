@@ -88,7 +88,7 @@ export function parsePaginationQuery(query: PaginationQuery): PaginationOptions 
         page: page > 0 ? page : 1,
         limit: limit > 0 && limit <= 100 ? limit : 10,
         lean: true,
-        leanWithId: true,
+        leanWithId: false,
     };
 
     // Handle sorting
@@ -126,6 +126,6 @@ export const DEFAULT_PAGINATION: PaginationOptions = {
     page: 1,
     limit: 10,
     lean: true,
-    leanWithId: true,
+    leanWithId: false,
     sort: { createdAt: -1 },
 };

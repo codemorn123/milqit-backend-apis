@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export interface IPermission {
 	permissionCode: string;
@@ -34,7 +35,7 @@ const permissionSchema = new Schema<IPermission>(
 		description: { type: String, required: true },
 		subCategory: { type: String, required: false }
 	},
-	{ timestamps: true }
+	createSchemaOptions()
 );
 
 export const Permission = mongoose.model<IPermission>('Permission', permissionSchema);

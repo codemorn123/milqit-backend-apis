@@ -68,7 +68,6 @@ export interface ICart {
  * Cart Document Interface
  */
 export interface ICartDocument extends ICart, Document {
-  id: string; // Add id property
   _id: Types.ObjectId;
   calculateTotals(): void;
   updateActivity(): Promise<void>;

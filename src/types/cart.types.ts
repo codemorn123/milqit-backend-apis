@@ -26,7 +26,7 @@ export interface CartItem {
 }
 
 export interface UserInfo {
-  id: string;
+  _id: string;
   name: string;
   phone: string;
   email?: string;
@@ -37,7 +37,7 @@ export interface UserInfo {
 // Location is imported from common.types.ts
 
 export interface Cart {
-  id: string;
+  _id: string;
   userId: string;
   userInfo?: UserInfo;
   sessionId?: string;
@@ -166,10 +166,10 @@ export interface CartCleanupResponse {
  */
 export function toCartDTO(cartDoc: any): Cart {
   return {
-    id: cartDoc._id?.toString() || cartDoc.id,
+    _id: cartDoc._id?.toString() || cartDoc._id,
     userId: cartDoc.userId?.toString() || cartDoc.userId,
     userInfo: cartDoc.userId && typeof cartDoc.userId === 'object' ? {
-      id: cartDoc.userId._id?.toString() || cartDoc.userId.id,
+      _id: cartDoc.userId._id?.toString() || cartDoc.userId._id,
       name: cartDoc.userId.name || '',
       phone: cartDoc.userId.phone || '',
       email: cartDoc.userId.email
@@ -234,7 +234,7 @@ export function toCartDTO(cartDoc: any): Cart {
  * Cart Response Interface
  */
 export interface ICartResponse {
-  id: string;
+  _id: string;
   userId: string;
   items: ICartItem[];
   totalItems: number;
@@ -256,7 +256,7 @@ export interface ICartResponse {
  * Cart Summary Interface
  */
 export interface ICartSummary {
-  cartId: string;
+  _id: string;
   totalItems: number;
   itemCount: number;
   subtotal: number;

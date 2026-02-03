@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export interface IMarketingCampaign {
     title: string;
@@ -33,9 +34,7 @@ const MarketingCampaignSchema = new Schema<MarketingCampaignDocument>(
         targetAudience: { type: String, default: 'all' },
         failureReason: { type: String },
     },
-    {
-        timestamps: true,
-    }
+    createSchemaOptions()
 );
 
 MarketingCampaignSchema.plugin(mongoosePaginate);

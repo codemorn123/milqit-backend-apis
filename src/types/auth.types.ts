@@ -6,7 +6,7 @@ import { IUser } from "./../models/UserModel";
  * Password and sensitive data are omitted.
  */
 export interface UserProfile {
-  id: string;
+  _id: string;
   name: string;
   phone?: string;
   roles: string[];

@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { ICouponDocument } from './../../types/coupon.types';
+import { createSchemaOptions } from '../../utils/schema.helpers';
 
 const couponSchema: Schema = new Schema<ICouponDocument>({
   code: {
@@ -64,9 +65,7 @@ const couponSchema: Schema = new Schema<ICouponDocument>({
     type: Boolean,
     default: true,
   },
-}, {
-  timestamps: true,
-});
+}, createSchemaOptions());
 
 couponSchema.plugin(mongoosePaginate);
 

@@ -211,10 +211,10 @@ const DeliveryBoySchema = new Schema<IDeliveryBoyDocument>(
     },
     {
         timestamps: true,
+        id: false,
         toJSON: {
             virtuals: true,
             transform: (_, ret: any) => {
-                delete ret._id;
                 delete ret.__v;
                 delete ret.passwordHash;
                 delete ret.aadharNumber;
@@ -222,7 +222,12 @@ const DeliveryBoySchema = new Schema<IDeliveryBoyDocument>(
                 delete ret.bankAccountNumber;
             },
         },
-        toObject: { virtuals: true },
+        toObject: {
+            virtuals: true,
+            transform: (_, ret: any) => {
+                delete ret.__v;
+            }
+        },
     }
 );
 

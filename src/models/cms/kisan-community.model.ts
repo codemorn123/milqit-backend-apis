@@ -23,17 +23,20 @@ const kisanCommunitySchema = new Schema<IKisanCommunityDocument>(
 
     timestamps: true,
     versionKey: false,
+    id: false,
     toJSON: {
       virtuals: true,
       transform: function (doc: IKisanCommunityDocument, ret: any) {
-        // delete ret._id;
         delete ret.__v;
-        // ret.id = doc._id?.toString();
         return ret;
       }
     },
     toObject: {
-      virtuals: true
+      virtuals: true,
+      transform: function (doc: IKisanCommunityDocument, ret: any) {
+        delete ret.__v;
+        return ret;
+      }
     }
   }
 

@@ -140,13 +140,11 @@ export abstract class BaseService<T extends Document = any, CreateDTO = Partial<
 
     /**
      * Helper to normalize lean documents:
-     * - Converts _id to id
-     * - Removes _id and __v
+     * - Keeps _id as the primary identifier
+     * - Removes internal Mongoose field __v
      */
     protected normalizeLeanDoc(doc: any): T {
-        if (doc && doc._id) {
-            doc.id = doc._id.toString();
-            delete doc._id;
+        if (doc) {
             delete doc.__v;
         }
         return doc;

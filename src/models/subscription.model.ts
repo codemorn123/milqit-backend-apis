@@ -1,6 +1,8 @@
 import { Schema, model, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { ISubscription } from '../types/subscription.types';
+import { createSchemaOptions } from '../utils/schema.helpers';
+
 type SubscriptionDocument = ISubscription & Document;
 const SubscriptionSchema = new Schema<SubscriptionDocument>(
   {
@@ -15,7 +17,7 @@ const SubscriptionSchema = new Schema<SubscriptionDocument>(
     subscriptionType: { type: String, required: true },
     planType: { type: String, enum: ['daily', 'weekly', 'monthly'], required: true },
   },
-  { timestamps: true }
+  createSchemaOptions()
 );
 
 // Apply pagination plugin

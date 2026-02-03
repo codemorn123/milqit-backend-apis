@@ -12,7 +12,7 @@ export interface IReview {
 }
 
 // Interface for the Review document returned by Mongoose
-export interface IReviewDocument extends IBase, IReview {}
+export interface IReviewDocument extends IBase, IReview { }
 
 // Interface for the Review model with statics
 export interface IReviewModel extends PaginateModel<IReviewDocument> {
@@ -46,13 +46,19 @@ const ReviewSchema = new Schema<IReviewDocument>(
   },
   {
     timestamps: true,
+    id: false,
     toJSON: {
       virtuals: true,
       transform: (_, ret: any) => {
-        delete ret._id;
         delete ret.__v;
       },
     },
+    toObject: {
+      virtuals: true,
+      transform: (_, ret: any) => {
+        delete ret.__v;
+      },
+    }
   }
 );
 

@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export type TransactionStatus = 'created' | 'authorized' | 'captured' | 'failed' | 'refunded';
 export type TransactionMethod = 'card' | 'upi' | 'netbanking' | 'wallet' | 'cod' | 'unknown';
@@ -90,10 +91,7 @@ const PaymentSchema = new Schema<PaymentDocument>(
             type: String
         }
     },
-    {
-        timestamps: true,
-        versionKey: false
-    }
+    createSchemaOptions()
 );
 
 PaymentSchema.plugin(mongoosePaginate);

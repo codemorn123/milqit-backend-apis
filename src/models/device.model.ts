@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export interface IDevice {
     userId: mongoose.Types.ObjectId;
@@ -41,10 +42,7 @@ const DeviceSchema = new Schema<DeviceDocument>(
             default: Date.now
         }
     },
-    {
-        timestamps: true,
-        versionKey: false
-    }
+    createSchemaOptions()
 );
 
 // Index to quickly find user's active devices

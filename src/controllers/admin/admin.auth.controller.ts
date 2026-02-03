@@ -75,7 +75,7 @@ export class AdminController extends BaseController {
     // Attempt login
     const { user, tokens } = await AdminService.login(body);
 
-    logger.info({ adminId: user.id, email: body.email }, 'Admin logged in successfully');
+    logger.info({ adminId: user._id, email: body.email }, 'Admin logged in successfully');
     return this.sendSuccess({ user, tokens }, 'Login successful');
   }
 

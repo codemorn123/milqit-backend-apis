@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { ISettings } from './../../types/settings.types';
+import { createSchemaOptions } from '../../utils/schema.helpers';
 
 type SettingsDocument = ISettings & Document;
 
@@ -27,9 +28,7 @@ const settingsSchema: Schema = new Schema<SettingsDocument>({
     isReferralEnabled: { type: Boolean, default: true },
     isNewPaymentGatewayVisible: { type: Boolean, default: false },
   },
-}, {
-  timestamps: true,
-});
+}, createSchemaOptions());
 
 // Apply pagination plugin
 settingsSchema.plugin(mongoosePaginate);

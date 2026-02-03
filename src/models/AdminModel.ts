@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export interface IAdminDocument extends Document {
   name: string;
@@ -22,9 +23,7 @@ const AdminSchema = new Schema<IAdminDocument>({
   isActive: { type: Boolean, default: true },
   isEmailVerified: { type: Boolean, default: false },
   isPhoneVerified: { type: Boolean, default: false },
-}, {
-  timestamps: true
-});
+}, createSchemaOptions());
 
 export const AdminModel = mongoose.model<IAdminDocument>('Admin', AdminSchema);
 

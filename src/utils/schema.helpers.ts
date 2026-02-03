@@ -186,10 +186,10 @@ export const AddressSchema = new Schema(
 export const createSchemaOptions = (customOptions: any = {}) => ({
     timestamps: true,
     versionKey: false,
+    id: false,
     toJSON: {
         virtuals: true,
         transform: (_: any, ret: any) => {
-            delete ret._id;
             delete ret.__v;
             return ret;
         },
@@ -197,7 +197,6 @@ export const createSchemaOptions = (customOptions: any = {}) => ({
     toObject: {
         virtuals: true,
         transform: (_: any, ret: any) => {
-            delete ret._id;
             delete ret.__v;
             return ret;
         },

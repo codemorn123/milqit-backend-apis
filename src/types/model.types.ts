@@ -15,16 +15,20 @@ export interface IBaseDocument extends Document {
 export const DEFAULT_SCHEMA_OPTIONS = {
     timestamps: true,
     versionKey: false,
+    id: false,
     toJSON: {
         virtuals: true,
         transform: (_: any, ret: any) => {
-            delete ret._id;
             delete ret.__v;
             return ret;
         },
     },
     toObject: {
         virtuals: true,
+        transform: (_: any, ret: any) => {
+            delete ret.__v;
+            return ret;
+        },
     },
 } as const;
 

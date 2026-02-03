@@ -273,7 +273,7 @@ class ProductService extends BaseService<ProductDocument, CreateProductPayload, 
     if (!product) return null;
 
     return {
-      id: product._id.toString(),
+      _id: product._id.toString(),
       name: product.name,
       isAvailable: product.quantity > 0 && product.isActive,
       quantity: product.quantity,

@@ -1,45 +1,47 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export interface IOtp {
   phone: string;
   otp: string;
   expiresAt: Date;
   attempts: number;
-  isInvalidated: boolean; 
+  isInvalidated: boolean;
   createdAt: Date;
   updatedAt: Date;
   isVerified: boolean;
-  
+
 }
 
-export interface IOtpDocument extends IOtp, Document {}
+export interface IOtpDocument extends IOtp, Document { }
 const OtpSchema = new Schema<IOtpDocument>(
-  {phone: {
+  {
+    phone: {
       type: String,
       required: true,
       index: true,
-      unique: true ,
+      unique: true,
       validate: {
         validator: function (v) {
           return /^\+[1-9]\d{1,14}$/.test(v);
         },
         message: 'Please provide a valid phone number',
-    },
+      },
 
     },
-   
+
     otp: {
       type: String,
       required: true,
       // REMOVED: Validation for 6-digit numeric code
     },
     expiresAt: { type: Date, required: true },
-  
-    attempts: { 
-      type: Number, 
-      default: 0 
+
+    attempts: {
+      type: Number,
+      default: 0
     },
-    
+
     isVerified: {
       type: Boolean,
       default: false
@@ -48,10 +50,8 @@ const OtpSchema = new Schema<IOtpDocument>(
       type: Boolean,
       default: false
     }
-  }, 
-  { 
-    timestamps: true 
-  }
+  },
+  createSchemaOptions()
 );
 
 // OtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

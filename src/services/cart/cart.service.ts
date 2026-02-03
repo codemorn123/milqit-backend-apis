@@ -613,7 +613,7 @@ class CartService {
       }
 
       return {
-        cartId: (cart as any)._id?.toString() || (cart as any).id || '',
+        _id: (cart as any)._id?.toString() || (cart as any).id || '',
         totalItems: cart.totalItems,
         itemCount: cart.items.length,
         subtotal: cart.subtotal,

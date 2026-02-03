@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { createSchemaOptions } from '../utils/schema.helpers';
 
 export type RefundStatus = 'pending' | 'processing' | 'completed' | 'rejected' | 'failed';
 
@@ -112,10 +113,7 @@ const RefundSchema = new Schema<RefundDocument>(
       type: String
     }
   },
-  {
-    timestamps: true,
-    versionKey: false
-  }
+  createSchemaOptions()
 );
 
 RefundSchema.plugin(mongoosePaginate);

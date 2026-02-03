@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, PaginateModel } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
-// import { INotification } from './../types/notification.types';
-
+import { createSchemaOptions } from '../../utils/schema.helpers';
 
 export interface INotification {
   title: string;
@@ -15,8 +14,6 @@ export interface INotification {
 }
 
 export type INotificationDocument = INotification & Document;
-
-
 
 const notificationSchema: Schema = new Schema<INotificationDocument>({
   title: {
@@ -46,9 +43,7 @@ const notificationSchema: Schema = new Schema<INotificationDocument>({
     type: String,
     optional: true,
   },
-}, {
-  timestamps: true, // Adds createdAt and updatedAt timestamps
-});
+}, createSchemaOptions());
 
 // Apply the pagination plugin
 notificationSchema.plugin(mongoosePaginate);
