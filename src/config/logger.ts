@@ -13,7 +13,7 @@ const pinoConfig: pino.LoggerOptions = {
     },
   },
   // Format logs in development using pino-pretty
-  ...(config.env === 'development' && {
+  ...(process.env.NODE_ENV !== 'production' ? {
     transport: {
       target: 'pino-pretty',
       options: {
@@ -22,7 +22,7 @@ const pinoConfig: pino.LoggerOptions = {
         ignore: 'pid,hostname'
       }
     }
-  })
+  } : {})
 };
 
 export const logger = pino(pinoConfig);
