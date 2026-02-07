@@ -27,9 +27,9 @@ const winstonInstance = winston.createLogger({
         logFormat // Apply custom format
       ),
     }),
-    // Optionally add File transport here
-    // new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    // new winston.transports.File({ filename: 'combined.log' }),
+    // Enable File transport for persistent logging
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
   ],
 });
 
