@@ -6999,7 +6999,7 @@
 			},
 			"UserInfo": {
 				"properties": {
-					"id": {
+					"_id": {
 						"type": "string"
 					},
 					"name": {
@@ -7013,7 +7013,7 @@
 					}
 				},
 				"required": [
-					"id",
+					"_id",
 					"name",
 					"phone"
 				],
@@ -7102,7 +7102,7 @@
 			},
 			"Cart": {
 				"properties": {
-					"id": {
+					"_id": {
 						"type": "string"
 					},
 					"userId": {
@@ -7204,7 +7204,7 @@
 					}
 				},
 				"required": [
-					"id",
+					"_id",
 					"userId",
 					"items",
 					"totalItems",
@@ -7545,7 +7545,7 @@
 			"UserProfile": {
 				"description": "The shape of the user profile data that is safe to return to clients.\nPassword and sensitive data are omitted.",
 				"properties": {
-					"id": {
+					"_id": {
 						"type": "string"
 					},
 					"name": {
@@ -7577,7 +7577,7 @@
 					}
 				},
 				"required": [
-					"id",
+					"_id",
 					"name",
 					"roles",
 					"isActive",
@@ -7694,6 +7694,9 @@
 					},
 					"password": {
 						"type": "string"
+					},
+					"platform": {
+						"$ref": "#/components/schemas/AuthPlatform"
 					}
 				},
 				"required": [
@@ -20645,78 +20648,6 @@
 					},
 					"400": {
 						"description": "Validation Failed"
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Resource not found",
-											"code": "NOT_FOUND"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Validation failed",
-											"code": "VALIDATION_ERROR",
-											"details": {
-												"field": [
-													"Error description"
-												]
-											}
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Internal server error",
-											"code": "INTERNAL_SERVER_ERROR"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"description": "Create a new admin account. Only admins can create new admin accounts.\nRequires authentication and proper admin privileges.",
@@ -20753,7 +20684,8 @@
 										"value": {
 											"body": {
 												"email": "admin@milqit.com",
-												"password": "SecurePassword@123"
+												"password": "SecurePassword@123",
+												"platform": "web"
 											}
 										}
 									}
@@ -20766,71 +20698,9 @@
 					},
 					"401": {
 						"description": "Invalid Credentials"
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Resource not found",
-											"code": "NOT_FOUND"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Validation failed",
-											"code": "VALIDATION_ERROR",
-											"details": {
-												"field": [
-													"Error description"
-												]
-											}
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Internal server error",
-											"code": "INTERNAL_SERVER_ERROR"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
-				"description": "Admin login endpoint\nReturns user profile and authentication tokens",
+				"description": "Admin login endpoint\nReturns user profile and authentication tokens\nSets HTTP-only cookies for secure authentication (Web only)",
 				"tags": [
 					"Admin Management"
 				],
@@ -20864,78 +20734,6 @@
 					},
 					"400": {
 						"description": "Invalid Query Params"
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Resource not found",
-											"code": "NOT_FOUND"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Validation failed",
-											"code": "VALIDATION_ERROR",
-											"details": {
-												"field": [
-													"Error description"
-												]
-											}
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Internal server error",
-											"code": "INTERNAL_SERVER_ERROR"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"description": "Get paginated list of customers\nRequires admin authentication",
@@ -21020,88 +20818,6 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"401": {
-						"description": "Unauthorized",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Resource not found",
-											"code": "NOT_FOUND"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Validation failed",
-											"code": "VALIDATION_ERROR",
-											"details": {
-												"field": [
-													"Error description"
-												]
-											}
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Internal server error",
-											"code": "INTERNAL_SERVER_ERROR"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
 				"description": "Get list of all admin users\nRequires admin authentication and super admin privileges",
@@ -21135,96 +20851,59 @@
 					},
 					"401": {
 						"description": "Invalid Token"
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Resource not found",
-											"code": "NOT_FOUND"
-										}
-									}
-								}
-							}
-						}
-					},
-					"422": {
-						"description": "Validation Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Validation failed",
-											"code": "VALIDATION_ERROR",
-											"details": {
-												"field": [
-													"Error description"
-												]
-											}
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"success": false,
-											"error": "Internal server error",
-											"code": "INTERNAL_SERVER_ERROR"
-										}
-									}
-								}
-							}
-						}
 					}
 				},
-				"description": "Refresh authentication tokens",
+				"description": "Refresh authentication tokens\nSupports both body-based (mobile) and cookie-based (web) refresh tokens",
 				"tags": [
 					"Admin Management"
 				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
-					"description": "Refresh token",
-					"required": true,
+					"required": false,
 					"content": {
 						"application/json": {
 							"schema": {
 								"properties": {
+									"platform": {
+										"type": "string",
+										"enum": [
+											"mobile",
+											"web"
+										]
+									},
 									"refreshToken": {
 										"type": "string"
 									}
 								},
-								"required": [
-									"refreshToken"
-								],
-								"type": "object",
-								"description": "Refresh token"
+								"type": "object"
 							}
 						}
 					}
 				}
+			}
+		},
+		"/admin/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Logout - Clear authentication cookies",
+				"tags": [
+					"Admin Management"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/admin/settings": {

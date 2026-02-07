@@ -241,16 +241,7 @@ export class CustomerOrderController extends BaseController {
 
   // --- Private Helpers ---
 
-  /**
-   * Extract authenticated user ID from request
-   */
-  private getUserId(req: any): string {
-    const userId = req.user?.userId;
-    if (!userId) {
-      throw new APIError('User not authenticated', StatusCodes.UNAUTHORIZED);
-    }
-    return userId;
-  }
+
 
   /**
    * Fetch order and validate it belongs to the user

@@ -56,7 +56,7 @@ export class MobileUserController extends BaseController {
   public async getUserProfile(
     @Request() req: any
   ): Promise<SuccessResponse<IUser>> {
-    const userId = req.user.userId;
+    const userId = this.getUserId(req);
     const user = await UserService.getAndValidateUser(userId);
     return this.sendSuccess(user, 'User profile retrieved successfully');
   }
@@ -68,14 +68,14 @@ export class MobileUserController extends BaseController {
   @Security('jwt')
   @Middlewares([
     // validateSchemaMiddleware(idParamSchema, "params"), // Removed
-    validateSchemaMiddleware(updateProfileSchema)
+    validateSchemaMiddleware(updateProfileSchema, "body")
   ])
   @Example<SuccessResponse<{}>>(success({}, 'Profile updated successfully'))
   public async updateProfile(
     @Request() req: any,
     @Body() body: IUpdateProfileRequest
   ): Promise<SuccessResponse<IUser>> {
-    const userId = req.user.userId;
+    const userId = this.getUserId(req);
     const updatedUser = await UserService.updateUserProfile(userId, body);
     if (!updatedUser) {
       throw new PresentableError('NOT_FOUND', 'User not found');
@@ -93,7 +93,7 @@ export class MobileUserController extends BaseController {
   public async deleteProfile(
     @Request() req: any
   ): Promise<SuccessResponse<{ success: boolean }>> {
-    const userId = req.user.userId;
+    const userId = this.getUserId(req);
     await UserService.deactivateUser(userId);
     return this.sendSuccess({ success: true }, 'Profile deleted successfully');
   }
@@ -110,7 +110,7 @@ export class MobileUserController extends BaseController {
   public async getAddresses(
     @Request() req: any
   ): Promise<SuccessResponse<any>> {
-    const userId = req.user.userId;
+    const userId = this.getUserId(req);
     const user = await UserService.getActiveUserById(userId);
     if (!user) {
       throw new PresentableError('NOT_FOUND', 'User not found');
@@ -125,14 +125,14 @@ export class MobileUserController extends BaseController {
   @Security('jwt')
   @Middlewares([
     // validateSchemaMiddleware(idParamSchema, "params"), // Removed
-    validateSchemaMiddleware(addAddressSchema)
+    validateSchemaMiddleware(addAddressSchema, "body")
   ])
   @TsoaSuccessResponse(StatusCodes.CREATED, "Address Added")
   public async addAddress(
     @Request() req: any,
     @Body() address: any
   ): Promise<SuccessResponse<any>> {
-    const userId = req.user.userId;
+    const userId = this.getUserId(req);
     const updatedUser = await UserService.addUserAddress(userId, address);
     const newAddress = updatedUser?.addresses?.slice(-1)[0];
     return this.sendCreated(newAddress, 'Address added successfully');
@@ -145,7 +145,7 @@ export class MobileUserController extends BaseController {
   @Security('jwt')
   @Middlewares([
     // validateSchemaMiddleware(idParamSchema, "params"), // Removed
-    validateSchemaMiddleware(addressIdSchema)
+    validateSchemaMiddleware(addressIdSchema, "body")
   ])
   @Example<SuccessResponse<{ success: boolean }>>(
     success({ success: true }, 'Primary address set successfully')
@@ -154,7 +154,7 @@ export class MobileUserController extends BaseController {
     @Request() req: any,
     @Body() body: { addressId: string }
   ): Promise<SuccessResponse<{ success: boolean }>> {
-    const userId = req.user.userId;
+    const userId = this.getUserId(req);
     await UserService.setPrimaryAddress(userId, body.addressId);
     return this.sendSuccess({ success: true }, 'Primary address set successfully');
   }
@@ -166,7 +166,7 @@ export class MobileUserController extends BaseController {
   @Security('jwt')
   @Middlewares([
     // validateSchemaMiddleware(idParamSchema, "params"), // Removed
-    validateSchemaMiddleware(addressIdSchema)
+    validateSchemaMiddleware(addressIdSchema, "body")
   ])
   @Example<SuccessResponse<{ success: boolean }>>(
     success({ success: true }, 'Address removed successfully')
@@ -175,7 +175,7 @@ export class MobileUserController extends BaseController {
     @Request() req: any,
     @Body() body: { addressId: string }
   ): Promise<SuccessResponse<{ success: boolean }>> {
-    const userId = req.user.userId;
+    const userId = this.getUserId(req);
     await UserService.removeUserAddress(userId, body.addressId);
     return this.sendSuccess({ success: true }, 'Address removed successfully');
   }

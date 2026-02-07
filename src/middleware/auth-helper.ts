@@ -4,12 +4,20 @@ import APIError from "../error/api-error";
 
 export async function expressAuthentication(request: Request, securityName: string, scopes?: string[]): Promise<any> {
   if (securityName === "jwt") {
-    const authHeader = request.headers["authorization"];
-    if (!authHeader) {
-      return Promise.reject(new APIError("No token provided", 401));
+    let tokenStr = request.headers["authorization"];
+    let token = "";
+
+    if (tokenStr) {
+      token = tokenStr.replace("Bearer ", "");
+    }
+    // Check cookies if not in header
+    else if (request.cookies && request.cookies["access_token"]) {
+      token = request.cookies["access_token"];
     }
 
-    const token = authHeader.replace("Bearer ", "");
+    if (!token) {
+      return Promise.reject(new APIError("No token provided", 401));
+    }
 
     try {
       const payload = tokenService.verifyAccessToken(token);

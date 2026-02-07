@@ -5,8 +5,10 @@ import {
   NoSecurity,
   Queries,
   Security,
-  SuccessResponse as TsoaSuccessResponse
+  SuccessResponse as TsoaSuccessResponse,
+  Request
 } from 'tsoa';
+import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { ErrorResponse, IFilter, PaginatedResponse } from '../../types/common.types';
@@ -20,18 +22,13 @@ import { AdminService } from '../../services/admin.service';
 import { IUser } from '../../models/UserModel';
 import { logger } from '../../config/logger';
 import { AdminUserService } from '../../services/admin/admin.users.service';
-
-
-
+import CookieHelper from '../../utils/cookie.helper';
+import { AdminControllerResponses } from '../../constants/response-decorators';
 import { BaseController } from '../base.controller';
 
 @Route('admin')
 @Tags('Admin Management')
-@Response<ErrorResponse>(StatusCodes.UNPROCESSABLE_ENTITY, 'Validation Error', VALIDATION_ERROR_EXAMPLE)
-@Response<ErrorResponse>(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error', SERVER_ERROR_EXAMPLE)
-@Response<ErrorResponse>(StatusCodes.NOT_FOUND, 'Not Found', NOT_FOUND_ERROR_EXAMPLE)
-@Response<ErrorResponse>(StatusCodes.BAD_REQUEST, 'Bad Request')
-@Response<ErrorResponse>(StatusCodes.UNAUTHORIZED, 'Unauthorized')
+@AdminControllerResponses()
 export class AdminController extends BaseController {
   private adminUserService = new AdminUserService();
 
@@ -53,16 +50,19 @@ export class AdminController extends BaseController {
     logger.info({ adminEmail: body.email }, 'Admin created successfully');
     return this.sendCreated(adminUser, 'Admin account created successfully');
   }
+
   /**
    * Admin login endpoint
    * Returns user profile and authentication tokens
+   * Sets HTTP-only cookies for secure authentication (Web only)
    */
   @Post('login')
   @NoSecurity()
   @Example({
     body: {
       "email": "admin@milqit.com",
-      "password": "SecurePassword@123"
+      "password": "SecurePassword@123",
+      "platform": "web"
     }
   })
   @Middlewares([validateSchemaMiddleware(loginSchema, 'body')])
@@ -70,16 +70,29 @@ export class AdminController extends BaseController {
   @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   @Response(StatusCodes.UNAUTHORIZED, "Invalid Credentials")
   public async login(
-    @Body() body: LoginRequest
+    @Body() body: LoginRequest,
+    @Request() request: ExpressRequest
   ): Promise<SuccessResponse<{ user: UserProfile; tokens: AuthTokens }>> {
-    // Attempt login
     const { user, tokens } = await AdminService.login(body);
 
-    logger.info({ adminId: user._id, email: body.email }, 'Admin logged in successfully');
+    const platform = body.platform || 'web'; // Default to web for backward compatibility with admin panel
+
+    // Set HTTP-only cookies only for web platform
+    if (platform === 'web') {
+      const res = request.res as ExpressResponse;
+      if (res) {
+        CookieHelper.setAuthTokens(
+          res,
+          tokens.accessToken,
+          tokens.refreshToken,
+          tokens.expiresIn
+        );
+      }
+    }
+
+    logger.info({ adminId: user._id, email: body.email, platform }, 'Admin logged in successfully');
     return this.sendSuccess({ user, tokens }, 'Login successful');
   }
-
-
 
   /**
    * Get paginated list of customers
@@ -108,21 +121,57 @@ export class AdminController extends BaseController {
     return this.sendSuccess(users, 'Admin users fetched successfully');
   }
 
-
   /**
    * Refresh authentication tokens
-   * @param body Refresh token
+   * Supports both body-based (mobile) and cookie-based (web) refresh tokens
    */
   @Post('refresh-token')
   @NoSecurity()
-  @Middlewares([validateSchemaMiddleware(refreshTokenSchema, 'body')])
   @TsoaSuccessResponse(StatusCodes.OK, "Success")
   @Response(StatusCodes.BAD_REQUEST, "Validation Failed")
   @Response(StatusCodes.UNAUTHORIZED, "Invalid Token")
   public async refreshToken(
-    @Body() body: { refreshToken: string }
+    @Request() request: ExpressRequest,
+    @Body() body: { refreshToken?: string; platform?: 'mobile' | 'web' } = {}
   ): Promise<SuccessResponse<{ tokens: AuthTokens }>> {
-    const result = await AuthService.refreshToken(body);
+    // Get refresh token from cookie or body
+    const refreshToken = CookieHelper.getRefreshToken(request) || body.refreshToken;
+
+    if (!refreshToken) {
+      throw new Error('Refresh token is required');
+    }
+
+    const result = await AuthService.refreshToken({ refreshToken });
+    const platform = body.platform || 'web';
+
+    // Update cookies if response object is available and platform is web
+    if (platform === 'web') {
+      const res = request.res as ExpressResponse;
+      if (res) {
+        CookieHelper.setAuthTokens(
+          res,
+          result.tokens.accessToken,
+          result.tokens.refreshToken,
+          result.tokens.expiresIn
+        );
+      }
+    }
+
     return this.sendSuccess(result, 'Tokens refreshed successfully');
+  }
+
+  /**
+   * Logout - Clear authentication cookies
+   */
+  @Post('logout')
+  @TsoaSuccessResponse(StatusCodes.OK, "Success")
+  public async logout(
+    @Request() request: ExpressRequest
+  ): Promise<SuccessResponse<null>> {
+    const res = request.res as ExpressResponse;
+    if (res) {
+      CookieHelper.clearAuthTokens(res);
+    }
+    return this.sendSuccess(null, 'Logged out successfully');
   }
 }

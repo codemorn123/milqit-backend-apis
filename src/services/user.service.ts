@@ -105,12 +105,8 @@ const UserService = {
      * Verify a user has admin privileges
      */
     async verifyAdminPrivileges(userId: string): Promise<void> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('FORBIDDEN', 'Invalid user ID');
-        }
-
-        const user = await UserModel.findById(userId);
-        if (!user || !user.roles.includes('admin')) {
+        const user = await this.getAndValidateUser(userId);
+        if (!user.roles.includes('admin')) {
             throw new PresentableError('FORBIDDEN', 'You do not have permission to perform this action');
         }
     },
@@ -120,23 +116,31 @@ const UserService = {
      * Update user's saved addresses
      */
     async addUserAddress(userId: string, address: any): Promise<IUser | null> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
-        }
-
         try {
-            await this.getAndValidateUser(userId);
+            const user = await this.getAndValidateUser(userId);
+
+            // Calculate isPrimary logic
+            const isPrimary = address.isPrimary === true;
+            const shouldSetPrimary = isPrimary || (!user.addresses || user.addresses.length === 0);
 
             // Add address with unique ID
             const addressId = new mongoose.Types.ObjectId().toString();
-            const newAddress = { ...address, id: addressId };
+            // Remove isPrimary from the address object itself as it's not in schema
+            const { isPrimary: _, ...addressData } = address;
+            const newAddress = { ...addressData, id: addressId };
+
+            const updateUpdate: any = {
+                $push: { addresses: newAddress },
+                $set: { updatedAt: new Date() }
+            };
+
+            if (shouldSetPrimary) {
+                updateUpdate.$set.primaryAddressId = addressId;
+            }
 
             const updatedUser = await UserModel.findByIdAndUpdate(
                 userId,
-                {
-                    $push: { addresses: newAddress },
-                    updatedAt: new Date()
-                },
+                updateUpdate,
                 { new: true }
             );
 
@@ -154,10 +158,6 @@ const UserService = {
      * Update user's primary address
      */
     async setPrimaryAddress(userId: string, addressId: string): Promise<IUser | null> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
-        }
-
         try {
             const user = await this.getAndValidateUser(userId);
 
@@ -191,10 +191,6 @@ const UserService = {
      * Update user's current location
      */
     async updateUserLocation(userId: string, location: GeoLocation): Promise<IUser | null> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
-        }
-
         try {
             await this.getAndValidateUser(userId);
             // Validate coordinates
@@ -237,10 +233,6 @@ const UserService = {
      * Delete a user address
      */
     async removeUserAddress(userId: string, addressId: string): Promise<IUser | null> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
-        }
-
         try {
             const user = await this.getAndValidateUser(userId);
 
@@ -306,10 +298,6 @@ const UserService = {
      * Update user FCM token for push notifications
      */
     async updateFcmToken(userId: string, fcmToken: string): Promise<void> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
-        }
-
         try {
             await this.getAndValidateUser(userId);
             await UserModel.findByIdAndUpdate(
@@ -332,10 +320,6 @@ const UserService = {
      * Update user profile
      */
     async updateUserProfile(userId: string, data: Partial<IUser>): Promise<IUser | null> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
-        }
-
         try {
             await this.getAndValidateUser(userId);
             // Prevent updating sensitive fields directly
@@ -371,10 +355,6 @@ const UserService = {
      * Deactivate user account (Soft delete)
      */
     async deactivateUser(userId: string): Promise<void> {
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            throw new PresentableError('BAD_REQUEST', 'Invalid user ID');
-        }
-
         try {
             await this.getAndValidateUser(userId);
             const user = await UserModel.findByIdAndUpdate(

@@ -79,4 +79,31 @@ export abstract class BaseController extends Controller {
     protected sendInternalError(message: string = 'Internal Server Error', code: string = 'INTERNAL_ERROR', details?: Record<string, any>): ErrorResponse {
         return this.sendError(message, code, StatusCodes.INTERNAL_SERVER_ERROR, details);
     }
+
+    /**
+     * Get user ID from request
+     * Throws 401 if user is not attached to request
+     */
+    protected getUserId(req: any): string {
+        if (!req.user || !req.user.userId) {
+            throw {
+                statusCode: StatusCodes.UNAUTHORIZED,
+                message: 'User authentication required',
+            };
+        }
+        return req.user.userId;
+    }
+
+    /**
+     * Get user object from request
+     */
+    protected getUser(req: any): { userId: string; roles: string[] } {
+        if (!req.user) {
+            throw {
+                statusCode: StatusCodes.UNAUTHORIZED,
+                message: 'User authentication required',
+            };
+        }
+        return req.user;
+    }
 }

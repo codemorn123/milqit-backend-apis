@@ -2366,7 +2366,7 @@ const models: TsoaRoute.Models = {
     "UserInfo": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"string","required":true},
+            "_id": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
             "phone": {"dataType":"string","required":true},
             "email": {"dataType":"string"},
@@ -2400,7 +2400,7 @@ const models: TsoaRoute.Models = {
     "Cart": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"string","required":true},
+            "_id": {"dataType":"string","required":true},
             "userId": {"dataType":"string","required":true},
             "userInfo": {"ref":"UserInfo"},
             "sessionId": {"dataType":"string"},
@@ -2520,7 +2520,7 @@ const models: TsoaRoute.Models = {
     "UserProfile": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"string","required":true},
+            "_id": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
             "phone": {"dataType":"string"},
             "roles": {"dataType":"array","array":{"dataType":"string"},"required":true},
@@ -2571,6 +2571,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
+            "platform": {"ref":"AuthPlatform"},
         },
         "additionalProperties": false,
     },
@@ -7646,6 +7647,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAdminController_login: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"LoginRequest"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         app.post('/admin/login',
             ...(fetchMiddlewares<RequestHandler>(AdminController)),
@@ -7736,7 +7738,8 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAdminController_refreshToken: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"refreshToken":{"dataType":"string","required":true}}},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","dataType":"nestedObjectLiteral","nestedProperties":{"platform":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["mobile"]},{"dataType":"enum","enums":["web"]}]},"refreshToken":{"dataType":"string"}}},
         };
         app.post('/admin/refresh-token',
             ...(fetchMiddlewares<RequestHandler>(AdminController)),
@@ -7754,6 +7757,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'refreshToken',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAdminController_logout: Record<string, TsoaRoute.ParameterSchema> = {
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        app.post('/admin/logout',
+            ...(fetchMiddlewares<RequestHandler>(AdminController)),
+            ...(fetchMiddlewares<RequestHandler>(AdminController.prototype.logout)),
+
+            async function AdminController_logout(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAdminController_logout, request, response });
+
+                const controller = new AdminController();
+
+              await templateService.apiHandler({
+                methodName: 'logout',
                 controller,
                 response,
                 next,

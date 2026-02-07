@@ -48,6 +48,7 @@ export interface AuthResponse {
 export interface LoginRequest {
   email: string;
   password: string;
+  platform?: AuthPlatform;
 }
 
 /**
