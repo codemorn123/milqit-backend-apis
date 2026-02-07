@@ -5,8 +5,8 @@ import helmet from 'helmet';
 import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
 import { config } from './config';
-import { logger } from './config/logger';
-import pinoHttp from 'pino-http';
+import { logger, stream } from './config/logger';
+import morgan from 'morgan';
 
 import { RegisterRoutes } from './generated/routes';
 import cookieParser from 'cookie-parser';
@@ -19,12 +19,8 @@ const app = express();
 
 const httpServer = createServer(app);
 
-app.use(pinoHttp({
-  logger,
-  autoLogging: {
-    ignore: req => req.url === '/health'
-  }
-}));
+// Use Morgan for HTTP request logging via Winston
+app.use(morgan(config.env === 'development' ? 'dev' : 'combined', { stream }));
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -70,7 +66,6 @@ app.use(cors({
 
 app.use(compression());
 
-// morgan removed in favor of pino-http
 
 // Import timeout middleware
 import { requestTimeout, enhancedHealthCheck } from './middleware/timeout';
