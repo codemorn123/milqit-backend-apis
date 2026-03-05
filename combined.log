@@ -1,0 +1,40 @@
+{"level":"warn","message":"Razorpay keys not found in config. Payment service will not work.","timestamp":"2026-03-05 14:43:23"}
+{"level":"warn","message":"Firebase Service Account Key not provided. FCM will not work.","timestamp":"2026-03-05 14:43:23"}
+{"level":"info","message":"Connected to MongoDB successfully","timestamp":"2026-03-05 14:43:24"}
+{"env":"development","level":"info","memoryUsage":"953MB","message":"Server started - development mode on port 5001","nodeVersion":"v23.9.0","port":5001,"timestamp":"2026-03-05 14:43:24"}
+{"level":"info","message":"Mobile API: http://localhost:5001/v1/mobile","timestamp":"2026-03-05 14:43:24"}
+{"level":"info","message":"Admin API: http://localhost:5001/v1/admin","timestamp":"2026-03-05 14:43:24"}
+{"level":"warn","message":"Razorpay keys not found in config. Payment service will not work.","timestamp":"2026-03-05 14:45:46"}
+{"level":"warn","message":"Firebase Service Account Key not provided. FCM will not work.","timestamp":"2026-03-05 14:45:46"}
+{"level":"info","message":"Connected to MongoDB successfully","timestamp":"2026-03-05 14:45:50"}
+{"env":"development","level":"info","memoryUsage":"954MB","message":"Server started - development mode on port 5001","nodeVersion":"v23.9.0","port":5001,"timestamp":"2026-03-05 14:45:50"}
+{"level":"info","message":"Mobile API: http://localhost:5001/v1/mobile","timestamp":"2026-03-05 14:45:50"}
+{"level":"info","message":"Admin API: http://localhost:5001/v1/admin","timestamp":"2026-03-05 14:45:50"}
+{"level":"info","message":"\u001b[0mGET /docs \u001b[36m301\u001b[0m 16.868 ms - 154\u001b[0m","timestamp":"2026-03-05 14:48:15"}
+{"level":"info","message":"\u001b[0mGET /docs/ \u001b[32m200\u001b[0m 24.620 ms - -\u001b[0m","timestamp":"2026-03-05 14:48:15"}
+{"level":"info","message":"\u001b[0mGET /docs/swagger-ui.css \u001b[32m200\u001b[0m 14.116 ms - -\u001b[0m","timestamp":"2026-03-05 14:48:15"}
+{"level":"info","message":"\u001b[0mGET /docs/swagger-ui-init.js \u001b[32m200\u001b[0m 7.956 ms - -\u001b[0m","timestamp":"2026-03-05 14:48:15"}
+{"level":"info","message":"\u001b[0mGET /docs/swagger-ui-standalone-preset.js \u001b[32m200\u001b[0m 10.658 ms - -\u001b[0m","timestamp":"2026-03-05 14:48:15"}
+{"level":"info","message":"\u001b[0mGET /docs/swagger-ui-bundle.js \u001b[32m200\u001b[0m 12.111 ms - -\u001b[0m","timestamp":"2026-03-05 14:48:15"}
+{"level":"info","message":"\u001b[0mGET /docs/favicon-32x32.png \u001b[32m200\u001b[0m 11.638 ms - 628\u001b[0m","timestamp":"2026-03-05 14:48:16"}
+{"level":"warn","message":"Razorpay keys not found in config. Payment service will not work.","timestamp":"2026-03-05 14:50:19"}
+{"level":"warn","message":"Firebase Service Account Key not provided. FCM will not work.","timestamp":"2026-03-05 14:50:19"}
+{"level":"info","message":"Connected to MongoDB successfully","timestamp":"2026-03-05 14:50:21"}
+{"env":"development","level":"info","memoryUsage":"886MB","message":"Server started - development mode on port 5001","nodeVersion":"v23.9.0","port":5001,"timestamp":"2026-03-05 14:50:21"}
+{"level":"info","message":"Mobile API: http://localhost:5001/v1/mobile","timestamp":"2026-03-05 14:50:21"}
+{"level":"info","message":"Admin API: http://localhost:5001/v1/admin","timestamp":"2026-03-05 14:50:21"}
+{"level":"warn","message":"Razorpay keys not found in config. Payment service will not work.","timestamp":"2026-03-05 14:50:49"}
+{"level":"warn","message":"Firebase Service Account Key not provided. FCM will not work.","timestamp":"2026-03-05 14:50:49"}
+{"level":"info","message":"Connected to MongoDB successfully","timestamp":"2026-03-05 14:50:54"}
+{"env":"development","level":"info","memoryUsage":"591MB","message":"Server started - development mode on port 5001","nodeVersion":"v23.9.0","port":5001,"timestamp":"2026-03-05 14:50:54"}
+{"level":"info","message":"Mobile API: http://localhost:5001/v1/mobile","timestamp":"2026-03-05 14:50:54"}
+{"level":"info","message":"Admin API: http://localhost:5001/v1/admin","timestamp":"2026-03-05 14:50:54"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","timestamp":"2026-03-05 14:55:17"}
+{"level":"warn","message":"Razorpay keys not found in config. Payment service will not work.","timestamp":"2026-03-05 14:56:37"}
+{"level":"warn","message":"Firebase Service Account Key not provided. FCM will not work.","timestamp":"2026-03-05 14:56:37"}
+{"level":"info","message":"Connected to MongoDB successfully","timestamp":"2026-03-05 14:56:39"}
+{"env":"development","level":"info","memoryUsage":"909MB","message":"Server started - development mode on port 5001","nodeVersion":"v23.9.0","port":5001,"timestamp":"2026-03-05 14:56:39"}
+{"level":"info","message":"Mobile API: http://localhost:5001/v1/mobile","timestamp":"2026-03-05 14:56:39"}
+{"level":"info","message":"Admin API: http://localhost:5001/v1/admin","timestamp":"2026-03-05 14:56:39"}
+{"level":"info","message":"\u001b[0mGET /v1/customer/kisan-community?sortOrder=asc \u001b[32m200\u001b[0m 87.289 ms - -\u001b[0m","timestamp":"2026-03-05 14:57:11"}
+{"level":"info","message":"SIGINT received, shutting down gracefully","timestamp":"2026-03-05 14:58:02"}

@@ -9,7 +9,7 @@ import {
   ProductStatsResponse,
   UpdateProductPayload
 } from '../types/product.types';
-import cloudinaryImageService from './cloudinary-image.service';
+
 import logger from './logger';
 import { BaseService } from './base.service';
 import { PaginatedResponse } from '../types/pagination.types';
@@ -102,20 +102,16 @@ class ProductService extends BaseService<ProductDocument, CreateProductPayload, 
    */
   public async create(
     payload: CreateProductPayload,
-    images?: Express.Multer.File[]
+    images?: string[]
   ): Promise<ProductDocument> {
     if (!images?.length) {
-      throw new APIError('At least one product image is required.', 400);
+      throw new APIError('At least one product image URL is required.', 400);
     }
 
     logger.info(`Creating product: ${payload.name}`);
 
-    // Upload images
-    const productImages = await cloudinaryImageService.uploadMultiple(
-      images,
-      this.CLOUDINARY_FOLDER,
-      { maxFiles: 10, required: true }
-    );
+    // Format images
+    const productImages = images.map(url => ({ url, key: 'url' }));
 
     // Generate unique slug
     const slug = await this.generateUniqueSlug(payload.name, payload.sku);
@@ -143,19 +139,13 @@ class ProductService extends BaseService<ProductDocument, CreateProductPayload, 
   public async update(
     id: string,
     data: UpdateProductPayload | Partial<ProductDocument>,
-    files?: Express.Multer.File[]
+    images?: string[]
   ): Promise<ProductDocument> {
     const existingProduct = await this.getOne(id);
 
     // Handle Images
-    if (files && files.length > 0) {
-      const currentImages = existingProduct.images || [];
-      const updatedImages = await cloudinaryImageService.addToExisting(
-        currentImages,
-        files,
-        this.CLOUDINARY_FOLDER
-      );
-      data.images = updatedImages;
+    if (images && images.length > 0) {
+      data.images = images.map(url => ({ url, key: 'url' }));
     }
 
     // Handle Slug Update if name changes
@@ -180,10 +170,7 @@ class ProductService extends BaseService<ProductDocument, CreateProductPayload, 
   public async delete(id: string): Promise<{ message: string; status: number }> {
     const product = await this.getOne(id);
 
-    // Delete images from cloud storage
-    if (product.images?.length) {
-      await cloudinaryImageService.deleteMultiple(product.images);
-    }
+
 
     logger.info(`Product deleted: ${id}`);
     return super.delete(id);

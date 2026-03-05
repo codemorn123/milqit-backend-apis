@@ -12,11 +12,9 @@ import { Request as ExpressRequest, Response as ExpressResponse } from 'express'
 import { StatusCodes } from 'http-status-codes';
 import { validateSchemaMiddleware } from '../../middleware/common-validate';
 import { ErrorResponse, IFilter, PaginatedResponse } from '../../types/common.types';
-import { NOT_FOUND_ERROR_EXAMPLE, SERVER_ERROR_EXAMPLE, VALIDATION_ERROR_EXAMPLE } from '../../error/exampleErrors';
 import { SuccessResponse } from '../../utils/SuccessResponse';
 import { AuthService } from '../../services/auth.service';
 import { AuthTokens, CreateAdminRequest, LoginRequest, UserProfile } from '../../types/auth.types';
-import { jwtAuthMiddleware } from '../../middleware/jwt-auth';
 import { createAdminSchema, loginSchema, refreshTokenSchema } from '../../validations/admin.validation';
 import { AdminService } from '../../services/admin.service';
 import { IUser } from '../../models/UserModel';

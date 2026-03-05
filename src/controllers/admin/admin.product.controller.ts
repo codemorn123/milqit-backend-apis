@@ -73,7 +73,7 @@ export class AdminProductController extends BaseController {
     @FormField() isActive?: boolean,
     @FormField() isFeatured?: boolean,
     @FormField() productDetails?: string, // JSON string that will be parsed
-    @UploadedFiles("images") images?: Express.Multer.File[]
+    @FormField() images?: string[]
 
   ): Promise<SuccessResponse<{}>> {
 
@@ -125,7 +125,7 @@ export class AdminProductController extends BaseController {
     @FormField() isActive?: boolean,
     @FormField() isFeatured?: boolean,
     @FormField() productDetails?: string,
-    @UploadedFiles("images") images?: Express.Multer.File[]
+    @FormField() images?: string[]
   ): Promise<SuccessResponse<{}>> {
     const dataToUpdate: any = {
       name, description, mrp, sellingPrice, unit, category, quantity, productType, brand, sku, isActive, isFeatured

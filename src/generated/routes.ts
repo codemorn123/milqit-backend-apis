@@ -10,7 +10,7 @@ import { DeliveryBoyAuthController } from './../controllers/deliveryBoy/delivery
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MobileUserController } from './../controllers/customer/users.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { CustomerProductController } from './../controllers/customer/user.product.controller';
+import { CustomerProductController } from './../controllers/customer/user.product.Controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserCartController } from './../controllers/customer/user.cart.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -5828,14 +5828,9 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 isActive: {"in":"formData","name":"isActive","dataType":"string"},
                 isFeatured: {"in":"formData","name":"isFeatured","dataType":"string"},
                 productDetails: {"in":"formData","name":"productDetails","dataType":"string"},
-                images: {"in":"formData","name":"images","dataType":"array","array":{"dataType":"file"}},
+                images: {"in":"formData","name":"images","dataType":"string"},
         };
         app.post('/admin/products',
-            upload.fields([
-                {
-                    name: "images",
-                }
-            ]),
             ...(fetchMiddlewares<RequestHandler>(AdminProductController)),
             ...(fetchMiddlewares<RequestHandler>(AdminProductController.prototype.createProduct)),
 
@@ -5877,14 +5872,9 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 isActive: {"in":"formData","name":"isActive","dataType":"string"},
                 isFeatured: {"in":"formData","name":"isFeatured","dataType":"string"},
                 productDetails: {"in":"formData","name":"productDetails","dataType":"string"},
-                images: {"in":"formData","name":"images","dataType":"array","array":{"dataType":"file"}},
+                images: {"in":"formData","name":"images","dataType":"string"},
         };
         app.put('/admin/products/:id',
-            upload.fields([
-                {
-                    name: "images",
-                }
-            ]),
             ...(fetchMiddlewares<RequestHandler>(AdminProductController)),
             ...(fetchMiddlewares<RequestHandler>(AdminProductController.prototype.updateProduct)),
 
@@ -7136,16 +7126,10 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 textColor: {"in":"formData","name":"textColor","dataType":"string"},
                 deepLink: {"in":"formData","name":"deepLink","dataType":"string"},
                 slug: {"in":"formData","name":"slug","dataType":"string"},
-                categoryImage: {"in":"formData","name":"categoryImage","dataType":"file"},
+                categoryImage: {"in":"formData","name":"categoryImage","dataType":"string"},
         };
         app.post('/admin/categories',
             authenticateMiddleware([{"jwt":[]}]),
-            upload.fields([
-                {
-                    name: "categoryImage",
-                    maxCount: 1
-                }
-            ]),
             ...(fetchMiddlewares<RequestHandler>(AdminCategoryController)),
             ...(fetchMiddlewares<RequestHandler>(AdminCategoryController.prototype.create)),
 
@@ -7243,16 +7227,10 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 textColor: {"in":"formData","name":"textColor","dataType":"string"},
                 deepLink: {"in":"formData","name":"deepLink","dataType":"string"},
                 slug: {"in":"formData","name":"slug","dataType":"string"},
-                categoryImage: {"in":"formData","name":"categoryImage","dataType":"file"},
+                categoryImage: {"in":"formData","name":"categoryImage","dataType":"string"},
         };
         app.put('/admin/categories/:id',
             authenticateMiddleware([{"jwt":[]}]),
-            upload.fields([
-                {
-                    name: "categoryImage",
-                    maxCount: 1
-                }
-            ]),
             ...(fetchMiddlewares<RequestHandler>(AdminCategoryController)),
             ...(fetchMiddlewares<RequestHandler>(AdminCategoryController.prototype.update)),
 

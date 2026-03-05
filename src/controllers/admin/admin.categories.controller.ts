@@ -43,7 +43,7 @@ export class AdminCategoryController extends BaseController {
     @FormField() textColor?: string,
     @FormField() deepLink?: string,
     @FormField() slug?: string,
-    @UploadedFile("categoryImage") categoryImage?: Express.Multer.File
+    @FormField() categoryImage?: string
   ): Promise<SuccessResponse<ICategory>> {
     const cleanedData = cleanObject({ name, description, parentId, backgroundColor, textColor, deepLink, slug });
     const { error, value } = createCategorySchema.validate(cleanedData);
@@ -94,7 +94,7 @@ export class AdminCategoryController extends BaseController {
     @FormField() textColor?: string,
     @FormField() deepLink?: string,
     @FormField() slug?: string,
-    @UploadedFile("categoryImage") categoryImage?: Express.Multer.File
+    @FormField() categoryImage?: string
   ): Promise<SuccessResponse<ICategory>> {
     const cleanedData = cleanObject({ name, description, parentId, backgroundColor, textColor, deepLink, slug });
     const { error, value } = updateCategorySchema.validate(cleanedData);

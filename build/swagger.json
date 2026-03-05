@@ -15357,11 +15357,7 @@
 										"type": "string"
 									},
 									"images": {
-										"items": {
-											"type": "string",
-											"format": "binary"
-										},
-										"type": "array"
+										"type": "string"
 									}
 								},
 								"required": [
@@ -15591,11 +15587,7 @@
 										"type": "string"
 									},
 									"images": {
-										"items": {
-											"type": "string",
-											"format": "binary"
-										},
-										"type": "array"
+										"type": "string"
 									}
 								}
 							}
@@ -19508,8 +19500,7 @@
 										"type": "string"
 									},
 									"categoryImage": {
-										"type": "string",
-										"format": "binary"
+										"type": "string"
 									}
 								},
 								"required": [
@@ -19938,8 +19929,7 @@
 										"type": "string"
 									},
 									"categoryImage": {
-										"type": "string",
-										"format": "binary"
+										"type": "string"
 									}
 								}
 							}
